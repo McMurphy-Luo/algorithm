@@ -4,3 +4,7 @@ bin
 lib
 temp
 CMakeFiles
+*.cbp
+CMakeCache.txt
+cmake_install.cmake
+Makefile
