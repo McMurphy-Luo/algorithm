@@ -28,6 +28,19 @@ namespace algorithm {
             return length_;
         };
 
+        T get(size_t index) const{
+            Node<T> *temporary_item = first_;
+            while(index){
+                temporary_item = temporary_item->next;
+                index--;
+            }
+            return temporary_item->payload;
+        };
+
+        T& operator[](size_t index){
+
+        };
+
         void push(T data) {
             Node<T> *new_one = new Node<T>();
             new_one->payload = data;
@@ -41,16 +54,21 @@ namespace algorithm {
         }
 
         T pop() {
-            Node<T>* save_last_temporary = last_;
-            last_ = last_->previous;
-            if (last_) last_->next = nullptr;
+            Node<T> *save_last_temporary = last_;
+            last_ = last_->previous; // if there is no item in the list just seg fault
+            if (last_) last_->next = nullptr; // when the list contains more than 2 items
             --length_;
             if (length_ == 0) first_ = nullptr;
             return save_last_temporary->payload;
         }
 
         T shift(){
-
+            Node<T> *save_first_temporary = first_;
+            first_ = first_->next; // if there is no item in the list, just seg fault
+            if (first_) first->previous = nullptr;
+            --length;
+            if (length == 0) last_ = nullptr;
+            return save_first_temporary->payload;
         }
 
         void unshift(T data){
