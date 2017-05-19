@@ -12,11 +12,19 @@ list(APPEND data_structure_source
         ${source_dir}/data_structure/array_list.h)
 add_library(data_structure ${data_structure_source})
 add_executable(list_test ${test_source_dir}/list.cpp)
-add_executable(test ${test_source_dir}/test.cpp)
+add_executable(simple_test ${test_source_dir}/test.cpp)
 
-list(APPEND all_target
+list(APPEND all_exe
+        list_test
+        simple_test
         )
+list(APPEND all_lib
+        data_structure
+        )
+list(APPEND all_target
+        ${all_exe}
+        ${all_lib})
 
-set_target_properties(data_structure list_test PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(data_structure PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${lib_output_dir})
-set_target_properties(list_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin_output_dir})
+set_target_properties(${all_target} PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(${all_lib} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${lib_output_dir})
+set_target_properties(${all_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin_output_dir})

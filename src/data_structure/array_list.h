@@ -5,6 +5,7 @@
 #define ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
 #include <cstddef>
 #include <memory>
+#include <cmath>
 
 namespace algorithm{
     template <typename T>
@@ -14,7 +15,6 @@ namespace algorithm{
                 size_(0),
                 located_(0),
                 begin_(nullptr),
-                current_(nullptr),
                 end_(nullptr)
         {
 
@@ -30,12 +30,31 @@ namespace algorithm{
         }
     private:
         void reallocate(){
-            if (size_ == 0) size_ = 1;
+            if (size_ == 0){
+                size_ = 1;
+                end_ = begin_ = operator new(sizeof T) ;
+                return;
+            }
+            size_t next_size = static_cast<std::size_t>(std::ceil(size_ * 1.5));
+            next_size = next_size > size_ ? next_size : next_size + 1;
+
+            T* current = begin_;
+            T* new_begin = new T[next_size];
+            while(current != end_){
+
+            }
+
+
+            T* new_current;
+            T* new_end;
+
+
+
         }
 
     private:
-        size_t size_;
-        size_t located_;
+        std::size_t size_;
+        std::size_t located_;
         T* begin_;
         T* current_;
         T* end_;
