@@ -9,85 +9,111 @@
 
 namespace algorithm {
     template<typename T>
-    struct Node {
-        T payload;
-        Node<T> *previous;
-        Node<T> *next;
-    };
-
-    template<typename T>
     class LinkedList {
+    public:
+        typedef T value_type;
+        typedef std::size_t size_type;
+
+    protected:
+        struct Node {
+            T payload;
+            Node *previous;
+            Node *next;
+        };
+
     public:
         LinkedList(): length_(0),
                 first_(nullptr),
-                last_(nullptr)
-        {
+                last_(nullptr) {};
+
+        LinkedList(const LinkedList &another){
+
         }
 
-        size_t length() const {
+        ~LinkedList(){
+            Node *current_ = first_;
+            while(current_){
+                delete current_;
+                current_ = current_->next;
+            }
+        }
+
+        size_type size() const {
             return length_;
         };
 
-        T get(size_t index) const{
-            return this[index];
+        value_type get(size_type index) {
+            return this->operator[](index);
         };
 
-        T& operator[](size_t index){
-            Node<T> *temporary_item = first_;
+        value_type& operator[](size_type index) {
+            Node *temporary_item = first_;
             while(index){
                 temporary_item = temporary_item->next;
-                index--;
+                --index;
             }
             return temporary_item->payload;
         };
 
-        void push(T data) {
-            Node<T> *new_one = new Node<T>();
+        void add(const value_type &data) {
+            Node *new_one = new Node;
             new_one->payload = data;
             new_one->next = nullptr;
             new_one->previous = last_;
-            last_ = new_one;
+            ++length_;
             if (!first_) {
-                first_ = new_one;
+                first_ = last_ = new_one;
+                return;
             }
-            ++length_;
-        }
+            last_->next = new_one;
+            last_ = new_one;
+            return;
+        };
 
-        T pop() {
-            Node<T> *save_last_temporary = last_;
-            last_ = last_->previous; // if there is no item in the list just seg fault
-            if (last_) last_->next = nullptr; // when the list contains more than 2 items
-            --length_;
-            if (length_ == 0) first_ = nullptr;
-            return save_last_temporary->payload;
-        }
-
-        T shift(){
-            Node<T> *save_first_temporary = first_;
-            first_ = first_->next; // if there is no item in the list, just seg fault
-            if (first_) first_->previous = nullptr;
-            --length_;
-            if (length_ == 0) last_ = nullptr;
-            return save_first_temporary->payload;
-        }
-
-        void unshift(T data){
-            Node<T> *new_node = new Node<T>();
-            new_node->payload = data;
-            new_node->next = first_;
-            new_node->previous = nullptr;
-            if (first_) first_->previous = new_node;
-            first_ = new_node;
-            if(!last_){
-                last_ = new_node;
+        // The linked list should at least contains 1 node, otherwise segfault.
+        value_type remove(size_type index){
+            Node *current = first_;
+            while(index){
+                current = first_->next;
+                index--;
             }
-            ++length_;
-        }
+            if (current == first_) { // I am the first node
+                first_ = last_ = nullptr;
+                value_type temp = current->payload;
+                delete current;
+                return temp;
+            }
+            if (current == last_){ // I am the last node
+                current->previous->next = nullptr;
+                value_type temp = current->payload;
+                delete current;
+                return temp;
+            }
+            current->previous = current->next;
+            current->next = current->previous;
+            value_type temp = current->payload;
+            delete current;
+            return temp;
+        };
 
-    private:
-        size_t length_;
-        Node<T> *first_;
-        Node<T> *last_;
+        void insert(const value_type &data, size_type after){
+
+        };
+
+        void clear(){
+            length_ = 0;
+            Node* current = first_;
+            Node* next = current->next;
+            while(current){
+                delete current;
+                current = next;
+            }
+        };
+
+    protected:
+        size_type length_;
+        Node *first_;
+        Node *last_;
     };
 };
 

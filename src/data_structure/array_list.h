@@ -5,7 +5,6 @@
 #define ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
 #include <cstddef>
 #include <memory>
-#include <cmath>
 
 namespace algorithm{
     template <typename T>
@@ -35,7 +34,7 @@ namespace algorithm{
                 end_ = begin_ = operator new(sizeof T) ;
                 return;
             }
-            size_t next_size = static_cast<std::size_t>(std::ceil(size_ * 1.5));
+            size_t next_size = size_ * 2;
             next_size = next_size > size_ ? next_size : next_size + 1;
 
             T* current = begin_;
