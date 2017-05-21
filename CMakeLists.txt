@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(algorithm C CXX)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Werror -Wall -g")
+set(CMAKE_CXX_FLAGS "-Werror -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -g")
 
 set(lib_output_dir ${PROJECT_BINARY_DIR}/lib)
 set(bin_output_dir ${PROJECT_BINARY_DIR}/bin)

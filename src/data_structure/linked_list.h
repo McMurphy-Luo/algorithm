@@ -4,9 +4,14 @@
 
 #ifndef ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
-
+#include "../config.h"
 #include <cstddef>
 #include <cassert>
+#ifdef DATA_STRUCTURE_DEBUG
+#include <cstring>
+#include <string>
+#endif
+
 
 namespace algorithm {
     template<typename T>
@@ -27,15 +32,25 @@ namespace algorithm {
                 first_(nullptr),
                 last_(nullptr) {};
 
-        LinkedList(const LinkedList &another): length_(another.length_),
-                                               first_(nullptr),
-                                               last_(nullptr)
+        LinkedList(const LinkedList &another): LinkedList()
         {
             Node* current = another.first_;
             while(current){
                 add(current->payload);
                 current = current->next;
             }
+        }
+
+        LinkedList& operator=(const LinkedList &rhs){
+            if (this == &rhs) return *this;
+            length_ = rhs.length_;
+            first_ = last_ = nullptr;
+            Node* current = rhs.first_;
+            while(current){
+                add(current->payload);
+                current = current->next;
+            }
+            return *this;
         }
 
         ~LinkedList(){
@@ -75,7 +90,6 @@ namespace algorithm {
             }
             last_->next = new_one;
             last_ = new_one;
-            return;
         };
 
         // The linked list should at least contains 1 node, otherwise segfault.
@@ -115,20 +129,20 @@ namespace algorithm {
                 return add(data);
             }
             ++length_;
-            Node *new_node = new Node;
+            Node* new_node = new Node;
             new_node->payload = data;
             if (following_node->previous == nullptr){ // the new node is inserted into the list head
                 assert(following_node == first_); // following node equals first_
                 following_node->previous = new_node;
                 new_node->next = following_node;
                 new_node->previous = nullptr;
+                first_ = new_node;
                 return;
             }
             following_node->previous->next = new_node;
             new_node->previous = following_node->previous;
             following_node->previous = new_node;
             new_node->next = following_node;
-            return;
         };
 
         void clear(){
@@ -140,6 +154,28 @@ namespace algorithm {
                 current = next;
             }
         };
+#ifdef DATA_STRUCTURE_DEBUG
+    public:
+        std::string toString(){
+            std::string result;
+
+            std::size_t len = 0;
+            Node* current = first_;
+            while(len < length_){
+                char buf[BUFSIZ];
+                memset(buf, 0, BUFSIZ);
+                snprintf(buf, BUFSIZ, "Node index is %ju, Node content is ", len);
+                result.append(buf);
+                result.append(current->payload);
+                result.append("\n");
+                ++len;
+                current = current->next;
+            }
+            return result;
+        };
+#endif
+
+
 
     protected:
         size_type length_;
