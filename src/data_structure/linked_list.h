@@ -6,6 +6,7 @@
 #define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 
 #include <cstddef>
+#include <cassert>
 
 namespace algorithm {
     template<typename T>
@@ -26,8 +27,15 @@ namespace algorithm {
                 first_(nullptr),
                 last_(nullptr) {};
 
-        LinkedList(const LinkedList &another){
-
+        LinkedList(const LinkedList &another): length_(another.length_),
+                                               first_(nullptr),
+                                               last_(nullptr)
+        {
+            Node* current = another.first_;
+            while(current){
+                add(current->payload);
+                current = current->next;
+            }
         }
 
         ~LinkedList(){
@@ -43,7 +51,7 @@ namespace algorithm {
         };
 
         value_type get(size_type index) {
-            return this->operator[](index);
+            return (*this)[index];
         };
 
         value_type& operator[](size_type index) {
@@ -72,6 +80,7 @@ namespace algorithm {
 
         // The linked list should at least contains 1 node, otherwise segfault.
         value_type remove(size_type index){
+            length_--;
             Node *current = first_;
             while(index){
                 current = first_->next;
@@ -89,15 +98,37 @@ namespace algorithm {
                 delete current;
                 return temp;
             }
-            current->previous = current->next;
-            current->next = current->previous;
+            current->previous->next = current->next;
+            current->next->previous = current->previous;
             value_type temp = current->payload;
             delete current;
             return temp;
         };
 
-        void insert(const value_type &data, size_type after){
-
+        void insert(const value_type &data, size_type before){
+            Node* following_node = first_;
+            while(before){
+                following_node = following_node->next;
+                --before;
+            }
+            if (following_node == nullptr) { // the list must be empty
+                return add(data);
+            }
+            ++length_;
+            Node *new_node = new Node;
+            new_node->payload = data;
+            if (following_node->previous == nullptr){ // the new node is inserted into the list head
+                assert(following_node == first_); // following node equals first_
+                following_node->previous = new_node;
+                new_node->next = following_node;
+                new_node->previous = nullptr;
+                return;
+            }
+            following_node->previous->next = new_node;
+            new_node->previous = following_node->previous;
+            following_node->previous = new_node;
+            new_node->next = following_node;
+            return;
         };
 
         void clear(){
