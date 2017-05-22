@@ -6,16 +6,16 @@
 #define ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H
 
 namespace algorithm{
-    template <typename KeyType, typename PayloadType, class Comparator>
+    template <typename KeyType, typename ValueType, class Comparator>
     class BinaryTree{
     public:
-        typedef key_type KeyType;
-        typedef value_type PayloadType;
+        typedef KeyType key_type;
+        typedef ValueType value_type;
 
     protected:
         struct Node{
-            KeyType key;
-            PayloadType payload;
+            key_type key;
+            value_type value;
             Node* left;
             Node* right;
         };
@@ -38,7 +38,6 @@ namespace algorithm{
         };
 
         void put(key_type key, value_type value){
-            * current = root;
 
             int compare_result = Comparator(key, root->key) < 0;
 
@@ -61,7 +60,7 @@ namespace algorithm{
 
 
     protected:
-        node_type *root;
+        Node* root;
     };
 }
 

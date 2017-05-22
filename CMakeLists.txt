@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(algorithm C CXX)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Werror -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -g")
+set(CMAKE_CXX_FLAGS "-Werror -Wall -Wextra -Wold-style-cast -Woverloaded-virtual -pg")
 
 set(lib_output_dir ${PROJECT_BINARY_DIR}/lib)
 set(bin_output_dir ${PROJECT_BINARY_DIR}/bin)
@@ -10,6 +10,7 @@ set(test_source_dir ${PROJECT_SOURCE_DIR}/test)
 include_directories(${source_dir})
 
 list(APPEND data_structure_source
+        ${source_dir}/config.h
         ${source_dir}/data_structure/linked_list.h
         ${source_dir}/data_structure/avl_tree.h
         ${source_dir}/data_structure/binary_tree.h

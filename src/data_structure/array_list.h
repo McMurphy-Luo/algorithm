@@ -3,60 +3,101 @@
 //
 #ifndef ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
+
 #include <cstddef>
 #include <memory>
+#include <cassert>
 
-namespace algorithm{
-    template <typename T>
-    class ArrayList{
+namespace algorithm {
+    template<typename T>
+    class ArrayList {
     public:
-        ArrayList():
+        typedef T value_type;
+        typedef std::size_t size_type;
+    public:
+        ArrayList() :
                 size_(0),
                 located_(0),
-                begin_(nullptr),
-                end_(nullptr)
-        {
+                begin_(nullptr) {
+        };
 
-        }
-        size_t length() const {
+        ArrayList(const ArrayList &another) : ArrayList() {
+            for (size_type index = 0; index < another.size_; ++index) add(another[index]);
+        };
+
+        ArrayList& operator=(const ArrayList &rhs) {
+            if (this == &rhs) return *this;
+            for (size_type index = 0; index < rhs.size_; ++index) add(rhs[index]);
+            return *this;
+        };
+
+        ~ArrayList() {
+
+            free(begin_);
+        };
+
+        size_type size() const {
             return size_;
-        }
-        void push(T data){
+        };
 
-        }
-        T pop(){
+        value_type get(size_type index) const {
+            return (*this)[index];
+        };
 
+        value_type &operator[](size_type index) {
+            return *(begin_ + index);
+        };
+
+        void add(const value_type &data) {
+            if (size_ == located_) reallocate();
+            assert(located_ > size_);
+            new(begin_ + size_) value_type(data);
+            ++size_;
+        };
+
+        value_type remove(size_type index){
+
+        };
+
+        void insert(const value_type &data) {
+            if (size_ == located_) reallocate();
+        };
+
+        void clear() {
+            for (size_type index = 0; index < size_; ++index) (begin_ + index)->~T();
+            free(begin_);
         }
-    private:
-        void reallocate(){
-            if (size_ == 0){
-                size_ = 1;
-                end_ = begin_ = operator new(sizeof T) ;
+
+    protected:
+        void reallocate() {
+            if (size_ == 0) {
+                begin_ = malloc(sizeof(value_type));
+                located_ = 1;
                 return;
             }
-            size_t next_size = size_ * 2;
-            next_size = next_size > size_ ? next_size : next_size + 1;
-
-            T* current = begin_;
-            T* new_begin = new T[next_size];
-            while(current != end_){
-
-            }
-
-
-            T* new_current;
-            T* new_end;
-
-
-
+            size_type next_located = located_ * 2;
+            value_type *new_begin = malloc(sizeof(value_type) * next_located);
+            move(new_begin, new_begin + next_located - 1);
+            located_ = next_located;
         }
 
-    private:
-        std::size_t size_;
-        std::size_t located_;
-        T* begin_;
-        T* current_;
-        T* end_;
+        void move(value_type *new_begin, value_type *new_end) {
+            assert(new_end > new_begin);
+            assert(new_end - new_begin + 1 == size_ * 2);
+            size_type index = 0;
+            while (index < size_) {
+                new(new_begin) value_type(*(begin_ + index));
+                (begin_ + index)->~value_type();
+                ++index;
+            }
+            free(begin_);
+            begin_ = new_begin;
+        }
+
+    protected:
+        size_type size_;
+        size_type located_;
+        value_type *begin_;
     };
 }
 #endif // ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
