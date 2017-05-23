@@ -21,19 +21,24 @@ namespace algorithm {
                 begin_(nullptr) {
         };
 
-        ArrayList(const ArrayList &another) : ArrayList() {
-            for (size_type index = 0; index < another.size_; ++index) add(another[index]);
+        ArrayList(const ArrayList &another)
+                : ArrayList() {
+            for (size_type index = 0; index < another.size_; ++index) {
+                add(another[index]);
+            }
         };
 
-        ArrayList& operator=(const ArrayList &rhs) {
+        ArrayList &operator=(const ArrayList &rhs) {
             if (this == &rhs) return *this;
-            for (size_type index = 0; index < rhs.size_; ++index) add(rhs[index]);
+            clear();
+            for (size_type index = 0; index < rhs.size_; ++index) {
+                add(rhs[index]);
+            }
             return *this;
         };
 
         ~ArrayList() {
-
-            free(begin_);
+            clear();
         };
 
         size_type size() const {
@@ -48,47 +53,70 @@ namespace algorithm {
             return *(begin_ + index);
         };
 
+        const value_type &operator[](size_type index) const {
+            return *(begin_ + index);
+        }
+
         void add(const value_type &data) {
-            if (size_ == located_) reallocate();
+            if (size_ == located_) {
+                reallocate();
+            }
             assert(located_ > size_);
             new(begin_ + size_) value_type(data);
             ++size_;
         };
 
-        value_type remove(size_type index){
-
+        value_type remove(size_type index) {
+            value_type result = *(begin_ + index);
+            (begin_ + index)->~value_type();
+            for (value_type *moving = begin_ + index + 1; moving < begin_ + size_; moving++) {
+                new(moving - 1) T(*moving);
+                moving->~value_type();
+            }
+            --size_;
+            return result;
         };
 
-        void insert(const value_type &data) {
+        void insert(const value_type &data, size_type before) {
             if (size_ == located_) reallocate();
+            value_type *moving = begin_ + size_ - 1;
+            for (; moving >= begin_ + before; --moving) {
+                new(moving + 1) T(*(moving));
+                moving->~value_type();
+            }
+            new(begin_ + before) T(data);
+            ++size_;
         };
 
         void clear() {
-            for (size_type index = 0; index < size_; ++index) (begin_ + index)->~T();
+            for (size_type index = 0; index < size_; ++index) {
+                (begin_ + index)->~value_type();
+            }
             free(begin_);
+            located_ = size_ = 0;
+            begin_ = nullptr;
         }
 
     protected:
         void reallocate() {
             if (size_ == 0) {
-                begin_ = malloc(sizeof(value_type));
+                begin_ = static_cast<value_type *>(malloc(sizeof(value_type)));
                 located_ = 1;
                 return;
             }
             size_type next_located = located_ * 2;
-            value_type *new_begin = malloc(sizeof(value_type) * next_located);
+            value_type *new_begin = static_cast<value_type *>(malloc(sizeof(value_type) * next_located));
             move(new_begin, new_begin + next_located - 1);
             located_ = next_located;
         }
 
         void move(value_type *new_begin, value_type *new_end) {
             assert(new_end > new_begin);
-            assert(new_end - new_begin + 1 == size_ * 2);
-            size_type index = 0;
-            while (index < size_) {
-                new(new_begin) value_type(*(begin_ + index));
+            assert(new_end == size_ * 2 + new_begin - 1);
+
+            for (size_type index = 0; index < size_; ++index) {
+                new(new_begin + index) value_type(*(begin_ + index));
                 (begin_ + index)->~value_type();
-                ++index;
             }
             free(begin_);
             begin_ = new_begin;

@@ -36,14 +36,20 @@ namespace algorithm {
                        first_(nullptr),
                        last_(nullptr) {};
 
-        LinkedList(const LinkedList &another) : LinkedList() {
-            for (Node *current = another.first_; current; current = current->next) add(current->payload);
+        LinkedList(const LinkedList &another):
+                LinkedList()
+        {
+            for (Node *current = another.first_; current; current = current->next){
+                add(current->payload);
+            }
         }
 
         LinkedList &operator=(const LinkedList &rhs) {
             if (this == &rhs) return *this;
             clear();
-            for (Node *current = rhs.first_; current; current = current->next) add(current->payload);
+            for (Node *current = rhs.first_; current; current = current->next){
+                add(current->payload);
+            }
             return *this;
         }
 
@@ -61,8 +67,14 @@ namespace algorithm {
 
         value_type& operator[](size_type index) {
             Node *temporary_item = first_;
-            for (; index; --index) temporary_item = temporary_item->next;
+            for (; index; --index) {
+                temporary_item = temporary_item->next;
+            }
             return temporary_item->payload;
+        };
+
+        const value_type& operator[](size_type index) const {
+            return (*this)[index];
         };
 
         void add(const value_type &data) {
@@ -83,9 +95,8 @@ namespace algorithm {
         value_type remove(size_type index) {
             length_--;
             Node *current = first_;
-            while (index) {
+            for (; index; --index){
                 current = first_->next;
-                index--;
             }
             if (current == first_) { // I am the first node
                 first_ = last_ = nullptr;
@@ -108,9 +119,8 @@ namespace algorithm {
 
         void insert(const value_type &data, size_type before) {
             Node *following_node = first_;
-            while (before) {
+            for(; before; --before){
                 following_node = following_node->next;
-                --before;
             }
             if (following_node == nullptr) { // the list must be empty
                 return add(data);
@@ -133,8 +143,10 @@ namespace algorithm {
         };
 
         void clear() {
-            if (!first_) return;
-            for (Node *current = first_, *next = first_->next; current; current = next) delete current;
+            for (Node* current = first_, *next; current; current = next){
+                next = current->next;
+                delete current;
+            }
             length_ = 0;
             last_ = first_ = nullptr;
         };
@@ -142,18 +154,15 @@ namespace algorithm {
     public:
         std::string toString() {
             std::string result;
-
             size_type len = 0;
             Node *current = first_;
-            while (len < length_) {
+            for (; len < length_; ++len, current = current->next){
                 char buf[BUFSIZ];
                 memset(buf, 0, BUFSIZ);
                 snprintf(buf, BUFSIZ, "Node index is %ju, Node content is ", len);
                 result.append(buf);
                 result.append(current->payload);
                 result.append("\n");
-                ++len;
-                current = current->next;
             }
             return result;
         };
