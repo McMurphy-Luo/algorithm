@@ -34,7 +34,7 @@ void test_list_2(T& list){
     assert(list_2[0] + list_2.get(1) == std::string("helloworld"));
 }
 
-int main(){
+int main(int argc, char* argv[]){
     LinkedList<std::string> linked_l1, linked_l2;
     ArrayList<std::string> array_l1, array_l2;
     test_list_1(linked_l1);

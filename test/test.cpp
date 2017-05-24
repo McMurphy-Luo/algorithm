@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int main(){
+int main(int argc, char* argv[]){
     int test = 1;
     test = test * 1.5;
     cout << test << endl;
