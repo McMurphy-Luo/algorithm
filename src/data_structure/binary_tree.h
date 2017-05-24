@@ -32,25 +32,40 @@ namespace algorithm{
 
         };
 
-        ~BinaryTree(){
+        BinaryTree& operator=(const BinaryTree& rhs){
+            return *this;
+        };
+
+        const value_type& operator[](const key_type& rhs) const {
 
         };
 
+        ~BinaryTree(){
+            clear();
+        };
+
         value_type* get(const key_type& key){ // create object on heap, I don't want to use boost::optional or std::pair etc.
-            if (!root_) {
+            if (!root_) {                     // It's user's duty to delete the object.
                 return nullptr;
             }
             Node* result = fuzzy_search(root_, key);
             int compare_result = Comparator(key, result->key);
-            if (!compare_result){
-                *target = result->value;
-                return true;
+            if (compare_result == 0){
+                return nullptr;
             }
-            return false;
+            return new value_type(result->value);
         };
 
-        void put(const key_type& key, value_type value){
-            int compare_result = Comparator(key, root->key) < 0;
+        void put(const key_type& key, const value_type& value){
+            if (!root_){
+                root_ = new Node;
+                root_->key = key;
+                root_->value = value;
+                root_->left = nullptr;
+                root_->right = nullptr;
+            }
+            Node* search_result = fuzzy_search(root_, key);
+
             if (compare_result < 0){
 
             }
@@ -59,12 +74,12 @@ namespace algorithm{
 
         };
 
-        void remove(const key_type& key){
+        void remove(const key_type& key){ // simply post order traverse the tree delete every node
 
         };
 
         bool isEmpty() const {
-
+            return root_ == nullptr;
         };
 
         size_type size() const {
