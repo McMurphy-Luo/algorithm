@@ -31,6 +31,7 @@ list(APPEND all_target
 add_library(data_structure ${data_structure_source})
 add_executable(list_test ${test_source_dir}/list.cpp)
 add_executable(simple_test ${test_source_dir}/test.cpp)
+add_executable(binary_tree_test ${test_source_dir}/binary_tree.cpp)
 
 set_target_properties(${all_target} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${all_lib} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${lib_output_dir})

@@ -65,16 +65,24 @@ namespace algorithm{
                 root_->right = nullptr;
             }
             Node* search_result = fuzzy_search(root_, key);
-
-            if (compare_result < 0){
-
+            int compare_result = Comparator(key, search_result->value);
+            if (compare_result == 0){  // if node already exists, replace it with new value
+                search_result->value = value;  // the value type should implement operator= plus copy ctor
             }
-
-
-
+            Node* new_node = new Node;
+            new_node->key = key;
+            new_node->value = value;
+            new_node->left = nullptr;
+            new_node->right = nullptr;
+            if (compare_result > 0){
+                search_result->right = new_node;
+            }
+            if (compare_result < 0){
+                search_result->left = new_node;
+            }
         };
 
-        void remove(const key_type& key){ // simply post order traverse the tree delete every node
+        void remove(const key_type& key){
 
         };
 
@@ -86,7 +94,7 @@ namespace algorithm{
 
         };
 
-        void clear(){
+        void clear(){ // simply post order traverse the tree delete every node
 
         };
 
