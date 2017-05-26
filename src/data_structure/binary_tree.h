@@ -20,6 +20,28 @@ namespace algorithm{
             typedef ValueType value_type;
 
         protected:
+            static void get_least_node(BinarySubTree *from, BinarySubTree* from_parent, BinarySubTree **target, BinarySubTree **target_parent){
+                assert(from);
+                assert(!from_parent || (from_parent->left_ == from || from_parent->right_ == from));
+                *target = from;
+                *target_parent = from_parent;
+                while((*target)->left_){
+                    *target_parent = *target;
+                    *target = (*target)->left_;
+                }
+            };
+
+            static void get_largest_node(BinarySubTree* from, BinarySubTree* from_parent, BinarySubTree **target, BinarySubTree **target_parent){
+                assert(from);
+                assert(!from_parent || (from_parent->left_ == from || from_parent->right_ == from));
+                *target = from;
+                *target_parent = from_parent;
+                while((*target)->right_){
+                    *target_parent = *target;
+                    *target = (*target)->right_;
+                }
+            };
+
             static void remove_leaf(BinarySubTree* target, BinarySubTree* parent){
                 assert(target && parent);
                 assert(target->left_ == nullptr && target->right_ == nullptr);
@@ -57,9 +79,14 @@ namespace algorithm{
                 if (left_child_height >= right_child_height){
                     BinarySubTree* sub_tree_to_be_lifted;
                     BinarySubTree* parent_of_sub_tree_to_be_lifted;
-                    target->left_->get_largest_node(&sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
+                    get_largest_node(target->left_, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
+                    sub_tree_to_be_lifted->right_ = target->right_;
+                    sub_tree_to_be_lifted->left_ = target->left_;
+                    parent_of_sub_tree_to_be_lifted->right_ = sub_tree_to_be_lifted->left_;
 
+                    if (sub_tree_to_be_lifted == target->left_){
 
+                    }
                 }
                 if (right_child_height > left_child_height){
 
@@ -141,24 +168,6 @@ namespace algorithm{
             };
 
         protected:
-            void get_least_node(BinarySubTree **target, BinarySubTree **target_parent){
-                *target_parent = this;
-                *target = this->left_;
-                while(*target){
-                    *target_parent = *target;
-                    *target = (*target)->left_;
-                }
-            };
-
-            void get_largest_node(BinarySubTree **target, BinarySubTree **target_parent){
-                *target_parent = this;
-                *target = this->right_;
-                while(*target){
-                    *target_parent = *target;
-                    *target = (*target)->left_;
-                }
-            };
-
             key_type key_;
             value_type value_;
             BinarySubTree* left_;
