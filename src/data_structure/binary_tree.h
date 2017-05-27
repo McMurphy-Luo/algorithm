@@ -7,46 +7,42 @@
 
 #include <cstddef>
 #include <cassert>
+#include <functional>
 #include "../config.h"
 
 namespace algorithm{
     namespace detail{
         typedef typename std::size_t size_type;
         template <typename KeyType, typename ValueType>
-        struct BinarySubTree{
-            BinarySubTree(const KeyType& key,
-                          const ValueType& value,
-                          BinarySubTree<KeyType, ValueType>* left,
-                          BinarySubTree<KeyType, ValueType>* right):
-                          key(key),
-                          value(value),
-                          left(left),
-                          right(right)
-            {
-            };
+        struct TreeNode{
+            typedef KeyType key_type;
+            typedef ValueType value_type;
+            key_type key;
+            value_type value;
+            TreeNode<key_type, value_type>* left;
+            TreeNode<key_type, value_type>* right;
+        };
 
-            size_type size() const {    // post order traversal
-                size_type left_sub_tree_size = left ? left->size() : 0;
-                size_type right_sub_tree_size = right ? right->size() : 0;
-                return left_sub_tree_size + right_sub_tree_size + 1;
-            };
+        template<typename KeyType, typename ValueType>
+        size_type size(const TreeNode<KeyType, ValueType>* which) {    // post order traversal
+            assert(which);
+            size_type left_sub_tree_size = which->left ? size(which->left) : 0;
+            size_type right_sub_tree_size = which->right ? size(which->right) : 0;
+            return left_sub_tree_size + right_sub_tree_size + 1;
+        };
 
-            size_type height() const {  // post order traversal
-                size_type left_sub_tree_height = left ? left->height(): 0;
-                size_type right_sub_tree_height = right ? right->height() : 0;
-                return 1 + (
+        template<typename KeyType, typename ValueType>
+        size_type height(const TreeNode<KeyType, ValueType>* which) {  // post order traversal
+            assert(which);
+            size_type left_sub_tree_height = which->left ? height(which->left): 0;
+            size_type right_sub_tree_height = which->right ? height(which->right) : 0;
+            return 1 + (
                     right_sub_tree_height > left_sub_tree_height ? right_sub_tree_height : left_sub_tree_height
-                );
-            };
-
-            KeyType key;
-            ValueType value;
-            BinarySubTree<KeyType, ValueType>* left;
-            BinarySubTree<KeyType, ValueType>* right;
+            );
         };
 
         template <typename KeyType, typename ValueType>
-        void get_least_node(BinarySubTree<KeyType, ValueType> *from, BinarySubTree<KeyType, ValueType>* from_parent, BinarySubTree<KeyType, ValueType> **target, BinarySubTree<KeyType, ValueType> **target_parent){
+        void get_least_node(TreeNode<KeyType, ValueType> *from, TreeNode<KeyType, ValueType>* from_parent, TreeNode<KeyType, ValueType> **target, TreeNode<KeyType, ValueType> **target_parent){
             assert(from);
             assert(!from_parent || (from_parent->left == from || from_parent->right == from));
             *target = from;
@@ -58,7 +54,7 @@ namespace algorithm{
         };
 
         template <typename KeyType, typename ValueType>
-        void get_largest_node(BinarySubTree<KeyType, ValueType>* from, BinarySubTree<KeyType, ValueType>* from_parent, BinarySubTree<KeyType, ValueType> **target, BinarySubTree<KeyType, ValueType> **target_parent){
+        void get_largest_node(TreeNode<KeyType, ValueType>* from, TreeNode<KeyType, ValueType>* from_parent, TreeNode<KeyType, ValueType> **target, TreeNode<KeyType, ValueType> **target_parent){
             assert(from);
             assert(!from_parent || (from_parent->left == from || from_parent->right == from));
             *target = from;
@@ -70,7 +66,7 @@ namespace algorithm{
         };
 
         template <typename KeyType, typename ValueType>
-        void remove_leaf(BinarySubTree<KeyType, ValueType>* target, BinarySubTree<KeyType, ValueType>* parent){
+        void remove_leaf(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
             assert(target && parent);
             assert(target->left == nullptr && target->right == nullptr);
             assert(target == parent->left || target == parent->right);
@@ -84,11 +80,11 @@ namespace algorithm{
         };
 
         template <typename KeyType, typename ValueType>
-        void remove_one_child_node(BinarySubTree<KeyType, ValueType>* target, BinarySubTree<KeyType, ValueType>* parent){
+        void remove_one_child_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
             assert(target && parent);
             assert(target->left == nullptr && target->right || target->left && target->right == nullptr);
             assert(target == parent->left || target == parent->right);
-            BinarySubTree<KeyType, ValueType>* my_child = target->left ? target->left : target->right;
+            TreeNode<KeyType, ValueType>* my_child = target->left ? target->left : target->right;
             if (target == parent->left){
                 parent->left = my_child;
             }
@@ -99,20 +95,20 @@ namespace algorithm{
         };
 
         template <typename KeyType, typename ValueType>
-        void remove_two_children_node(BinarySubTree<KeyType, ValueType>* target, BinarySubTree<KeyType, ValueType>* parent){
+        void remove_two_children_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
             assert(target && parent);
             assert(target->left && target->right);
             assert(target == parent->left || target == parent->right);
-            size_type left_child_height = target->left->height();
-            size_type right_child_height = target->right->height();
+            size_type left_child_height = height(target->left);
+            size_type right_child_height = height(target->right);
 
             if (left_child_height >= right_child_height){
-                BinarySubTree<KeyType, ValueType>* sub_tree_to_be_lifted;
-                BinarySubTree<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
+                TreeNode<KeyType, ValueType>* sub_tree_to_be_lifted;
+                TreeNode<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
                 get_largest_node(target->left, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
 
                 assert(!sub_tree_to_be_lifted->right);
-                if (sub_tree_to_be_lifted->height() == 1){
+                if (height(sub_tree_to_be_lifted) == 1){
                     remove_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
                 } else {
                     remove_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
@@ -131,12 +127,12 @@ namespace algorithm{
                 }
             }
             if (right_child_height > left_child_height){
-                BinarySubTree<KeyType, ValueType>* sub_tree_to_be_lifted;
-                BinarySubTree<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
+                TreeNode<KeyType, ValueType>* sub_tree_to_be_lifted;
+                TreeNode<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
                 get_least_node(target->right, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
 
                 assert(!sub_tree_to_be_lifted->left);
-                switch(sub_tree_to_be_lifted->height()){
+                switch(height(sub_tree_to_be_lifted)){
                     case 1:
                         remove_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
                         break;
@@ -160,12 +156,14 @@ namespace algorithm{
         };
     }
 
-    template <typename KeyType, typename ValueType, int (*Comparator)(const KeyType&, const KeyType&)>
+    template <typename KeyType, typename ValueType, std::function<int(const KeyType&, const KeyType&)> Comparator>
     class BinaryTree{
     public:
-        typedef KeyType key_type;
-        typedef ValueType value_type;
+        typedef typename detail::TreeNode<KeyType, ValueType>::key_type key_type;
+        typedef typename detail::TreeNode<KeyType, ValueType>::value_type value_type;
         typedef detail::size_type size_type;
+    protected:
+        typedef detail::TreeNode<KeyType, ValueType> node;
     public:
         BinaryTree():
                 root_(nullptr)
@@ -173,8 +171,8 @@ namespace algorithm{
         };
 
         value_type* remove(const key_type& key){
-            detail::BinarySubTree<KeyType, ValueType>* result;
-            detail::BinarySubTree<KeyType, ValueType>* result_parent;
+            detail::TreeNode<KeyType, ValueType>* result;
+            detail::TreeNode<KeyType, ValueType>* result_parent;
             find_ex(key, &result, &result_parent);
             if (!result){
                 return nullptr;
@@ -195,8 +193,8 @@ namespace algorithm{
         };
 
         value_type* find(const key_type& key){
-            detail::BinarySubTree<KeyType, ValueType>* result;
-            detail::BinarySubTree<KeyType, ValueType>* result_parent;
+            node* result;
+            node* result_parent;
             find_ex(key, &result, &result_parent);
             if (!result){
                 return nullptr;
@@ -205,24 +203,27 @@ namespace algorithm{
         };
 
         void put(const key_type& key, const value_type& value){ // pre-order traversal
-            detail::BinarySubTree<KeyType, ValueType>* result;
-            detail::BinarySubTree<KeyType, ValueType>* result_parent;
+            node* result;
+            node* result_parent;
             find_ex(key, &result, &result_parent);
             if (result){
                 result->value = value;
                 return;
             }
             if (!result_parent){
-                root_ = new detail::BinarySubTree<key_type, value_type>(key, value, nullptr, nullptr);
+                root_ = new node;
+                root_->key = key;
+                root_->value = value;
+                root_->left = root_->right = nullptr;
                 return;
             }
             int compare_result = Comparator(key, result_parent->key);
             if (compare_result > 0){
-                result_parent->right = new detail::BinarySubTree<key_type, value_type>(key, value, nullptr, nullptr);
+                result_parent->right = new node;
                 return;
             }
             if (compare_result < 0){
-                result_parent->left = new detail::BinarySubTree<key_type, value_type>(key, value, nullptr, nullptr);
+                result_parent->left = new node;
                 return;
             }
             assert(false);
@@ -230,8 +231,8 @@ namespace algorithm{
 
     protected:
         void find_ex(const key_type& key,
-                     detail::BinarySubTree<KeyType, ValueType> **target,
-                     detail::BinarySubTree<KeyType, ValueType> **target_parent)
+                     detail::TreeNode<KeyType, ValueType> **target,
+                     detail::TreeNode<KeyType, ValueType> **target_parent)
         {
             *target = root_;
             *target_parent = nullptr;
@@ -250,7 +251,7 @@ namespace algorithm{
                 }
             }
         };
-        detail::BinarySubTree<KeyType, ValueType>* root_;
+        node* root_;
     };
 }
 

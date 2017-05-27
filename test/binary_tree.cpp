@@ -1,25 +1,23 @@
 //
 // Created by luojiayi on 5/24/17.
 //
-#include "data_structure/binary_tree.h"
-
 #include <string>
 #include <iostream>
-
-int string_comparator(const std::string& left, const std::string& right){
-    if (left > right){
-        return 1;
-    }
-    if (left < right){
-        return -1;
-    }
-    return 0;
-}
+#include "data_structure/binary_tree.h"
 
 using namespace std;
+using namespace algorithm;
 
 int main(){
-    algorithm::BinaryTree<string, string, string_comparator> tree;
+    BinaryTree<string, string, [](const std::string& left, const std::string& right) -> int {
+        if (left > right){
+            return 1;
+        }
+        if (left < right){
+            return -1;
+        }
+        return 0;
+    }> tree;
     tree.put(string("1"), string("I am 1 string!"));
     tree.put(string("a"), string("I am a string!"));
     tree.put(string("3"), string("I am 3 string!"));
