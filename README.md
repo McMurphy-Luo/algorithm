@@ -1,2 +1,2 @@
 # algorithm
-Learning algorithm.
+Algorithm Playground.

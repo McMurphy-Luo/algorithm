@@ -22,7 +22,7 @@ int main(){
     algorithm::BinaryTree<string, string, string_comparator> tree;
     tree.put(string("1"), string("I am 1 string!"));
     tree.put(string("a"), string("I am a string!"));
-    tree.put(string("3"), string("I am 1 string!"));
+    tree.put(string("3"), string("I am 3 string!"));
     tree.put(string("asdfasdfqe"), string("I am asdfasdfqe string!"));
     tree.put(string("asdfa"), string("I am asdfa string!"));
     tree.put(string("123123asdfa"), string("I am 123123asdfa string!"));
