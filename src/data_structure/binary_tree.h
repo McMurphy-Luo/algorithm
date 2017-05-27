@@ -11,133 +11,19 @@
 
 namespace algorithm{
     namespace detail{
-        template <typename KeyType, typename ValueType, int (*Comparator)(const KeyType&, const KeyType&)>
-        class BinarySubTree{
-        public:
-            friend class BinaryTree<KeyType, ValueType, Comparator>;
-            typedef std::size_t size_type;
-            typedef KeyType key_type;
-            typedef ValueType value_type;
+        template <typename KeyType, typename ValueType>
+        struct BinarySubTree{
+            typedef typename std::size_t size_type;
 
-        protected:
-            static void get_least_node(BinarySubTree *from, BinarySubTree* from_parent, BinarySubTree **target, BinarySubTree **target_parent){
-                assert(from);
-                assert(!from_parent || (from_parent->left_ == from || from_parent->right_ == from));
-                *target = from;
-                *target_parent = from_parent;
-                while((*target)->left_){
-                    *target_parent = *target;
-                    *target = (*target)->left_;
-                }
-            };
-
-            static void get_largest_node(BinarySubTree* from, BinarySubTree* from_parent, BinarySubTree **target, BinarySubTree **target_parent){
-                assert(from);
-                assert(!from_parent || (from_parent->left_ == from || from_parent->right_ == from));
-                *target = from;
-                *target_parent = from_parent;
-                while((*target)->right_){
-                    *target_parent = *target;
-                    *target = (*target)->right_;
-                }
-            };
-
-            static void remove_leaf(BinarySubTree* target, BinarySubTree* parent){
-                assert(target && parent);
-                assert(target->left_ == nullptr && target->right_ == nullptr);
-                assert(target == parent->left_ || target == parent->right_);
-                if (target == parent->left_){
-                    parent->left_ = nullptr;
-                }
-                if (target == parent->right_){
-                    parent->right_ = nullptr;
-                }
-                assert(false); //  should never be here
-            };
-
-            static void remove_one_child_node(BinarySubTree* target, BinarySubTree* parent){
-                assert(target && parent);
-                assert(target->left_ == nullptr && target->right_ || target->left_ && target->right_ == nullptr);
-                assert(target == parent->left_ || target == parent->right_);
-                BinarySubTree* my_child = target->left_ ? target->left_ : target->right_;
-                if (target == parent->left_){
-                    parent->left_ = my_child;
-                }
-                if (target == parent->right_){
-                    parent->right_ = my_child;
-                }
-                assert(false); //should never be here
-            };
-
-            static void remove_two_children_node(BinarySubTree* target, BinarySubTree* parent){
-                assert(target && parent);
-                assert(target->left_ && target->right_);
-                assert(target == parent->left_ || target == parent->right_);
-                size_type left_child_height = target->left_->height();
-                size_type right_child_height = target->right_->height();
-
-                if (left_child_height >= right_child_height){
-                    BinarySubTree* sub_tree_to_be_lifted;
-                    BinarySubTree* parent_of_sub_tree_to_be_lifted;
-                    get_largest_node(target->left_, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
-                    sub_tree_to_be_lifted->right_ = target->right_;
-                    sub_tree_to_be_lifted->left_ = target->left_;
-                    parent_of_sub_tree_to_be_lifted->right_ = sub_tree_to_be_lifted->left_;
-
-                    if (sub_tree_to_be_lifted == target->left_){
-
-                    }
-                }
-                if (right_child_height > left_child_height){
-
-                }
-
-
-
-            };
-
-        public:
-            BinarySubTree(const key_type& key,
-                          const value_type& value,
-                          BinarySubTree* left,
-                          BinarySubTree* right):
+            BinarySubTree(const KeyType& key,
+                          const ValueType& value,
+                          BinarySubTree<KeyType, ValueType>* left,
+                          BinarySubTree<KeyType, ValueType>* right):
                           key_(key),
                           value_(value),
                           left_(left),
                           right_(right)
             {
-            };
-
-            BinarySubTree(const BinarySubTree& another){
-
-            };
-
-            BinarySubTree& operator=(const BinarySubTree& rhs){
-                return *this;
-            };
-
-            virtual ~BinarySubTree(){
-                clear();
-            };
-
-            BinarySubTree* find(const key_type& key){
-                int compare_result = Comparator(key, key_);
-                if (compare_result == 0){
-                    return this;
-                }
-                if (compare_result > 0){
-                    if (right_ == nullptr){
-                        return nullptr;
-                    }
-                    return right_->find(key);
-                }
-                if (compare_result < 0){
-                    if (left_ == nullptr){
-                        return nullptr;
-                    }
-                    return left_->find(key);
-                }
-                assert(false); // could never be here
             };
 
             size_type size() const {    // post order traversal
@@ -154,24 +40,124 @@ namespace algorithm{
                 );
             };
 
-            void clear(){ //post order traversal
-                if (left_) {
-                    left_->clear();
-                    delete left_;
-                    left_ = nullptr;
-                }
-                if (right_){
-                    right_->clear();
-                    delete right_;
-                    right_ = nullptr;
-                }
-            };
+            KeyType key_;
+            ValueType value_;
+            BinarySubTree<KeyType, ValueType>* left_;
+            BinarySubTree<KeyType, ValueType>* right_;
+        };
 
-        protected:
-            key_type key_;
-            value_type value_;
-            BinarySubTree* left_;
-            BinarySubTree* right_;
+        template <typename KeyType, typename ValueType>
+        void get_least_node(BinarySubTree<KeyType, ValueType> *from, BinarySubTree<KeyType, ValueType>* from_parent, BinarySubTree<KeyType, ValueType> **target, BinarySubTree<KeyType, ValueType> **target_parent){
+            assert(from);
+            assert(!from_parent || (from_parent->left_ == from || from_parent->right_ == from));
+            *target = from;
+            *target_parent = from_parent;
+            while((*target)->left_){
+                *target_parent = *target;
+                *target = (*target)->left_;
+            }
+        };
+
+        template <typename KeyType, typename ValueType>
+        void get_largest_node(BinarySubTree<KeyType, ValueType>* from, BinarySubTree<KeyType, ValueType>* from_parent, BinarySubTree<KeyType, ValueType> **target, BinarySubTree<KeyType, ValueType> **target_parent){
+            assert(from);
+            assert(!from_parent || (from_parent->left_ == from || from_parent->right_ == from));
+            *target = from;
+            *target_parent = from_parent;
+            while((*target)->right_){
+                *target_parent = *target;
+                *target = (*target)->right_;
+            }
+        };
+
+        template <typename KeyType, typename ValueType>
+        void remove_leaf(BinarySubTree<KeyType, ValueType>* target, BinarySubTree<KeyType, ValueType>* parent){
+            assert(target && parent);
+            assert(target->left_ == nullptr && target->right_ == nullptr);
+            assert(target == parent->left_ || target == parent->right_);
+            if (target == parent->left_){
+                parent->left_ = nullptr;
+            }
+            if (target == parent->right_){
+                parent->right_ = nullptr;
+            }
+            assert(false); //  should never be here
+        };
+
+        template <typename KeyType, typename ValueType>
+        void remove_one_child_node(BinarySubTree<KeyType, ValueType>* target, BinarySubTree<KeyType, ValueType>* parent){
+            assert(target && parent);
+            assert(target->left_ == nullptr && target->right_ || target->left_ && target->right_ == nullptr);
+            assert(target == parent->left_ || target == parent->right_);
+            BinarySubTree<KeyType, ValueType>* my_child = target->left_ ? target->left_ : target->right_;
+            if (target == parent->left_){
+                parent->left_ = my_child;
+            }
+            if (target == parent->right_){
+                parent->right_ = my_child;
+            }
+            assert(false); //should never be here
+        };
+
+        template <typename KeyType, typename ValueType>
+        void remove_two_children_node(BinarySubTree<KeyType, ValueType>* target, BinarySubTree<KeyType, ValueType>* parent){
+            assert(target && parent);
+            assert(target->left_ && target->right_);
+            assert(target == parent->left_ || target == parent->right_);
+            typename BinarySubTree<KeyType, ValueType>::size_type left_child_height = target->left_->height();
+            typename BinarySubTree<KeyType, ValueType>::size_type right_child_height = target->right_->height();
+
+            if (left_child_height >= right_child_height){
+                BinarySubTree<KeyType, ValueType>* sub_tree_to_be_lifted;
+                BinarySubTree<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
+                get_largest_node(target->left_, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
+
+                assert(!sub_tree_to_be_lifted->right_);
+                if (sub_tree_to_be_lifted->height() == 1){
+                    remove_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                } else {
+                    remove_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                }
+
+                sub_tree_to_be_lifted->left_ = target->left_;
+                sub_tree_to_be_lifted->right_ = target->right_;
+
+                target->left_ = nullptr;
+                target->left_ = nullptr;
+                if (parent->left_ == target){
+                    parent->left_ = sub_tree_to_be_lifted;
+                }
+                if (parent->right_ == target){
+                    parent->right_ = sub_tree_to_be_lifted;
+                }
+            }
+            if (right_child_height > left_child_height){
+                BinarySubTree<KeyType, ValueType>* sub_tree_to_be_lifted;
+                BinarySubTree<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
+                get_least_node(target->right_, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
+
+                assert(!sub_tree_to_be_lifted->left_);
+                switch(sub_tree_to_be_lifted->height()){
+                    case 1:
+                        remove_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                        break;
+                    default:
+                        remove_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                        break;
+                }
+
+                sub_tree_to_be_lifted->left_ = target->left_;
+                sub_tree_to_be_lifted->right_ = target->right_;
+
+                target->left_ = nullptr;
+                target->left_ = nullptr;
+                if (parent->left_ == target){
+                    parent->left_ = sub_tree_to_be_lifted;
+                }
+                if (parent->right_ == target){
+                    parent->right_ = sub_tree_to_be_lifted;
+                }
+            }
         };
     }
 
@@ -180,30 +166,75 @@ namespace algorithm{
     template <typename KeyType, typename ValueType, int (*Comparator)(const KeyType&, const KeyType&)>
     class BinaryTree{
     public:
-        typedef detail::BinarySubTree::key_type  key_type;
-        typedef detail::BinarySubTree::value_type value_type;
-        typedef detail::BinarySubTree::size_type size_type;
+        typedef KeyType key_type;
+        typedef ValueType value_type;
+        typedef typename detail::BinarySubTree<KeyType, ValueType>::size_type size_type;
     public:
         BinaryTree():
                 root_(nullptr)
         {
         };
 
-        value_type remove(const key_type& key){
+        value_type* remove(const key_type& key){
+            detail::BinarySubTree<KeyType, ValueType>* result;
+            detail::BinarySubTree<KeyType, ValueType>* result_parent;
+            find_ex(key, &result, &result_parent);
+            if (!result){
+                return nullptr;
+            }
+            if (!(result->left_) && !(result->right_)){
+                detail::remove_leaf(result, result_parent);
+            } else if (result->left_ && result->right_){
+                detail::remove_two_children_node(result, result_parent);
+            } else {
+                detail::remove_one_child_node(result, result_parent);
+            }
+            value_type* result_value = new value_type(result->value_);
+            delete result;
+            if (!result_parent){
+                root_ = nullptr;
+            }
+            return result_value;
+        };
 
+        value_type* find(const key_type& key){
+            detail::BinarySubTree<KeyType, ValueType>* result;
+            detail::BinarySubTree<KeyType, ValueType>* result_parent;
+            find_ex(key, &result, &result_parent);
+            if (!result){
+                return nullptr;
+            }
+            return new value_type(result->value_);
         };
 
         void put(const key_type& key, const value_type& value){ // pre-order traversal
-            if (!root_){
-                root_ = new detail::BinarySubTree(key, value, nullptr, nullptr);
+            detail::BinarySubTree<KeyType, ValueType>* result;
+            detail::BinarySubTree<KeyType, ValueType>* result_parent;
+            find_ex(key, &result, &result_parent);
+            if (result){
+                result->value_ = value;
+                return;
             }
-
+            if (!result_parent){
+                root_ = new detail::BinarySubTree<key_type, value_type>(key, value, nullptr, nullptr);
+                return;
+            }
+            int compare_result = Comparator(key, result_parent->key_);
+            if (compare_result > 0){
+                result_parent->right_ = new detail::BinarySubTree<key_type, value_type>(key, value, nullptr, nullptr);
+                return;
+            }
+            if (compare_result < 0){
+                result_parent->left_ = new detail::BinarySubTree<key_type, value_type>(key, value, nullptr, nullptr);
+                return;
+            }
+            assert(false);
         };
 
     protected:
         void find_ex(const key_type& key,
-                     detail::BinarySubTree **target,
-                     detail::BinarySubTree **target_parent)
+                     detail::BinarySubTree<KeyType, ValueType> **target,
+                     detail::BinarySubTree<KeyType, ValueType> **target_parent)
         {
             *target = root_;
             *target_parent = nullptr;
@@ -222,7 +253,7 @@ namespace algorithm{
                 }
             }
         };
-        detail::BinarySubTree* root_;
+        detail::BinarySubTree<KeyType, ValueType>* root_;
     };
 }
 
