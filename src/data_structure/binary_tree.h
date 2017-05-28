@@ -66,10 +66,13 @@ namespace algorithm{
         };
 
         template <typename KeyType, typename ValueType>
-        void remove_leaf(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
-            assert(target && parent);
+        void detach_leaf(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
+            assert(target);
             assert(target->left == nullptr && target->right == nullptr);
-            assert(target == parent->left || target == parent->right);
+            assert(!parent || target == parent->left || target == parent->right);
+            if (!parent){
+                return;
+            }
             if (target == parent->left){
                 parent->left = nullptr;
             }
@@ -80,11 +83,14 @@ namespace algorithm{
         };
 
         template <typename KeyType, typename ValueType>
-        void remove_one_child_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
-            assert(target && parent);
+        void detach_one_child_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
+            assert(target);
             assert(target->left == nullptr && target->right || target->left && target->right == nullptr);
-            assert(target == parent->left || target == parent->right);
+            assert(!parent || target == parent->left || target == parent->right);
             TreeNode<KeyType, ValueType>* my_child = target->left ? target->left : target->right;
+            if (!parent){
+                return;
+            }
             if (target == parent->left){
                 parent->left = my_child;
             }
@@ -95,10 +101,10 @@ namespace algorithm{
         };
 
         template <typename KeyType, typename ValueType>
-        void remove_two_children_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
-            assert(target && parent);
+        void detach_two_children_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
+            assert(target);
             assert(target->left && target->right);
-            assert(target == parent->left || target == parent->right);
+            assert(!parent || target == parent->left || target == parent->right);
             size_type left_child_height = height(target->left);
             size_type right_child_height = height(target->right);
 
@@ -109,9 +115,9 @@ namespace algorithm{
 
                 assert(!sub_tree_to_be_lifted->right);
                 if (height(sub_tree_to_be_lifted) == 1){
-                    remove_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                    detach_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
                 } else {
-                    remove_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                    detach_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
                 }
 
                 sub_tree_to_be_lifted->left = target->left;
@@ -134,10 +140,10 @@ namespace algorithm{
                 assert(!sub_tree_to_be_lifted->left);
                 switch(height(sub_tree_to_be_lifted)){
                     case 1:
-                        remove_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                        detach_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
                         break;
                     default:
-                        remove_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+                        detach_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
                         break;
                 }
 
@@ -156,7 +162,7 @@ namespace algorithm{
         };
     }
 
-    template <typename KeyType, typename ValueType, std::function<int(const KeyType&, const KeyType&)> Comparator>
+    template <typename KeyType, typename ValueType,  int (*Comparator)(const KeyType&, const KeyType&)>
     class BinaryTree{
     public:
         typedef typename detail::TreeNode<KeyType, ValueType>::key_type key_type;
@@ -171,18 +177,18 @@ namespace algorithm{
         };
 
         value_type* remove(const key_type& key){
-            detail::TreeNode<KeyType, ValueType>* result;
-            detail::TreeNode<KeyType, ValueType>* result_parent;
+            node* result;
+            node* result_parent;
             find_ex(key, &result, &result_parent);
             if (!result){
                 return nullptr;
             }
             if (!(result->left) && !(result->right)){
-                detail::remove_leaf(result, result_parent);
+                detail::detach_leaf(result, result_parent);
             } else if (result->left && result->right){
-                detail::remove_two_children_node(result, result_parent);
+                detail::detach_two_children_node(result, result_parent);
             } else {
-                detail::remove_one_child_node(result, result_parent);
+                detail::detach_one_child_node(result, result_parent);
             }
             value_type* result_value = new value_type(result->value);
             delete result;
@@ -210,20 +216,22 @@ namespace algorithm{
                 result->value = value;
                 return;
             }
+            node* new_node = new node;
+            new_node->key = key;
+            new_node->value = value;
+            new_node->left = new_node->right = nullptr;
             if (!result_parent){
-                root_ = new node;
-                root_->key = key;
-                root_->value = value;
-                root_->left = root_->right = nullptr;
+                root_ = new_node;
                 return;
             }
             int compare_result = Comparator(key, result_parent->key);
+            assert(compare_result);
             if (compare_result > 0){
-                result_parent->right = new node;
+                result_parent->right = new_node;
                 return;
             }
             if (compare_result < 0){
-                result_parent->left = new node;
+                result_parent->left = new_node;
                 return;
             }
             assert(false);
@@ -231,18 +239,19 @@ namespace algorithm{
 
     protected:
         void find_ex(const key_type& key,
-                     detail::TreeNode<KeyType, ValueType> **target,
-                     detail::TreeNode<KeyType, ValueType> **target_parent)
+                     node **target,
+                     node **target_parent)
         {
             *target = root_;
             *target_parent = nullptr;
             int compare_result = 1;
 
-            while(compare_result != 0 && *target){
+            while(*target){
                 compare_result = Comparator(key, (*target)->key);
-                if (compare_result != 0){
-                    *target_parent = *target;
+                if (compare_result == 0){
+                    break;
                 }
+                *target_parent = *target;
                 if (compare_result > 0){
                     *target = (*target)->right;
                 }
