@@ -7,7 +7,6 @@
 
 #include <cstddef>
 #include <cassert>
-#include <functional>
 #include "../config.h"
 
 namespace algorithm{
@@ -65,13 +64,14 @@ namespace algorithm{
             }
         };
 
+        // leaf does not have any successor, it always return nullptr.
         template <typename KeyType, typename ValueType>
-        void detach_leaf(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
+        TreeNode<KeyType, ValueType>* detach_leaf(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
             assert(target);
             assert(target->left == nullptr && target->right == nullptr);
             assert(!parent || target == parent->left || target == parent->right);
             if (!parent){
-                return;
+                return nullptr;
             }
             if (target == parent->left){
                 parent->left = nullptr;
@@ -79,17 +79,19 @@ namespace algorithm{
             if (target == parent->right){
                 parent->right = nullptr;
             }
-            assert(false); //  should never be here
+            return nullptr;
         };
 
+        //detach the target node from the tree, replace the target with the successor of it and return the successor.
         template <typename KeyType, typename ValueType>
-        void detach_one_child_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
+        TreeNode<KeyType, ValueType>* detach_one_child_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
             assert(target);
-            assert(target->left == nullptr && target->right || target->left && target->right == nullptr);
+            assert((target->left == nullptr && target->right) || (target->left && target->right == nullptr));
             assert(!parent || target == parent->left || target == parent->right);
             TreeNode<KeyType, ValueType>* my_child = target->left ? target->left : target->right;
-            if (!parent){
-                return;
+            target->left = target->right = nullptr;
+            if (!parent){ // no parent, target must be root
+                return my_child;
             }
             if (target == parent->left){
                 parent->left = my_child;
@@ -97,68 +99,44 @@ namespace algorithm{
             if (target == parent->right){
                 parent->right = my_child;
             }
-            assert(false); //should never be here
+            return my_child;
         };
 
+        //detach the target node from the tree and return the successor of target
         template <typename KeyType, typename ValueType>
-        void detach_two_children_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
+        TreeNode<KeyType, ValueType>* detach_two_children_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent){
             assert(target);
             assert(target->left && target->right);
             assert(!parent || target == parent->left || target == parent->right);
             size_type left_child_height = height(target->left);
             size_type right_child_height = height(target->right);
 
+            TreeNode<KeyType, ValueType>* sub_tree_to_be_lifted;
+            TreeNode<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
             if (left_child_height >= right_child_height){
-                TreeNode<KeyType, ValueType>* sub_tree_to_be_lifted;
-                TreeNode<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
                 get_largest_node(target->left, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
-
                 assert(!sub_tree_to_be_lifted->right);
-                if (height(sub_tree_to_be_lifted) == 1){
-                    detach_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
-                } else {
-                    detach_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
-                }
-
-                sub_tree_to_be_lifted->left = target->left;
-                sub_tree_to_be_lifted->right = target->right;
-
-                target->left = nullptr;
-                target->left = nullptr;
-                if (parent->left == target){
-                    parent->left = sub_tree_to_be_lifted;
-                }
-                if (parent->right == target){
-                    parent->right = sub_tree_to_be_lifted;
-                }
-            }
-            if (right_child_height > left_child_height){
-                TreeNode<KeyType, ValueType>* sub_tree_to_be_lifted;
-                TreeNode<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
+            } else {
                 get_least_node(target->right, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
-
                 assert(!sub_tree_to_be_lifted->left);
-                switch(height(sub_tree_to_be_lifted)){
-                    case 1:
-                        detach_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
-                        break;
-                    default:
-                        detach_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
-                        break;
-                }
-
-                sub_tree_to_be_lifted->left = target->left;
-                sub_tree_to_be_lifted->right = target->right;
-
-                target->left = nullptr;
-                target->left = nullptr;
-                if (parent->left == target){
-                    parent->left = sub_tree_to_be_lifted;
-                }
-                if (parent->right == target){
-                    parent->right = sub_tree_to_be_lifted;
-                }
             }
+
+            if (height(sub_tree_to_be_lifted) == 1){
+                detach_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+            } else {
+                detach_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+            }
+            sub_tree_to_be_lifted->left = target->left;
+            sub_tree_to_be_lifted->right = target->right;
+            target->left = nullptr;
+            target->right = nullptr;
+            if (parent && parent->left == target){
+                parent->left = sub_tree_to_be_lifted;
+            }
+            if (parent && parent->right == target){
+                parent->right = sub_tree_to_be_lifted;
+            }
+            return sub_tree_to_be_lifted;
         };
     }
 
@@ -176,31 +154,59 @@ namespace algorithm{
         {
         };
 
+        BinaryTree(const BinaryTree& another):
+                BinaryTree(){
+            inner_copy(another.root_, &root_);
+        };
+
+        BinaryTree& operator=(const BinaryTree& to){
+            clear();
+            inner_copy(to.root_, &root_);
+            return *this;
+        }
+
+        ~BinaryTree(){
+            clear();
+        };
+
+        void clear(){ // post order traversal, delete all nodes
+            inner_clear(root_);
+            root_ = nullptr;
+        }
+
         value_type* remove(const key_type& key){
-            node* result;
-            node* result_parent;
+            node* result = root_;
+            node* result_parent = nullptr;
             find_ex(key, &result, &result_parent);
             if (!result){
                 return nullptr;
             }
+            node* successor = nullptr;
             if (!(result->left) && !(result->right)){
-                detail::detach_leaf(result, result_parent);
+                successor = detail::detach_leaf(result, result_parent);
             } else if (result->left && result->right){
-                detail::detach_two_children_node(result, result_parent);
+                successor = detail::detach_two_children_node(result, result_parent);
             } else {
-                detail::detach_one_child_node(result, result_parent);
+                successor = detail::detach_one_child_node(result, result_parent); // successor must exists because target at least contains one child
+            }
+            if (!result_parent){ // the node deleted has no parent node, so it must be root
+                root_ = successor;
             }
             value_type* result_value = new value_type(result->value);
             delete result;
-            if (!result_parent){
-                root_ = nullptr;
-            }
             return result_value;
         };
 
+        size_type size() const {
+            if (!root_){
+                return 0;
+            }
+            return detail::size(root_);
+        }
+
         value_type* find(const key_type& key){
-            node* result;
-            node* result_parent;
+            node* result = root_;
+            node* result_parent = nullptr;
             find_ex(key, &result, &result_parent);
             if (!result){
                 return nullptr;
@@ -208,9 +214,9 @@ namespace algorithm{
             return new value_type(result->value);
         };
 
-        void put(const key_type& key, const value_type& value){ // pre-order traversal
-            node* result;
-            node* result_parent;
+        void put(const key_type& key, const value_type& value){
+            node* result = root_;
+            node* result_parent = nullptr;
             find_ex(key, &result, &result_parent);
             if (result){
                 result->value = value;
@@ -220,7 +226,7 @@ namespace algorithm{
             new_node->key = key;
             new_node->value = value;
             new_node->left = new_node->right = nullptr;
-            if (!result_parent){
+            if (!result_parent){ // the tree is empty
                 root_ = new_node;
                 return;
             }
@@ -234,7 +240,6 @@ namespace algorithm{
                 result_parent->left = new_node;
                 return;
             }
-            assert(false);
         };
 
     protected:
@@ -242,24 +247,42 @@ namespace algorithm{
                      node **target,
                      node **target_parent)
         {
-            *target = root_;
-            *target_parent = nullptr;
-            int compare_result = 1;
-
-            while(*target){
-                compare_result = Comparator(key, (*target)->key);
-                if (compare_result == 0){
-                    break;
-                }
-                *target_parent = *target;
-                if (compare_result > 0){
-                    *target = (*target)->right;
-                }
-                if (compare_result < 0){
-                    *target = (*target)->left;
-                }
+            if (!(*target)){
+                return;
+            }
+            int compare_result = Comparator(key, (*target)->key);
+            if (compare_result == 0){
+                return;
+            }
+            *target_parent = *target;
+            if (compare_result > 0){
+                *target = (*target)->right;
+                find_ex(key, target, target_parent);
+            }
+            if (compare_result < 0){
+                *target = (*target)->left;
+                find_ex(key, target, target_parent);
             }
         };
+
+        void inner_clear(node* current){
+            if (!current){
+                return;
+            }
+            inner_clear(current->left);
+            inner_clear(current->right);
+            delete current;
+        }
+
+        void inner_copy(node* from, node** to){
+            if (!from){
+                return;
+            }
+            *to = new node(*from);
+            inner_copy(from->left, &((*to)->left));
+            inner_copy(from->right, &((*(to))->right));
+        }
+
         node* root_;
     };
 }
