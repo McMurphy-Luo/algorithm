@@ -1,3 +1,6 @@
+#ifndef ALGORITHM_WINDOWS_MAIN_WINDOW
+#define ALGORITHM_WINDOWS_MAIN_WINDOW
+
 #include <string>
 #include <Windows.h>
 
@@ -44,3 +47,5 @@ namespace algorithm
         };
     }
 }
+
+#endif //ALGORITHM_WINDOWS_MAIN_WINDOW
