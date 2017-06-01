@@ -1,50 +1,56 @@
-#include "D2DColor.h"
+#include "d2d_color.h"
 #include <cassert>
 
-namespace draw
+using namespace algorithm::windows;
+
+D2DColor::D2DColor(Color color, ID2D1RenderTarget* render_target):
+color_(color),
+render_target_(render_target)
 {
-    D2DColor::D2DColor(ID2D1RenderTarget* render_target, const Color& color):
-    render_target_(render_target),
-    color_(color)
-    {
-        createD2DBrush();
-    }
+    createD2DBrush();
+}
 
-    D2DColor::D2DColor(const D2DColor& to):
-    render_target_(to.render_target_),
-    color_(to.color_)
-    {
-        createD2DBrush();
-    }
+D2DColor::D2DColor(const D2DColor& to) :
+color_(to.color_),
+render_target_(to.render_target_)
+{
+    createD2DBrush();
+}
 
-    D2DColor& D2DColor::operator=(const D2DColor& to)
+D2DColor& D2DColor::operator=(const D2DColor& to)
+{
+    if (&to == this)
     {
-        render_target_ = to.render_target_;
-        color_ = to.color_;
-        createD2DBrush();
         return *this;
     }
-
-    D2DColor::~D2DColor()
+    if (d2d_brush_)
     {
-        if (d2d_brush_)
-        {
-            d2d_brush_->Release();
-        }
+        d2d_brush_->Release();
     }
+    render_target_ = to.render_target_;
+    createD2DBrush();
+    return *this;
+}
 
-    HRESULT D2DColor::createD2DBrush()
+D2DColor::~D2DColor()
+{
+    if (d2d_brush_)
     {
-        HRESULT result = render_target_->CreateSolidColorBrush(
-            D2D1::ColorF(
-                color_.getRed(),
-                color_.getGreen(),
-                color_.getBlue(),
-                color_.getAlpha()
-            ),
-            &d2d_brush_
-        );
-        assert(SUCCEEDED(result));
-        return result;
+        d2d_brush_->Release();
     }
+}
+
+HRESULT D2DColor::createD2DBrush()
+{
+    HRESULT result = render_target_->CreateSolidColorBrush(
+        D2D1::ColorF(
+            color_.getRed(),
+            color_.getGreen(),
+            color_.getBlue(),
+            color_.getAlpha()
+        ),
+        &d2d_brush_
+    );
+    assert(SUCCEEDED(result));
+    return result;
 }

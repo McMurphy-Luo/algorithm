@@ -26,17 +26,14 @@ list(APPEND windows_source
         ${source_dir}/windows/main_window.h
         ${source_dir}/windows/main_window.cpp
         ${source_dir}/windows/win_main.cpp
-        ${source_dir}/windows/graphics/color.cpp
         ${source_dir}/windows/graphics/color.h
         ${source_dir}/windows/graphics/d2d_color.h
         ${source_dir}/windows/graphics/d2d_color.cpp
-        ${source_dir}/windows/graphics/ellipse.cpp
         ${source_dir}/windows/graphics/ellipse.h
         ${source_dir}/windows/graphics/d2d_ellipse.h
         ${source_dir}/windows/graphics/d2d_ellipse.cpp
         ${source_dir}/windows/graphics/image.cpp
         ${source_dir}/windows/graphics/image.h
-        ${source_dir}/windows/graphics/point.cpp
         ${source_dir}/windows/graphics/point.h
         ${source_dir}/windows/graphics/transformation.h)
 

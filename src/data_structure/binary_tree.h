@@ -242,6 +242,14 @@ namespace algorithm{
             }
         };
 
+#ifdef DATA_STRUCTURE_DEBUG
+    public:
+        node* getRootNode()
+        {
+            return root_;
+        }
+#endif
+
     protected:
         void find_ex(const key_type& key,
                      node **target,

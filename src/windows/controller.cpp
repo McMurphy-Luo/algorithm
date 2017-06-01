@@ -6,7 +6,7 @@ using namespace algorithm::windows;
 
 
 
-Controller::Controller(std::shared_ptr<MainWindow> main_window):
+Controller::Controller(MainWindow* main_window):
 main_window_(main_window)
 {
     HRESULT result = CoInitialize(NULL);

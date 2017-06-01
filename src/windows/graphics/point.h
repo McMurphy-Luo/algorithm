@@ -1,25 +1,26 @@
-#ifndef DRAW_POINT_H
-#define DRAW_POINT_H
-namespace draw
+#ifndef ALGORITHM_WINDOWS_POINT_H
+#define ALGORITHM_WINDOWS_POINT_H
+
+namespace algorithm
 {
-    class Point
+    namespace windows
     {
-    public:
-        Point(double x, double y);
-        Point(const Point& to) = default;
-        Point& operator=(const Point& to) = default;
-        ~Point() = default;
+        class Point
+        {
+        public:
+            Point(double x, double y);
 
-        double getX() const { return x_; }
-        double getY() const { return y_; }
+            double getX() const { return x_; }
+            double getY() const { return y_; }
 
-        void setX(double value) { x_ = value; }
-        void setY(double value) { y_ = value; }
+            void setX(double value) { x_ = value; }
+            void setY(double value) { y_ = value; }
 
-    private:
-        double x_;
-        double y_;
-    };
+        private:
+            double x_;
+            double y_;
+        };
+    }
 }
 
-#endif //DRAW_POINT_H
+#endif //ALGORITHM_WINDOWS_POINT_H

@@ -1,71 +1,53 @@
 #ifndef DRAW_TRANSFORMATION_H
 #define DRAW_TRANSFORMATION_H
 
-#include "Point.h"
+#include "point.h"
 
-namespace draw
+namespace algorithm
 {
-    template<typename T>
-    class Transformation
+    namespace windows
     {
-    public:
-        explicit Transformation(const T& graphic, const Point position = Point(0,0)):
-        graphic_(graphic),
-        position_(position)
+        class Transformation
         {
-            
-        }
-        Transformation(const Transformation& to) = default;
-        Transformation& operator=(const Transformation& to) = default;
-        virtual ~Transformation() = default;
+        public:
+            explicit Transformation(const Point position = Point(0, 0))
+                :position_(position)
+            {
 
-        virtual T getGraphic() const
-        {
-            return graphic_;
-        }
+            }
 
-        virtual double getPositionX() const
-        {
-            return position_.getX();
-        }
+            virtual ~Transformation() = default;
 
-        virtual double getPositionY() const
-        {
-            return position_.getY();
-        }
+            virtual double getPositionX() const
+            {
+                return position_.getX();
+            }
 
-        virtual Point getPosition() const
-        {
-            return position_;
-        }
+            virtual double getPositionY() const
+            {
+                return position_.getY();
+            }
 
-    protected:
-        virtual void setGraphic(const T& graphic)
-        {
-            graphic_ = graphic;
-        }
+            virtual Point getPosition() const
+            {
+                return position_;
+            }
 
-        virtual void rePosition()
-        {
-            position_.setX(0);
-            position_.setY(0);
-        }
+            virtual void moveTo(const Point to)
+            {
+                position_ = to;
+            }
 
-        virtual void moveTo(const Point to)
-        {
-            position_ = to;
-        }
+            virtual void move(double x, double y)
+            {
+                position_.setX(x + position_.getX());
+                position_.setY(y + position_.getY());
+            }
 
-        virtual void move(double x, double y)
-        {
-            position_.setX(x + position_.getX());
-            position_.setY(y + position_.getY());
-        }
-
-    protected:
-        T graphic_;
-        Point position_;
-    };
+        private:
+            Point position_;
+        };
+    }
 }
 
 

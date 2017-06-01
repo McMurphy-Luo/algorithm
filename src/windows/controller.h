@@ -14,13 +14,13 @@ namespace algorithm
         class Controller
         {
         public:
-            Controller(std::shared_ptr<MainWindow> main_window);
+            Controller(MainWindow *main_window);
             ~Controller();
 
             void render();
         
         private:
-            std::shared_ptr<MainWindow> main_window_;
+            MainWindow *main_window_;
             ID2D1Factory* factory_;
             ID2D1HwndRenderTarget* render_target_;
         };
