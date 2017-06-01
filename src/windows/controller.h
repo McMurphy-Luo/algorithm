@@ -16,13 +16,14 @@ namespace algorithm
         public:
             Controller(MainWindow *main_window);
             ~Controller();
-
+			
             void render();
         
         private:
             MainWindow *main_window_;
             ID2D1Factory* factory_;
             ID2D1HwndRenderTarget* render_target_;
+			ID2D1SolidColorBrush* black_brush;
         };
     }
 };

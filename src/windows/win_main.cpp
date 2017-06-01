@@ -1,16 +1,20 @@
 #include <Windows.h>
 #include "main_window.h"
+#include "controller.h"
 
 int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR cmd_string, int cmd_show) {
     
     algorithm::windows::MainWindow *the_main_window = new algorithm::windows::MainWindow(h_instance);
     the_main_window->show();
+	algorithm::windows::Controller *the_controller = new algorithm::windows::Controller(the_main_window);
+	
 
     MSG msg;
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+		the_controller->render();
     }
 
     delete the_main_window;

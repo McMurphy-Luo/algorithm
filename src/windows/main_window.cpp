@@ -37,7 +37,8 @@ namespace //unamed namespace start for this file static staff
         window_class.cbWndExtra = 0;
         window_class.hIcon = nullptr;
         window_class.hIconSm = nullptr;
-        window_class.hbrBackground = nullptr;
+		HBRUSH white_brush = CreateSolidBrush(9999);
+        window_class.hbrBackground = white_brush;
         window_class.lpszMenuName = nullptr;
         window_class.lpfnWndProc = windowProcedure;
         std::wstring class_name = main_window->getWindowName();
