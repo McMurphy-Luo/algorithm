@@ -20,7 +20,11 @@ namespace algorithm
 
         private:
             D2D1_ELLIPSE ellipse_;
+<<<<<<< HEAD
             BinaryTree<std::string, value_type, Comparator>* the_tree_;
+=======
+            BinaryTree<key_type, value_type, Comparator>* the_tree_;
+>>>>>>> 8a5bcab8652461a6b2c712b808956ad0a4d45c78
         };
 
     }

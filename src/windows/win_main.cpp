@@ -14,6 +14,7 @@ int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+		the_controller->render();
     }
 
     delete the_main_window;
