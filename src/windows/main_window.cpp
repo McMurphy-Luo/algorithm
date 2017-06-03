@@ -1,4 +1,4 @@
-#include "main_window.h"
+﻿#include "main_window.h"
 #include <cassert>
 #include <Windows.h>
 
@@ -51,11 +51,7 @@ namespace //unamed namespace start for this file static staff
         window_class.cbWndExtra = 0;
         window_class.hIcon = nullptr;
         window_class.hIconSm = nullptr;
-<<<<<<< HEAD
-        HBRUSH white_brush = CreateSolidBrush(9999);
-=======
-		HBRUSH white_brush = CreateSolidBrush(9999);
->>>>>>> 8a5bcab8652461a6b2c712b808956ad0a4d45c78
+        HBRUSH white_brush = CreateSolidBrush(RGB(255,255,255));
         window_class.hbrBackground = white_brush;
         window_class.lpszMenuName = nullptr;
         window_class.lpfnWndProc = windowProcedure;

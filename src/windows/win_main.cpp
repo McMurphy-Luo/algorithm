@@ -6,18 +6,17 @@ int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR
     
     algorithm::windows::MainWindow *the_main_window = new algorithm::windows::MainWindow(h_instance);
     the_main_window->show();
-	algorithm::windows::Controller *the_controller = new algorithm::windows::Controller(the_main_window);
-	
+    algorithm::windows::Controller *the_controller = new algorithm::windows::Controller(the_main_window);
+    
 
     MSG msg;
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
-		the_controller->render();
     }
 
     delete the_main_window;
     
-    return msg.wParam;
+    return static_cast<int>(msg.wParam);
 }
