@@ -5,7 +5,6 @@
 #ifndef ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 
-#include "config.h"
 #include <cstddef>
 #include <cassert>
 
@@ -150,23 +149,6 @@ namespace algorithm {
             length_ = 0;
             last_ = first_ = nullptr;
         };
-#ifdef DATA_STRUCTURE_DEBUG
-    public:
-        std::string toString() {
-            std::string result;
-            size_type len = 0;
-            Node *current = first_;
-            for (; len < length_; ++len, current = current->next){
-                char buf[BUFSIZ];
-                memset(buf, 0, BUFSIZ);
-                snprintf(buf, BUFSIZ, "Node index is %ju, Node content is ", len);
-                result.append(buf);
-                result.append(current->payload);
-                result.append("\n");
-            }
-            return result;
-        };
-#endif
 
     protected:
         size_type length_;

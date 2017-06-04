@@ -11,8 +11,8 @@ namespace algorithm
                 D2D1_ELLIPSE ellipse;
                 ellipse.point.x = static_cast<float>(x);
                 ellipse.point.y = static_cast<float>(y);
-                ellipse.radiusX = 10;
-                ellipse.radiusY = 10;
+                ellipse.radiusX = 50;
+                ellipse.radiusY = 50;
                 render_target->FillEllipse(ellipse, brush);
             }
 

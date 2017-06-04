@@ -15,11 +15,7 @@ namespace // unamed namespace start for this file static staff
     {
         assert(the_controller);
         assert(the_window);
-        RECT client_rect = the_window->getSize();
-        D2D1_SIZE_U client_size;
-        client_size.width = client_rect.right - client_rect.left;
-        client_size.height = client_rect.bottom - client_rect.top;
-        the_controller->getRenderTarget()->Resize(client_size);
+        the_controller->setNeedResize(true);
         return 0;
     }
 
@@ -41,32 +37,42 @@ namespace // unamed namespace start for this file static staff
         assert(the_controller);
         assert(the_window);
         HRESULT result;
-        ID2D1RenderTarget* render_target = the_controller->getRenderTarget();
-
+        
         algorithm::BinaryTree<std::string, std::string, string_comparator> the_tree;
         the_tree.put("1", "1");
         the_tree.put("2", "2");
         the_tree.put("3", "3");
         the_tree.put("4", "4");
         the_tree.put("5", "5");
-
         TreeRender<string_comparator> tree_render(&the_tree);
+
         while (the_controller->getRendering())
         {
-            the_controller->getRenderTarget()->BeginDraw();
+            ID2D1HwndRenderTarget* render_target = the_controller->getRenderTarget();
+            render_target->BeginDraw();
             render_target->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
 
             tree_render.render(render_target);
 
             result = render_target->EndDraw();
             assert(result == S_OK);
+            if (the_controller->getNeedResize())
+            {
+                RECT client_rect = the_window->getSize();
+                D2D1_SIZE_U client_size;
+                client_size.width = client_rect.right - client_rect.left;
+                client_size.height = client_rect.bottom - client_rect.top;
+                result = render_target->Resize(client_size);
+                assert(result == S_OK);
+            }
         }
     }
 } // unamed namespace end
 
 Controller::Controller(MainWindow* main_window):
 main_window_(main_window),
-rendering_(false)
+rendering_(true),
+need_resize_(false)
 {
     HRESULT result = CoInitialize(NULL);
     assert(result == S_OK);
@@ -84,7 +90,6 @@ rendering_(false)
     assert(result == S_OK);
     the_controller = this;
     the_window = main_window;
-    this->startRender();
     render_thread_ = std::thread(render);
     main_window->bind(Event::SIZE, resize_callback);
     assert(result == S_OK);
