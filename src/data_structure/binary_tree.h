@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by luojiayi on 5/18/17.
 //
 
@@ -7,7 +7,7 @@
 
 #include <cstddef>
 #include <cassert>
-#include "../config.h"
+#include "config.h"
 
 namespace algorithm{
     namespace detail{
@@ -146,8 +146,8 @@ namespace algorithm{
         typedef typename detail::TreeNode<KeyType, ValueType>::key_type key_type;
         typedef typename detail::TreeNode<KeyType, ValueType>::value_type value_type;
         typedef detail::size_type size_type;
-    protected:
         typedef detail::TreeNode<KeyType, ValueType> node;
+
     public:
         BinaryTree():
                 root_(nullptr)
@@ -242,13 +242,10 @@ namespace algorithm{
             }
         };
 
-#ifdef DATA_STRUCTURE_DEBUG
-    public:
-        node* getRootNode()
+        const node* getRootNode() const
         {
             return root_;
         }
-#endif
 
     protected:
         void find_ex(const key_type& key,
@@ -291,6 +288,7 @@ namespace algorithm{
             inner_copy(from->right, &((*(to))->right));
         }
 
+    private:
         node* root_;
     };
 }

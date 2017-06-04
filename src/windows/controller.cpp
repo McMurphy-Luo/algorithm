@@ -1,50 +1,68 @@
 ﻿#include "controller.h"
 #include <cassert>
 #include <thread>
-
+#include "data_structure/binary_tree.h"
+#include "./render/tree_render.h"
 
 using namespace algorithm::windows;
 
-
-namespace
+namespace // unamed namespace start for this file static staff
 {
-    LRESULT resize_callback(MainWindow* window, Controller* controller, WPARAM w_param, LPARAM l_param)
+    Controller* the_controller = nullptr;
+    MainWindow* the_window = nullptr;
+    
+    LRESULT resize_callback(WPARAM w_param, LPARAM l_param)
     {
-        RECT client_rect = window->getSize();
+        assert(the_controller);
+        assert(the_window);
+        RECT client_rect = the_window->getSize();
         D2D1_SIZE_U client_size;
         client_size.width = client_rect.right - client_rect.left;
         client_size.height = client_rect.bottom - client_rect.top;
-        controller->getRenderTarget()->Resize(client_size);
+        the_controller->getRenderTarget()->Resize(client_size);
         return 0;
     }
 
-    void render(Controller *controller)
+    int string_comparator(const std::string& lhs, const std::string& rhs)
     {
-        HRESULT result;
-
-        ID2D1RenderTarget* render_target = controller->getRenderTarget();
-        ID2D1SolidColorBrush* black_brush;
-
-        render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f), &black_brush);
-
-        while (controller->getRendering())
+        if (lhs < rhs)
         {
-            controller->getRenderTarget()->BeginDraw();
+            return -1;
+        }
+        if (lhs > rhs)
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    void render()
+    {
+        assert(the_controller);
+        assert(the_window);
+        HRESULT result;
+        ID2D1RenderTarget* render_target = the_controller->getRenderTarget();
+
+        algorithm::BinaryTree<std::string, std::string, string_comparator> the_tree;
+        the_tree.put("1", "1");
+        the_tree.put("2", "2");
+        the_tree.put("3", "3");
+        the_tree.put("4", "4");
+        the_tree.put("5", "5");
+
+        TreeRender<string_comparator> tree_render(&the_tree);
+        while (the_controller->getRendering())
+        {
+            the_controller->getRenderTarget()->BeginDraw();
             render_target->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
 
-            D2D1_ELLIPSE ellipse;
-            ellipse.point.x = 50;
-            ellipse.point.y = 50;
-            ellipse.radiusX = 100;
-            ellipse.radiusY = 100;
+            tree_render.render(render_target);
 
-            render_target->FillEllipse(ellipse, black_brush);
             result = render_target->EndDraw();
             assert(result == S_OK);
         }
     }
-}
-
+} // unamed namespace end
 
 Controller::Controller(MainWindow* main_window):
 main_window_(main_window),
@@ -64,18 +82,21 @@ rendering_(false)
         &render_target_
     );
     assert(result == S_OK);
-    render_ = std::bind(&render, this);
+    the_controller = this;
+    the_window = main_window;
     this->startRender();
-    std::thread(render_).detach();
-    main_window->bind(Event::SIZE, std::bind(resize_callback, main_window, this, std::placeholders::_1, std::placeholders::_2));
+    render_thread_ = std::thread(render);
+    main_window->bind(Event::SIZE, resize_callback);
     assert(result == S_OK);
 }
 
-
-
 Controller::~Controller()
 {
+    main_window_->unbind(Event::SIZE, resize_callback);
     this->stopRender();
+    render_thread_.join();
+    the_window = nullptr;
+    the_controller = nullptr;
     if (factory_)
     {
         factory_->Release();

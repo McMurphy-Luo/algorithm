@@ -1,10 +1,25 @@
-#include "tree_render.h"
+﻿#include "tree_render.h"
 
-
-using namespace algorithm::windows;
-
-template <typename value_type, int(* Comparator)(const std::string&, const std::string&)>
-void TreeRender<value_type, Comparator>::render(ID2D1RenderTarget* render_target)
+namespace algorithm
 {
-    
+    namespace windows
+    {
+        namespace detail
+        {
+            void render_node(ID2D1RenderTarget* render_target, ID2D1SolidColorBrush* brush, double x, double y)
+            {
+                D2D1_ELLIPSE ellipse;
+                ellipse.point.x = static_cast<float>(x);
+                ellipse.point.y = static_cast<float>(y);
+                ellipse.radiusX = 10;
+                ellipse.radiusY = 10;
+                render_target->FillEllipse(ellipse, brush);
+            }
+
+            void render_line(ID2D1SolidColorBrush* brush, double x1, double y1, double x2, double y2)
+            {
+
+            }
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿#include "main_window.h"
 #include <cassert>
+#include <algorithm>
 #include <Windows.h>
 
 
@@ -95,7 +96,7 @@ void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
     CallbackContainer::const_iterator iter;
     for (iter = callback_list->cbegin(); iter != callback_list->cend(); ++iter)
     {
-        iter->operator()(w_param, l_param);
+        (*iter)(w_param, l_param);
     }
 }
 
@@ -128,5 +129,6 @@ void MainWindow::bind(Event which, Callback call_back)
 
 void MainWindow::unbind(Event which, Callback call_back)
 {
-
+    CallbackContainer* container_of_which = getCallbackContainer(which);
+    container_of_which->erase(std::remove(container_of_which->begin(), container_of_which->end(), call_back), container_of_which->end());
 }

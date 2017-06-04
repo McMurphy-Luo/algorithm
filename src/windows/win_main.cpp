@@ -15,8 +15,8 @@ int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-
+    delete the_controller;
     delete the_main_window;
     
-    return static_cast<int>(msg.wParam);
+    return msg.wParam;
 }

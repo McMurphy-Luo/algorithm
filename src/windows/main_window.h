@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_WINDOWS_MAIN_WINDOW
-#define ALGORITHM_WINDOWS_MAIN_WINDOW
+﻿#ifndef ALGORITHM_WINDOWS_MAIN_WINDOW_H
+#define ALGORITHM_WINDOWS_MAIN_WINDOW_H
 
 #include <string>
 #include <vector>
@@ -19,7 +19,7 @@ namespace algorithm
         class MainWindow
         {
         public:
-            typedef std::function<LRESULT(WPARAM, LPARAM)> Callback;
+            typedef LRESULT(*Callback)(WPARAM, LPARAM);
 
             typedef std::vector<Callback> CallbackContainer;
 
@@ -52,7 +52,7 @@ namespace algorithm
 
         protected:
             CallbackContainer* getCallbackContainer(Event which);
-                
+
         private:
             CallbackContainer l_button_down_callback_container_;
 
@@ -69,4 +69,4 @@ namespace algorithm
     }
 }
 
-#endif //ALGORITHM_WINDOWS_MAIN_WINDOW
+#endif //ALGORITHM_WINDOWS_MAIN_WINDOW_H

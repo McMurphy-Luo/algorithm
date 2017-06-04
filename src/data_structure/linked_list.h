@@ -1,11 +1,11 @@
-//
+﻿//
 // Created by luojiayi on 5/16/17.
 //
 
 #ifndef ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 
-#include "../config.h"
+#include "config.h"
 #include <cstddef>
 #include <cassert>
 
