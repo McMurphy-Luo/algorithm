@@ -36,7 +36,6 @@ namespace // unamed namespace start for this file static staff
     {
         assert(the_controller);
         assert(the_window);
-
         HRESULT result;
         algorithm::BinaryTree<std::string, std::string, string_comparator> the_tree;
         the_tree.put("1", "1");
@@ -44,7 +43,6 @@ namespace // unamed namespace start for this file static staff
         the_tree.put("3", "3");
         the_tree.put("4", "4");
         the_tree.put("5", "5");
-
         TreeRender<string_comparator> tree_render(&the_tree, the_controller->getRenderTarget());
         while (the_controller->getRendering())
         {

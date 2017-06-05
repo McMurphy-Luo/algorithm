@@ -20,6 +20,7 @@ namespace algorithm
         class TreeRender
         {
         public:
+
             typedef typename BinaryTree<std::string, std::string, Comparator>::node node;
 
         public:
@@ -34,6 +35,7 @@ namespace algorithm
             TreeRender(const TreeRender&) = delete;
 
             TreeRender& operator=(const TreeRender* rhs) = delete;
+
 
             ~TreeRender()
             {
