@@ -25,6 +25,9 @@ namespace //unamed namespace start for this file static staff
             reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_DOWN, w_param, l_param);
             return 0;
 
+        case WM_PAINT:
+            return 0;
+
         case WM_LBUTTONUP:
             reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_UP, w_param, l_param);
             return 0;
@@ -33,7 +36,7 @@ namespace //unamed namespace start for this file static staff
             reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::SIZE, w_param, l_param);
             return 0;
 
-        case WM_CLOSE:
+        case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
         }
@@ -47,13 +50,12 @@ namespace //unamed namespace start for this file static staff
         window_class.cbSize = sizeof(window_class);
         window_class.hInstance = main_window->getAppHandler();
         window_class.hIcon = nullptr;
-        window_class.style = CS_HREDRAW | CS_VREDRAW;
+        window_class.style = 0;
         window_class.hCursor = LoadCursor(nullptr, MAKEINTRESOURCE(32512));
         window_class.cbWndExtra = 0;
         window_class.hIcon = nullptr;
         window_class.hIconSm = nullptr;
-        HBRUSH white_brush = CreateSolidBrush(RGB(255,255,255));
-        window_class.hbrBackground = white_brush;
+        window_class.hbrBackground = nullptr;
         window_class.lpszMenuName = nullptr;
         window_class.lpfnWndProc = windowProcedure;
         std::wstring class_name = main_window->getWindowName();

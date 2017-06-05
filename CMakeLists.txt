@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+﻿cmake_minimum_required(VERSION 3.5)
 project(algorithm C CXX)
 set(CMAKE_CXX_STANDARD 11)
 
@@ -9,7 +9,6 @@ set(test_source_dir ${PROJECT_SOURCE_DIR}/test)
 include_directories(${source_dir})
 
 list(APPEND data_structure_source
-        ${source_dir}/config.h
         ${source_dir}/data_structure/linked_list.h
         ${source_dir}/data_structure/avl_tree.h
         ${source_dir}/data_structure/binary_tree.h
@@ -32,6 +31,7 @@ add_executable(list_test ${test_source_dir}/list.cpp)
 add_executable(simple_test ${test_source_dir}/test.cpp)
 add_executable(binary_tree_test ${test_source_dir}/binary_tree.cpp)
 add_executable(render ${windows_source})
+target_compile_definitions(render PUBLIC "UNICODE" "_UNICODE")
 
 list(APPEND all_exe
         list_test
@@ -46,6 +46,8 @@ list(APPEND all_target
         ${all_exe}
         ${all_lib})
 
+target_link_libraries(render d2d1.lib)
 set_target_properties(${all_target} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${all_lib} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${lib_output_dir})
+set_target_properties(render PROPERTIES WIN32_EXECUTABLE TRUE)
 set_target_properties(${all_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin_output_dir})

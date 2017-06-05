@@ -7,7 +7,6 @@
 
 #include <cstddef>
 #include <cassert>
-#include "config.h"
 
 namespace algorithm{
     namespace detail{

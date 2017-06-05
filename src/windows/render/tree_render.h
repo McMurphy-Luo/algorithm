@@ -20,26 +20,79 @@ namespace algorithm
         class TreeRender
         {
         public:
-            explicit TreeRender(BinaryTree<std::string, std::string, Comparator>* the_tree): the_tree_(the_tree){};
+            typedef typename BinaryTree<std::string, std::string, Comparator>::node node;
+
+        public:
+            explicit TreeRender(BinaryTree<std::string, std::string, Comparator>* the_tree, ID2D1RenderTarget* render_target)
+            :render_target_(render_target),
+            the_tree_(the_tree)
+            {
+                HRESULT result = render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f), &black_brush_);
+                assert(result == S_OK);
+            };
 
             TreeRender(const TreeRender&) = delete;
 
             TreeRender& operator=(const TreeRender* rhs) = delete;
 
-            void render(ID2D1RenderTarget* render_target)
+            ~TreeRender()
             {
-                ID2D1SolidColorBrush* black_brush;
-                render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f), &black_brush);
-                auto *root = the_tree_->getRootNode();
+                if (black_brush_)
+                {
+                    black_brush_->Release();
+                }
+            }
+
+            void render()
+            {
+                const node *root = the_tree_->getRootNode();
                 if (!root)
                 {
                     return;
                 }
-                detail::render_node(render_target, black_brush, 10, 10);
+
+                D2D1_SIZE_F render_target_size = render_target_->GetSize();
+                render_node(root, render_target_size.width, render_target_size.width / 2, 20);
             };
-            
+
+            void render_node(const node* current, const double render_target_width, double x, double y)
+            {
+                if (!current)
+                {
+                    return;
+                }
+                D2D1_ELLIPSE ellipse;
+                ellipse.point.x = static_cast<float>(x);
+                ellipse.point.y = static_cast<float>(y);
+                ellipse.radiusX = 20;
+                ellipse.radiusY = 20;
+                render_target_->FillEllipse(ellipse, black_brush_);
+                if (current->left)
+                {
+                    render_node(current->left, render_target_width, x / 2, y + 100);
+                    render_line(x, y, x / 2, y + 100);
+                }
+                
+                if (current->right)
+                {
+                    render_node(current->right, render_target_width, render_target_width - x / 2, y + 100);
+                    render_line(x, y, render_target_width - x / 2, y + 100);
+                }
+            }
+
+            void render_line(double x1, double y1, double x2, double y2)
+            {
+                render_target_->DrawLine(
+                    D2D1::Point2F(static_cast<float>(x1), static_cast<float>(y1)),
+                    D2D1::Point2F(static_cast<float>(x2), static_cast<float>(y2)),
+                    black_brush_,
+                    1
+                );
+            }
 
         private:
+            ID2D1RenderTarget* render_target_;
+            ID2D1SolidColorBrush* black_brush_;
             BinaryTree<std::string, std::string, Comparator> *the_tree_;
         };
     }

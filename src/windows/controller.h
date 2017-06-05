@@ -24,11 +24,15 @@ namespace algorithm
 
             ID2D1HwndRenderTarget* getRenderTarget() const { return render_target_; };
 
-            bool getRendering() const { return rendering_; };
-
             void startRender() { rendering_ = true; };
 
+            bool getRendering() const { return rendering_; };
+
             void stopRender() { rendering_ = false; };
+
+            bool getNeedResize() { return need_resize_; };
+
+            void setNeedResize(bool value) { need_resize_ = value; };
         
         private:
             std::thread render_thread_;
@@ -40,6 +44,8 @@ namespace algorithm
             ID2D1HwndRenderTarget* render_target_;
 
             bool rendering_;
+
+            bool need_resize_;
         };
     }
 };
