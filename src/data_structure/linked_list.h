@@ -5,15 +5,9 @@
 #ifndef ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 
+
 #include <cstddef>
 #include <cassert>
-
-#ifdef DATA_STRUCTURE_DEBUG
-
-#include <cstring>
-#include <string>
-
-#endif
 
 
 namespace algorithm {
@@ -58,11 +52,11 @@ namespace algorithm {
 
         size_type size() const {
             return length_;
-        };
+        }
 
         value_type get(size_type index) {
             return (*this)[index];
-        };
+        }
 
         value_type& operator[](size_type index) {
             Node *temporary_item = first_;
@@ -70,11 +64,11 @@ namespace algorithm {
                 temporary_item = temporary_item->next;
             }
             return temporary_item->payload;
-        };
+        }
 
         const value_type& operator[](size_type index) const {
             return (*this)[index];
-        };
+        }
 
         void add(const value_type &data) {
             Node *new_one = new Node;
@@ -88,7 +82,7 @@ namespace algorithm {
             }
             last_->next = new_one;
             last_ = new_one;
-        };
+        }
 
         // The linked list should at least contains 1 node, otherwise segfault.
         value_type remove(size_type index) {
@@ -114,7 +108,7 @@ namespace algorithm {
             value_type temp = current->payload;
             delete current;
             return temp;
-        };
+        }
 
         void insert(const value_type &data, size_type before) {
             Node *following_node = first_;
@@ -139,7 +133,7 @@ namespace algorithm {
             new_node->previous = following_node->previous;
             following_node->previous = new_node;
             new_node->next = following_node;
-        };
+        }
 
         void clear() {
             for (Node* current = first_, *next; current; current = next){
@@ -148,9 +142,9 @@ namespace algorithm {
             }
             length_ = 0;
             last_ = first_ = nullptr;
-        };
+        }
 
-    protected:
+    private:
         size_type length_;
         Node *first_;
         Node *last_;

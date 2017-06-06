@@ -26,7 +26,8 @@ namespace //unamed namespace start for this file static staff
             return 0;
 
         case WM_PAINT:
-            return 0;
+            reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::PAINT, w_param, l_param);
+            return DefWindowProc(h_wnd, msg, w_param, l_param);
 
         case WM_LBUTTONUP:
             reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_UP, w_param, l_param);
@@ -112,6 +113,8 @@ MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which) {
         return &l_button_up_callback_container_;
     case Event::SIZE:
         return &resize_callback_container_;
+    case Event::PAINT:
+        return &paint_callback_container_;
     }
     assert(false); //should never be here
     return nullptr;

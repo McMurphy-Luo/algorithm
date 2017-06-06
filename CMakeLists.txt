@@ -9,6 +9,7 @@ set(test_source_dir ${PROJECT_SOURCE_DIR}/test)
 include_directories(${source_dir})
 
 list(APPEND data_structure_source
+        ${source_dir}/data_structure/tree_node.h
         ${source_dir}/data_structure/linked_list.h
         ${source_dir}/data_structure/avl_tree.h
         ${source_dir}/data_structure/binary_tree.h

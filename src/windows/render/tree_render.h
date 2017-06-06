@@ -2,6 +2,7 @@
 #define ALGORITHM_WINDOWS_TREE_RENDER_H
 
 #include <string>
+#include <memory>
 #include "data_structure/binary_tree.h"
 #include <d2d1_1.h>
 
@@ -20,11 +21,10 @@ namespace algorithm
         class TreeRender
         {
         public:
-
             typedef typename BinaryTree<std::string, std::string, Comparator>::node node;
 
         public:
-            explicit TreeRender(BinaryTree<std::string, std::string, Comparator>* the_tree, ID2D1RenderTarget* render_target)
+            explicit TreeRender(std::shared_ptr<BinaryTree<std::string, std::string, Comparator>> the_tree, ID2D1RenderTarget* render_target)
             :render_target_(render_target),
             the_tree_(the_tree)
             {
@@ -95,7 +95,7 @@ namespace algorithm
         private:
             ID2D1RenderTarget* render_target_;
             ID2D1SolidColorBrush* black_brush_;
-            BinaryTree<std::string, std::string, Comparator> *the_tree_;
+            std::shared_ptr<BinaryTree<std::string, std::string, Comparator>> the_tree_;
         };
     }
 }

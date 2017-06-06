@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <functional>
 #include <Windows.h>
 
 namespace algorithm
@@ -14,7 +13,8 @@ namespace algorithm
         {
             LBUTTON_DOWN,
             LBUTTON_UP,
-            SIZE
+            SIZE,
+            PAINT
         };
         class MainWindow
         {
@@ -59,6 +59,8 @@ namespace algorithm
             CallbackContainer l_button_up_callback_container_;
 
             CallbackContainer resize_callback_container_;
+
+            CallbackContainer paint_callback_container_;
 
             std::wstring window_name_;
 

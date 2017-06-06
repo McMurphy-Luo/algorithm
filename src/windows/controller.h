@@ -1,14 +1,21 @@
 ﻿#ifndef ALGORITHM_WINDOWS_CONTROLLER_H
 #define ALGORITHM_WINDOWS_CONTROLLER_H
 
-#include <thread>
+
 #include <d2d1_1.h>
 #include "main_window.h"
+#include "render/tree_render.h"
+
 
 namespace algorithm
 {
     namespace windows
     {
+        namespace detail
+        {
+            int string_comparator(const std::string& lhs, const std::string& rhs);
+        }
+
         class Controller
         {
         public:
@@ -24,28 +31,26 @@ namespace algorithm
 
             ID2D1HwndRenderTarget* getRenderTarget() const { return render_target_; };
 
-            void startRender() { rendering_ = true; };
+            void startRender() const;
 
-            bool getRendering() const { return rendering_; };
+            void render();
 
-            void stopRender() { rendering_ = false; };
+            void stopRender() const;
 
-            bool getNeedResize() { return need_resize_; };
+            bool getNeedResize() const { return need_resize_; };
 
             void setNeedResize(bool value) { need_resize_ = value; };
         
         private:
-            std::thread render_thread_;
-
             MainWindow *main_window_;
 
             ID2D1Factory* factory_;
 
             ID2D1HwndRenderTarget* render_target_;
 
-            bool rendering_;
-
             bool need_resize_;
+
+            TreeRender<detail::string_comparator>* tree_render_;
         };
     }
 };

@@ -1,12 +1,14 @@
-//
+﻿//
 // Created by luojiayi on 5/17/17.
 //
 #ifndef ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
 
+
 #include <cstddef>
 #include <memory>
 #include <cassert>
+
 
 namespace algorithm {
     template<typename T>
@@ -14,19 +16,20 @@ namespace algorithm {
     public:
         typedef T value_type;
         typedef std::size_t size_type;
+
     public:
         ArrayList() :
                 size_(0),
                 located_(0),
                 begin_(nullptr) {
-        };
+        }
 
         ArrayList(const ArrayList &another)
                 : ArrayList() {
             for (size_type index = 0; index < another.size_; ++index) {
                 add(another[index]);
             }
-        };
+        }
 
         ArrayList &operator=(const ArrayList &rhs) {
             if (this == &rhs) return *this;
@@ -35,23 +38,23 @@ namespace algorithm {
                 add(rhs[index]);
             }
             return *this;
-        };
+        }
 
         ~ArrayList() {
             clear();
-        };
+        }
 
         size_type size() const {
             return size_;
-        };
+        }
 
         value_type get(size_type index) const {
             return (*this)[index];
-        };
+        }
 
         value_type &operator[](size_type index) {
             return *(begin_ + index);
-        };
+        }
 
         const value_type &operator[](size_type index) const {
             return *(begin_ + index);
@@ -64,7 +67,7 @@ namespace algorithm {
             assert(located_ > size_);
             new(begin_ + size_) value_type(data);
             ++size_;
-        };
+        }
 
         value_type remove(size_type index) {
             value_type result = *(begin_ + index);
@@ -75,7 +78,7 @@ namespace algorithm {
             }
             --size_;
             return result;
-        };
+        }
 
         void insert(const value_type &data, size_type before) {
             if (size_ == located_) reallocate();
@@ -86,7 +89,7 @@ namespace algorithm {
             }
             new(begin_ + before) T(data);
             ++size_;
-        };
+        }
 
         void clear() {
             for (size_type index = 0; index < size_; ++index) {
@@ -122,7 +125,7 @@ namespace algorithm {
             begin_ = new_begin;
         }
 
-    protected:
+    private:
         size_type size_;
         size_type located_;
         value_type *begin_;
