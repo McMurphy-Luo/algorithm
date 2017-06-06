@@ -136,4 +136,4 @@ namespace algorithm {
     };
 }
 
-#endif
+#endif //ALGORITHM_DATA_STRUCTURE_TREE_NODE_H

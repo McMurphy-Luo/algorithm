@@ -53,11 +53,11 @@ namespace algorithm{
             }
             node* successor = nullptr;
             if (!(result->left) && !(result->right)){
-                successor = detail::detach_leaf(result, result_parent);
+                successor = detach_leaf(result, result_parent);
             } else if (result->left && result->right){
-                successor = detail::detach_two_children_node(result, result_parent);
+                successor = detach_two_children_node(result, result_parent);
             } else {
-                successor = detail::detach_one_child_node(result, result_parent); // successor must exists because target at least contains one child
+                successor = detach_one_child_node(result, result_parent); // successor must exists because target at least contains one child
             }
             if (!result_parent){ // the node deleted has no parent node, so it must be root
                 root_ = successor;
@@ -71,7 +71,7 @@ namespace algorithm{
             if (!root_){
                 return 0;
             }
-            return size(root_);
+            return algorithm::size(root_);
         }
 
         value_type* find(const key_type& key){

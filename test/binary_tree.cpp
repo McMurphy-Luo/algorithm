@@ -46,7 +46,7 @@ void test1(T& the_tree){
 
 template <typename T>
 void test2(T& the_tree){
-    typename T::size_type origin_size = the_tree.size();
+    size_type origin_size = the_tree.size();
     the_tree.put("xx", "xx_s");
     assert(origin_size + 1 == the_tree.size());
     shared_ptr<string> holder(the_tree.find("xx"));

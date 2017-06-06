@@ -31,15 +31,19 @@ add_library(data_structure ${data_structure_source})
 add_executable(list_test ${test_source_dir}/list.cpp)
 add_executable(simple_test ${test_source_dir}/test.cpp)
 add_executable(binary_tree_test ${test_source_dir}/binary_tree.cpp)
+if(${WIN32})
 add_executable(render ${windows_source})
 target_compile_definitions(render PUBLIC "UNICODE" "_UNICODE")
+endif(${WIN32})
 
 list(APPEND all_exe
         list_test
         simple_test
         binary_tree_test
-        render
         )
+if(${WIN32})
+list(APPEND all_exe render)
+endif(${WIN32})
 list(APPEND all_lib
         data_structure
         )
@@ -47,8 +51,14 @@ list(APPEND all_target
         ${all_exe}
         ${all_lib})
 
-target_link_libraries(render d2d1.lib)
+if(${WIN32})
+    target_link_libraries(render d2d1.lib)
+endif(${WIN32})
+
+
 set_target_properties(${all_target} PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(${all_lib} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${lib_output_dir})
-set_target_properties(render PROPERTIES WIN32_EXECUTABLE TRUE)
+if(${WIN32})
+    set_target_properties(render PROPERTIES WIN32_EXECUTABLE TRUE)
+endif(${WIN32})
 set_target_properties(${all_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${bin_output_dir})
