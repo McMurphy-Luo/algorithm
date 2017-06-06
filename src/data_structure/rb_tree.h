@@ -20,7 +20,7 @@ namespace algorithm
         typedef typename node::value_type value_type;
 
     public:
-        RBTree()
+        RBTree(): root_(nullptr)
         {
             
         }
@@ -48,8 +48,6 @@ namespace algorithm
         {
             
         }
-
-
 
     private:
         node* root_;

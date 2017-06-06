@@ -6,14 +6,28 @@
 
 namespace algorithm {
     typedef std::size_t size_type;
+
+    typedef enum class NodeColor{
+        red,
+        black
+    } node_color;
+
     template <typename KeyType, typename ValueType>
     struct TreeNode {
         typedef KeyType key_type;
         typedef ValueType value_type;
+        TreeNode(
+                key_type key,
+                value_type value,
+                TreeNode<key_type, value_type> *left = nullptr,
+                TreeNode<key_type, value_type> *right = nullptr,
+                node_color color = node_color::black
+        ): key(key), value(value), left(left), right(right), color(color){}
         key_type key;
         value_type value;
         TreeNode<key_type, value_type>* left;
         TreeNode<key_type, value_type>* right;
+        node_color color;
     };
 
     template<typename KeyType, typename ValueType>
@@ -110,16 +124,14 @@ namespace algorithm {
         if (left_child_height >= right_child_height) {
             get_largest_node(target->left, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
             assert(!sub_tree_to_be_lifted->right);
-        }
-        else {
+        } else {
             get_least_node(target->right, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
             assert(!sub_tree_to_be_lifted->left);
         }
 
         if (height(sub_tree_to_be_lifted) == 1) {
             detach_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
-        }
-        else {
+        } else {
             detach_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
         }
         sub_tree_to_be_lifted->left = target->left;
@@ -134,6 +146,16 @@ namespace algorithm {
         }
         return sub_tree_to_be_lifted;
     };
+
+    template<typename KeyType, typename ValueType>
+    void left_rotate(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* target_parent){
+
+    }
+
+    template<typename KeyType, typename ValueType>
+    void right_rotate(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* target_parent){
+
+    }
 }
 
 #endif //ALGORITHM_DATA_STRUCTURE_TREE_NODE_H
