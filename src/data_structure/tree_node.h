@@ -17,11 +17,11 @@ namespace algorithm {
         typedef KeyType key_type;
         typedef ValueType value_type;
         TreeNode(
-                key_type key,
-                value_type value,
-                TreeNode<key_type, value_type> *left = nullptr,
-                TreeNode<key_type, value_type> *right = nullptr,
-                node_color color = node_color::black
+            key_type key,
+            value_type value,
+            TreeNode<key_type, value_type> *left = nullptr,
+            TreeNode<key_type, value_type> *right = nullptr,
+            node_color color = node_color::black
         ): key(key), value(value), left(left), right(right), color(color){}
         key_type key;
         value_type value;
@@ -32,17 +32,21 @@ namespace algorithm {
 
     template<typename KeyType, typename ValueType>
     size_type size(const TreeNode<KeyType, ValueType>* which) {    // post order traversal
-        assert(which);
-        size_type left_sub_tree_size = which->left ? size(which->left) : 0;
-        size_type right_sub_tree_size = which->right ? size(which->right) : 0;
-        return left_sub_tree_size + right_sub_tree_size + 1;
+        if (!which) // empty node size is 0
+        {
+            return 0;
+        }
+        return size(which->left) + size(which->right) + 1;
     };
 
     template<typename KeyType, typename ValueType>
     size_type height(const TreeNode<KeyType, ValueType>* which) {  // post order traversal
-        assert(which);
-        size_type left_sub_tree_height = which->left ? height(which->left) : 0;
-        size_type right_sub_tree_height = which->right ? height(which->right) : 0;
+        if (!which) // empty node height is 0
+        {
+            return 0;
+        }
+        size_type left_sub_tree_height = height(which->left);
+        size_type right_sub_tree_height = height(which->right);
         return 1 + (
             right_sub_tree_height > left_sub_tree_height ? right_sub_tree_height : left_sub_tree_height
             );
@@ -149,12 +153,45 @@ namespace algorithm {
 
     template<typename KeyType, typename ValueType>
     void left_rotate(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* target_parent){
-
+        assert(target);
+        assert(target->right);
+        assert(!target_parent || (target_parent && (target_parent->right == target || target_parent->left == target)));
+        TreeNode<KeyType, ValueType> node_to_be_lifted = target->right;
+        target->right = node_to_be_lifted->left;
+        node_to_be_lifted->left = target;
+        if (target_parent)
+        {
+            if (target_parent->left == target)
+            {
+                target_parent->left = node_to_be_lifted;
+            }
+            if (target_parent->right == target)
+            {
+                target_parent->right = node_to_be_lifted;
+            }
+        }
     }
 
     template<typename KeyType, typename ValueType>
-    void right_rotate(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* target_parent){
-
+    void right_rotate(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* target_parent)
+    {
+        assert(target);
+        assert(target->left);
+        assert(!target_parent || (target_parent && (target_parent->right == target || target_parent->left == target)));
+        TreeNode<KeyType, ValueType> node_to_be_lifted = target->left;
+        target->left = node_to_be_lifted->right;
+        node_to_be_lifted->right = target;
+        if (target_parent)
+        {
+            if (target_parent->left == target)
+            {
+                target_parent->left = node_to_be_lifted;
+            }
+            if (target_parent->right == target)
+            {
+                target_parent->right = node_to_be_lifted;
+            }
+        }
     }
 }
 
