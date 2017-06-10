@@ -26,12 +26,12 @@ namespace algorithm{
 
         BinaryTree(const BinaryTree& another):
                 BinaryTree(){
-            inner_copy(another.root_, &root_);
+            inner_copy(another.root_);
         };
 
         BinaryTree& operator=(const BinaryTree& to){
             clear();
-            inner_copy(to.root_, &root_);
+            inner_copy(to.root_);
             return *this;
         }
 
@@ -106,22 +106,20 @@ namespace algorithm{
                     if (current->right){
                         current = current->right;
                         continue;
-                    } else {
-                        current->right = new node(key, value, current, nullptr, nullptr, NodeColor::black);
-                        return;
                     }
+                    current->right = new node(key, value, current, nullptr, nullptr, NodeColor::black);
+                    return;
                 }
                 if (compare_result < 0){
                     if (current->left){
                         current = current->left;
                         continue;
-                    } else {
-                        current->left = new node(key, value, current, nullptr, nullptr, NodeColor::black);
-                        return;
                     }
+                    current->left = new node(key, value, current, nullptr, nullptr, NodeColor::black);
+                    return;
                 }
             }
-        };
+        }
 
         const node* getRootNode() const
         {
@@ -138,13 +136,15 @@ namespace algorithm{
             delete current;
         }
 
-        void inner_copy(node* from, node** to){
-            if (!from){
+        void inner_copy(node* from){
+            if (!from)
+            {
                 return;
             }
-            *to = new node(*from);
-            inner_copy(from->left, &((*to)->left));
-            inner_copy(from->right, &((*(to))->right));
+            put(from->key, from->value);
+            inner_copy(from->left);
+            inner_copy(from->right);
+            
         }
 
     private:

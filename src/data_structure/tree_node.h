@@ -1,8 +1,9 @@
 ﻿#ifndef ALGORITHM_DATA_STRUCTURE_TREE_NODE_H
 #define ALGORITHM_DATA_STRUCTURE_TREE_NODE_H
 
-#include <cstddef>
+
 #include <cassert>
+
 
 namespace algorithm {
     typedef int size_type;
@@ -29,6 +30,8 @@ namespace algorithm {
             node *right,
             node_color color
         ): key(key), value(value), parent(parent), left(left), right(right), color(color){}
+        TreeNode(const TreeNode& another):
+        TreeNode(another.key, another.value, another.parent, another.left, another.right, another.color){}
         key_type key;
         value_type value;
         node *parent;
@@ -90,9 +93,61 @@ namespace algorithm {
         {
             return nullptr;
         }
+
+        /*if (!(which->left) && !(which->right))
+        {
+            if (which->parent)
+            {
+                if (which->parent->left == which)
+                {
+                    which->parent->left = nullptr;
+                }
+                if (which->parent->right == which)
+                {
+                    which->parent->right = nullptr;
+                }
+            }
+            return nullptr;
+        }
+
+        if ((which->left) && !(which->right))
+        {
+            which->left->parent = which->parent;
+            if (which->parent)
+            {
+                if (which->parent->left == which)
+                {
+                    which->parent->left = which->left;
+                }
+                if (which->parent->right == which)
+                {
+                    which->parent->right = which->right;
+                }
+            }
+            return which->left;
+        }
+
+        if ((which->right) && !(which->left))
+        {
+            which->right->parent = which->parent;
+            if (which->parent)
+            {
+                if (which->parent->left == which)
+                {
+                    which->parent->left = which->right;
+                }
+                if (which->parent->right == which)
+                {
+                    which->parent->right = which->right;
+                }
+            }
+            return which->right;
+        }*/
+
         // from now the "which" has two child
         size_type left_child_height = height(which->left);
         size_type right_child_height = height(which->right);
+
 
         TreeNode<KeyType, ValueType>* node_to_be_lifted;
         if (left_child_height > right_child_height){
@@ -103,7 +158,8 @@ namespace algorithm {
             node_to_be_lifted = get_least_node(which->right);
         }
         detach(node_to_be_lifted);
-        if (node_to_be_lifted){
+        if (node_to_be_lifted)
+        {
             node_to_be_lifted->right = which->right;
             node_to_be_lifted->left = which->left;
             node_to_be_lifted->parent = which->parent;
