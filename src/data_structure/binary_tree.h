@@ -94,6 +94,7 @@ namespace algorithm{
         void put(const key_type& key, const value_type& value){
             if (!root_){
                 root_ = new node(key, value, nullptr, nullptr, nullptr, NodeColor::black);
+                return;
             }
             node* current = root_;
             while(current){

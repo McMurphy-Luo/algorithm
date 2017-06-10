@@ -7,6 +7,9 @@ set(bin_output_dir ${PROJECT_BINARY_DIR}/bin)
 set(source_dir ${PROJECT_SOURCE_DIR}/src)
 set(test_source_dir ${PROJECT_SOURCE_DIR}/test)
 include_directories(${source_dir})
+if(${UNIX})
+    set(CMAKE_CXX_FLAGS "-Werror -Wall -O0 -g")
+endif(${UNIX})
 
 list(APPEND data_structure_source
         ${source_dir}/data_structure/tree_node.h
