@@ -83,7 +83,7 @@ namespace algorithm{
             size_type left_child_height = height(which->left);
             size_type right_child_height = height(which->right);
             int child_height_diff = left_child_height - right_child_height;
-            if ()
+            
             
         }
 

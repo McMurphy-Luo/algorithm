@@ -5,28 +5,35 @@
 #include <cassert>
 
 namespace algorithm {
-    typedef std::size_t size_type;
+    typedef int size_type;
 
-    typedef enum class NodeColor{
+    typedef enum class NodeColor {
         red,
         black
     } node_color;
 
+    /*
+     * The only one node type for avl tree, red black tree, trivial binary tree.
+     * In avl tree and trivial binary tree, node color is always black.
+     */
     template <typename KeyType, typename ValueType>
     struct TreeNode {
         typedef KeyType key_type;
         typedef ValueType value_type;
+        typedef TreeNode<key_type, value_type> node;
         TreeNode(
             key_type key,
             value_type value,
-            TreeNode<key_type, value_type> *left = nullptr,
-            TreeNode<key_type, value_type> *right = nullptr,
-            node_color color = node_color::black
-        ): key(key), value(value), left(left), right(right), color(color){}
+            node *parent,
+            node *left,
+            node *right,
+            node_color color
+        ): key(key), value(value), parent(parent), left(left), right(right), color(color){}
         key_type key;
         value_type value;
-        TreeNode<key_type, value_type>* left;
-        TreeNode<key_type, value_type>* right;
+        node *parent;
+        node *left;
+        node *right;
         node_color color;
     };
 
@@ -37,7 +44,7 @@ namespace algorithm {
             return 0;
         }
         return size(which->left) + size(which->right) + 1;
-    };
+    }
 
     template<typename KeyType, typename ValueType>
     size_type height(const TreeNode<KeyType, ValueType>* which) {  // post order traversal
@@ -50,126 +57,79 @@ namespace algorithm {
         return 1 + (
             right_sub_tree_height > left_sub_tree_height ? right_sub_tree_height : left_sub_tree_height
             );
-    };
+    }
 
     template <typename KeyType, typename ValueType>
-    void get_least_node(TreeNode<KeyType, ValueType> *from, TreeNode<KeyType, ValueType>* from_parent, TreeNode<KeyType, ValueType> **target, TreeNode<KeyType, ValueType> **target_parent) {
-        assert(from);
-        assert(!from_parent || (from_parent->left == from || from_parent->right == from));
-        *target = from;
-        *target_parent = from_parent;
-        while ((*target)->left) {
-            *target_parent = *target;
-            *target = (*target)->left;
+    TreeNode<KeyType, ValueType>* get_least_node(TreeNode<KeyType, ValueType> *from) {
+        if (!from)
+        {
+            return nullptr;
         }
-    };
+        while (from->left) {
+            from = from->left;
+        }
+        return from;
+    }
 
     template <typename KeyType, typename ValueType>
-    void get_largest_node(TreeNode<KeyType, ValueType>* from, TreeNode<KeyType, ValueType>* from_parent, TreeNode<KeyType, ValueType> **target, TreeNode<KeyType, ValueType> **target_parent) {
-        assert(from);
-        assert(!from_parent || (from_parent->left == from || from_parent->right == from));
-        *target = from;
-        *target_parent = from_parent;
-        while ((*target)->right) {
-            *target_parent = *target;
-            *target = (*target)->right;
+    TreeNode<KeyType, ValueType>* get_largest_node(TreeNode<KeyType, ValueType>* from) {
+        if (!from)
+        {
+            return nullptr;
         }
-    };
+        while (from->right) {
+            from = from->right;
+        }
+        return from;
+    }
 
     // leaf does not have any successor, it always return nullptr.
     template <typename KeyType, typename ValueType>
-    TreeNode<KeyType, ValueType>* detach_leaf(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent) {
-        assert(target);
-        assert(target->left == nullptr && target->right == nullptr);
-        assert(!parent || target == parent->left || target == parent->right);
-        if (!parent) {
+    TreeNode<KeyType, ValueType>* detach(TreeNode<KeyType, ValueType>* which) {
+        if (!which)
+        {
             return nullptr;
         }
-        if (target == parent->left) {
-            parent->left = nullptr;
-        }
-        if (target == parent->right) {
-            parent->right = nullptr;
-        }
-        return nullptr;
-    };
+        // from now the "which" has two child
+        size_type left_child_height = height(which->left);
+        size_type right_child_height = height(which->right);
 
-    //detach the target node from the tree, replace the target with the successor of it and return the successor.
-    template <typename KeyType, typename ValueType>
-    TreeNode<KeyType, ValueType>* detach_one_child_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent) {
-        assert(target);
-        assert((target->left == nullptr && target->right) || (target->left && target->right == nullptr));
-        assert(!parent || target == parent->left || target == parent->right);
-        TreeNode<KeyType, ValueType>* my_child = target->left ? target->left : target->right;
-        target->left = target->right = nullptr;
-        if (!parent) { // no parent, target must be root
-            return my_child;
-        }
-        if (target == parent->left) {
-            parent->left = my_child;
-        }
-        if (target == parent->right) {
-            parent->right = my_child;
-        }
-        return my_child;
-    };
-
-    //detach the target node from the tree and return the successor of target
-    template <typename KeyType, typename ValueType>
-    TreeNode<KeyType, ValueType>* detach_two_children_node(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* parent) {
-        assert(target);
-        assert(target->left && target->right);
-        assert(!parent || target == parent->left || target == parent->right);
-        size_type left_child_height = height(target->left);
-        size_type right_child_height = height(target->right);
-
-        TreeNode<KeyType, ValueType>* sub_tree_to_be_lifted;
-        TreeNode<KeyType, ValueType>* parent_of_sub_tree_to_be_lifted;
-        if (left_child_height >= right_child_height) {
-            get_largest_node(target->left, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
-            assert(!sub_tree_to_be_lifted->right);
+        TreeNode<KeyType, ValueType>* node_to_be_lifted;
+        if (left_child_height > right_child_height){
+            node_to_be_lifted = get_largest_node(which->left);
+            assert(node_to_be_lifted);
+            assert(!(node_to_be_lifted->right));
         } else {
-            get_least_node(target->right, target, &sub_tree_to_be_lifted, &parent_of_sub_tree_to_be_lifted);
-            assert(!sub_tree_to_be_lifted->left);
+            node_to_be_lifted = get_least_node(which->right);
+        }
+        detach(node_to_be_lifted);
+        if (node_to_be_lifted){
+            node_to_be_lifted->right = which->right;
+            node_to_be_lifted->left = which->left;
+            node_to_be_lifted->parent = which->parent;
         }
 
-        if (height(sub_tree_to_be_lifted) == 1) {
-            detach_leaf(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
-        } else {
-            detach_one_child_node(sub_tree_to_be_lifted, parent_of_sub_tree_to_be_lifted);
+        if (which->parent){
+            if (which->parent->left == which){
+                which->parent->left = node_to_be_lifted;
+            }
+            if (which->parent->right == which){
+                which->parent->right = node_to_be_lifted;
+            }
         }
-        sub_tree_to_be_lifted->left = target->left;
-        sub_tree_to_be_lifted->right = target->right;
-        target->left = nullptr;
-        target->right = nullptr;
-        if (parent && parent->left == target) {
-            parent->left = sub_tree_to_be_lifted;
-        }
-        if (parent && parent->right == target) {
-            parent->right = sub_tree_to_be_lifted;
-        }
-        return sub_tree_to_be_lifted;
-    };
+        return node_to_be_lifted;
+    }
 
     template<typename KeyType, typename ValueType>
-    void left_rotate(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* target_parent){
+    void left_rotate(TreeNode<KeyType, ValueType>* target){
         assert(target);
         assert(target->right);
-        assert(!target_parent || (target_parent && (target_parent->right == target || target_parent->left == target)));
-        TreeNode<KeyType, ValueType> node_to_be_lifted = target->right;
+        TreeNode<KeyType, ValueType>* node_to_be_lifted = target->right;
         target->right = node_to_be_lifted->left;
+        target->right->parent = target;
         node_to_be_lifted->left = target;
-        if (target_parent)
-        {
-            if (target_parent->left == target)
-            {
-                target_parent->left = node_to_be_lifted;
-            }
-            if (target_parent->right == target)
-            {
-                target_parent->right = node_to_be_lifted;
-            }
-        }
+        node_to_be_lifted->parent = target->parent;
+        target->parent = node_to_be_lifted;
     }
 
     template<typename KeyType, typename ValueType>
@@ -177,21 +137,12 @@ namespace algorithm {
     {
         assert(target);
         assert(target->left);
-        assert(!target_parent || (target_parent && (target_parent->right == target || target_parent->left == target)));
-        TreeNode<KeyType, ValueType> node_to_be_lifted = target->left;
+        TreeNode<KeyType, ValueType>* node_to_be_lifted = target->left;
         target->left = node_to_be_lifted->right;
+        target->left->parent = target;
         node_to_be_lifted->right = target;
-        if (target_parent)
-        {
-            if (target_parent->left == target)
-            {
-                target_parent->left = node_to_be_lifted;
-            }
-            if (target_parent->right == target)
-            {
-                target_parent->right = node_to_be_lifted;
-            }
-        }
+        node_to_be_lifted->parent = target->parent;
+        target->parent = node_to_be_lifted;
     }
 }
 

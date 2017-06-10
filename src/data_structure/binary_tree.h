@@ -45,27 +45,27 @@ namespace algorithm{
         }
 
         value_type* remove(const key_type& key){
-            node* result = root_;
-            node* result_parent = nullptr;
-            find_ex(key, &result, &result_parent);
-            if (!result){
-                return nullptr;
+            node* current = root_;
+            while(current){
+                int compare_result = Comparator(key, current->key);
+                if (compare_result > 0){
+                    current = current->right;
+                }
+                if (compare_result < 0){
+                    current = current->left;
+                }
+                if (compare_result == 0){
+                    node* successor = detach(current);
+                    if (current == root_){
+                        root_ = successor;
+                    }
+                    value_type* result_value = new value_type(current->value);
+                    delete current;
+                    return result_value;
+                }
             }
-            node* successor = nullptr;
-            if (!(result->left) && !(result->right)){
-                successor = detach_leaf(result, result_parent);
-            } else if (result->left && result->right){
-                successor = detach_two_children_node(result, result_parent);
-            } else {
-                successor = detach_one_child_node(result, result_parent); // successor must exists because target at least contains one child
-            }
-            if (!result_parent){ // the node deleted has no parent node, so it must be root
-                root_ = successor;
-            }
-            value_type* result_value = new value_type(result->value);
-            delete result;
-            return result_value;
-        };
+            return nullptr;
+        }
 
         size_type size() const {
             if (!root_){
@@ -75,40 +75,50 @@ namespace algorithm{
         }
 
         value_type* find(const key_type& key){
-            node* result = root_;
-            node* result_parent = nullptr;
-            find_ex(key, &result, &result_parent);
-            if (!result){
-                return nullptr;
+            node* current = root_;
+            while(current){
+                int compare_result = Comparator(key, current->key);
+                if (compare_result > 0){
+                    current = current->right;
+                }
+                if (compare_result < 0){
+                    current = current->left;
+                }
+                if (compare_result == 0){
+                    return new value_type(current->value);
+                }
             }
-            return new value_type(result->value);
-        };
+            return nullptr;
+        }
 
         void put(const key_type& key, const value_type& value){
-            node* result = root_;
-            node* result_parent = nullptr;
-            find_ex(key, &result, &result_parent);
-            if (result){
-                result->value = value;
-                return;
+            if (!root_){
+                root_ = new node(key, value, nullptr, nullptr, nullptr, NodeColor::black);
             }
-            node* new_node = new node;
-            new_node->key = key;
-            new_node->value = value;
-            new_node->left = new_node->right = nullptr;
-            if (!result_parent){ // the tree is empty
-                root_ = new_node;
-                return;
-            }
-            int compare_result = Comparator(key, result_parent->key);
-            assert(compare_result);
-            if (compare_result > 0){
-                result_parent->right = new_node;
-                return;
-            }
-            if (compare_result < 0){
-                result_parent->left = new_node;
-                return;
+            node* current = root_;
+            while(current){
+                int compare_result = Comparator(key, current->key);
+                if (compare_result == 0){
+                    current->value = value;
+                }
+                if (compare_result > 0){
+                    if (current->right){
+                        current = current->right;
+                        continue;
+                    } else {
+                        current->right = new node(key, value, current, nullptr, nullptr, NodeColor::black);
+                        return;
+                    }
+                }
+                if (compare_result < 0){
+                    if (current->left){
+                        current = current->left;
+                        continue;
+                    } else {
+                        current->left = new node(key, value, current, nullptr, nullptr, NodeColor::black);
+                        return;
+                    }
+                }
             }
         };
 
@@ -118,28 +128,6 @@ namespace algorithm{
         }
 
     protected:
-        void find_ex(const key_type& key,
-                     node **target,
-                     node **target_parent)
-        {
-            if (!(*target)){
-                return;
-            }
-            int compare_result = Comparator(key, (*target)->key);
-            if (compare_result == 0){
-                return;
-            }
-            *target_parent = *target;
-            if (compare_result > 0){
-                *target = (*target)->right;
-                find_ex(key, target, target_parent);
-            }
-            if (compare_result < 0){
-                *target = (*target)->left;
-                find_ex(key, target, target_parent);
-            }
-        };
-
         void inner_clear(node* current){
             if (!current){
                 return;
