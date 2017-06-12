@@ -33,13 +33,12 @@ namespace algorithm
 
             void startRender() const;
 
-            void render();
-
             void stopRender() const;
 
-            bool getNeedResize() const { return need_resize_; };
-
             void setNeedResize(bool value) { need_resize_ = value; };
+
+        protected:
+            LRESULT render(WPARAM w_param, LPARAM l_param);
         
         private:
             MainWindow *main_window_;
@@ -47,6 +46,10 @@ namespace algorithm
             ID2D1Factory* factory_;
 
             ID2D1HwndRenderTarget* render_target_;
+
+            MainWindow::Callback resize_callback_;
+            
+            MainWindow::Callback paint_callback_;
 
             bool need_resize_;
 

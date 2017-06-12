@@ -14,9 +14,6 @@ namespace algorithm
                 ellipse.radiusX = 20;
                 ellipse.radiusY = 20;
                 render_target->FillEllipse(ellipse, brush);
-
-                
-
             }
 
             void render_line(ID2D1SolidColorBrush* brush, double x1, double y1, double x2, double y2)

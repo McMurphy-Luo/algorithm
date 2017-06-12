@@ -29,31 +29,31 @@ namespace algorithm
     }
 }
 
-
-namespace // unamed namespace start for this file static staff
-{
-    Controller* the_controller = nullptr;
-    MainWindow* the_window = nullptr;
-    
-    LRESULT resize_callback(WPARAM w_param, LPARAM l_param)
-    {
-        assert(the_controller);
-        assert(the_window);
-        the_controller->setNeedResize(true);
-        return 0;
-    }
-
-    LRESULT render_callback(WPARAM w_param, LPARAM l_param)
-    {
-        assert(the_controller);
-        assert(the_window);
-        the_controller->render();
-        return 0;
-    }
-} // unamed namespace end
-
 Controller::Controller(MainWindow* main_window):
 main_window_(main_window),
+resize_callback_(
+    std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
+        std::bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
+            {
+                controller->setNeedResize(true);
+                return 0;
+            },
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2
+        )
+    )
+),
+paint_callback_(
+    std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
+        std::bind(
+            std::mem_fn(&Controller::render),
+            this,
+            std::placeholders::_1,
+            std::placeholders::_2
+        )
+    )
+),
 need_resize_(false)
 {
     HRESULT result = CoInitialize(NULL);
@@ -70,10 +70,8 @@ need_resize_(false)
         &render_target_
     );
     assert(result == S_OK);
-    the_controller = this;
-    the_window = main_window;
-    main_window->bind(Event::SIZE, resize_callback);
-    assert(result == S_OK);
+
+    main_window->bind(Event::SIZE, resize_callback_);
 
     auto the_tree = std::make_shared<BinaryTree<std::string, std::string, detail::string_comparator>>();
     the_tree->put("1", "1");
@@ -88,10 +86,9 @@ need_resize_(false)
 
 Controller::~Controller()
 {
-    main_window_->unbind(Event::SIZE, resize_callback);
+    main_window_->unbind(Event::SIZE, resize_callback_);
     stopRender();
-    the_window = nullptr;
-    the_controller = nullptr;
+    delete tree_render_;
     if (factory_)
     {
         factory_->Release();
@@ -103,33 +100,35 @@ Controller::~Controller()
     CoUninitialize();
 }
 
-void Controller::render()
+LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 {
     HRESULT result;
-    render_target_->BeginDraw();
-    render_target_->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
+    ID2D1RenderTarget* render_target = this->getRenderTarget();
+    render_target->BeginDraw();
+    render_target->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
 
     tree_render_->render();
 
-    result = render_target_->EndDraw();
+    result = render_target->EndDraw();
     assert(result == S_OK);
-    if (the_controller->getNeedResize())
+    if (need_resize_)
     {
-        RECT client_rect = the_window->getSize();
+        RECT client_rect = main_window_->getSize();
         D2D1_SIZE_U client_size;
         client_size.width = client_rect.right - client_rect.left;
         client_size.height = client_rect.bottom - client_rect.top;
         result = render_target_->Resize(client_size);
         assert(result == S_OK);
     }
+    return 0;
 }
 
 void Controller::startRender() const
 {
-    main_window_->bind(Event::PAINT, render_callback);
+    main_window_->bind(Event::PAINT, paint_callback_);
 }
 
 void Controller::stopRender() const
 {
-    main_window_->unbind(Event::PAINT, render_callback);
+    main_window_->unbind(Event::PAINT, paint_callback_);
 }

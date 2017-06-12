@@ -99,7 +99,7 @@ void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
     CallbackContainer::const_iterator iter;
     for (iter = callback_list->cbegin(); iter != callback_list->cend(); ++iter)
     {
-        (*iter)(w_param, l_param);
+        (*(*iter))(w_param, l_param);
     }
 }
 

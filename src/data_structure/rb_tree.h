@@ -95,9 +95,14 @@ namespace algorithm
         void clear()
         {
             
-        };
+        }
 
     protected:
+        node* find_ex(const key_type& key)
+        {
+            
+        }
+
         void insert_fix()
         {
             

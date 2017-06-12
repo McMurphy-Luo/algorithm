@@ -2,7 +2,9 @@
 #define ALGORITHM_WINDOWS_MAIN_WINDOW_H
 
 #include <string>
+#include <functional>
 #include <vector>
+#include <memory>
 #include <Windows.h>
 
 namespace algorithm
@@ -19,7 +21,7 @@ namespace algorithm
         class MainWindow
         {
         public:
-            typedef LRESULT(*Callback)(WPARAM, LPARAM);
+            typedef std::shared_ptr<std::function<LRESULT(WPARAM, LPARAM)>> Callback;
 
             typedef std::vector<Callback> CallbackContainer;
 
