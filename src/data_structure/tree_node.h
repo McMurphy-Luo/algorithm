@@ -1,9 +1,7 @@
 ﻿#ifndef ALGORITHM_DATA_STRUCTURE_TREE_NODE_H
 #define ALGORITHM_DATA_STRUCTURE_TREE_NODE_H
 
-
 #include <cassert>
-
 
 namespace algorithm {
     typedef int size_type;
@@ -189,7 +187,10 @@ namespace algorithm {
         target->left->parent = target;
         node_to_be_lifted->right = target;
         node_to_be_lifted->parent = target->parent;
-        target->parent = node_to_be_lifted;
+        if (target->parent)
+        {
+            target->parent = node_to_be_lifted;
+        }
     }
 }
 

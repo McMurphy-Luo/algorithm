@@ -5,10 +5,8 @@
 #ifndef ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
 
-
 #include <cstddef>
 #include <cassert>
-
 
 namespace algorithm {
     template<typename T>

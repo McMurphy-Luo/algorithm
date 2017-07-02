@@ -1,11 +1,9 @@
 ﻿#ifndef ALGORITHM_WINDOWS_CONTROLLER_H
 #define ALGORITHM_WINDOWS_CONTROLLER_H
 
-
 #include <d2d1_1.h>
 #include "main_window.h"
 #include "render/tree_render.h"
-
 
 namespace algorithm
 {

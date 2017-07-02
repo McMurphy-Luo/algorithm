@@ -4,11 +4,9 @@
 #ifndef ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
 #define ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
 
-
 #include <cstddef>
 #include <memory>
 #include <cassert>
-
 
 namespace algorithm {
     template<typename T>
