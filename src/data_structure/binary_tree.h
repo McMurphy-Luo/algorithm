@@ -44,49 +44,44 @@ namespace algorithm{
             root_ = nullptr;
         }
 
+        // It's the user's duty to delete the returned value
         value_type* remove(const key_type& key){
-            node* current = root_;
-            while(current){
-                int compare_result = Comparator(key, current->key);
-                if (compare_result > 0){
-                    current = current->right;
-                }
-                if (compare_result < 0){
-                    current = current->left;
-                }
-                if (compare_result == 0){
-                    node* successor = detach(current);
-                    if (current == root_){
-                        root_ = successor;
-                    }
-                    value_type* result_value = new value_type(current->value);
-                    delete current;
-                    return result_value;
-                }
+            if (!root_)
+            {
+                return nullptr;
             }
-            return nullptr;
+
+            node* maybe_result = fuzzy_find(key, root_);
+            int compare_result = Comparator(key, maybe_result->key);
+            if (compare_result != 0)
+            {
+                return nullptr;
+            }
+
+            node* successor = detach(maybe_result);
+            if (maybe_result == root_)
+            {
+                root_ = successor;
+            }
+            value_type* result_value = new value_type(maybe_result->value);
+            delete maybe_result;
+            return result_value;
         }
 
         size_type size() const {
-            if (!root_){
-                return 0;
-            }
             return algorithm::size(root_);
         }
 
         value_type* find(const key_type& key){
-            node* current = root_;
-            while(current){
-                int compare_result = Comparator(key, current->key);
-                if (compare_result > 0){
-                    current = current->right;
-                }
-                if (compare_result < 0){
-                    current = current->left;
-                }
-                if (compare_result == 0){
-                    return new value_type(current->value);
-                }
+            if (!root_)
+            {
+                return nullptr;
+            }
+            node* maybe_target = fuzzy_find(key, root_);
+            int compare_result = Comparator(key, maybe_target->key);
+            if (compare_result == 0)
+            {
+                return new value_type(maybe_target->value);
             }
             return nullptr;
         }
@@ -96,28 +91,20 @@ namespace algorithm{
                 root_ = new node(key, value, nullptr, nullptr, nullptr, NodeColor::black);
                 return;
             }
-            node* current = root_;
-            while(current){
-                int compare_result = Comparator(key, current->key);
-                if (compare_result == 0){
-                    current->value = value;
-                }
-                if (compare_result > 0){
-                    if (current->right){
-                        current = current->right;
-                        continue;
-                    }
-                    current->right = new node(key, value, current, nullptr, nullptr, NodeColor::black);
-                    return;
-                }
-                if (compare_result < 0){
-                    if (current->left){
-                        current = current->left;
-                        continue;
-                    }
-                    current->left = new node(key, value, current, nullptr, nullptr, NodeColor::black);
-                    return;
-                }
+
+            node* maybe_target = fuzzy_find(key, root_);
+            int compare_result = Comparator(key, maybe_target->key);
+            if (compare_result == 0)
+            {
+                maybe_target->value = value;
+            }
+            if (compare_result > 0)
+            {
+                maybe_target->right = new node(key, value, maybe_target, nullptr, nullptr, NodeColor::black);
+            }
+            if (compare_result < 0)
+            {
+                maybe_target->left = new node(key, value, maybe_target, nullptr, nullptr, NodeColor::black);
             }
         }
 
@@ -127,6 +114,20 @@ namespace algorithm{
         }
 
     protected:
+        node* fuzzy_find(key_type key, node* from)
+        {
+            int compare_result = Comparator(key, from->key);
+            if (compare_result > 0 && from->right)
+            {
+                return fuzzy_find(key, from->right);
+            }
+            if (compare_result < 0 && from->left)
+            {
+                return fuzzy_find(key, from->left);
+            }
+            return from;
+        }
+
         void inner_clear(node* current){
             if (!current){
                 return;
@@ -144,7 +145,6 @@ namespace algorithm{
             put(from->key, from->value);
             inner_copy(from->left);
             inner_copy(from->right);
-            
         }
 
     private:

@@ -64,10 +64,6 @@ namespace algorithm {
 
     template <typename KeyType, typename ValueType>
     TreeNode<KeyType, ValueType>* get_least_node(TreeNode<KeyType, ValueType> *from) {
-        if (!from)
-        {
-            return nullptr;
-        }
         while (from->left) {
             from = from->left;
         }
@@ -76,104 +72,99 @@ namespace algorithm {
 
     template <typename KeyType, typename ValueType>
     TreeNode<KeyType, ValueType>* get_largest_node(TreeNode<KeyType, ValueType>* from) {
-        if (!from)
-        {
-            return nullptr;
-        }
         while (from->right) {
             from = from->right;
         }
         return from;
     }
 
+    template<typename KeyType, typename ValueType>
+    void replace(TreeNode<KeyType, ValueType>* which, TreeNode<KeyType, ValueType>* to)
+    {
+        if (which->parent)
+        {
+            if (which->parent->left == which)
+            {
+                which->parent->left = to;
+            }
+            if (which->parent->right == which)
+            {
+                which->parent->right = to;
+            }
+        }
+        if (to)
+        {
+            to->parent = which->parent;
+            to->left = which->left;
+            to->right = which->right;
+        }
+    }
+
+    template<typename KeyType, typename ValueType>
+    void detach_leaf(TreeNode<KeyType, ValueType>* which)
+    {
+        assert(which);
+        assert(!(which->left) && !(which->right));
+        replace(which, nullptr);
+    }
+
+    template<typename KeyType, typename ValueType>
+    TreeNode<KeyType, ValueType>* detach_one_child_node(TreeNode<KeyType, ValueType>* which)
+    {
+        assert((which->left && !(which->right)) || (!(which->left) && which->right));
+        TreeNode<KeyType, ValueType>* successor = which->left ? which->left : which->right;
+        replace(which, successor);
+        return successor;
+    }
+
+    template<typename KeyType, typename ValueType>
+    TreeNode<KeyType, ValueType>* detach_two_child_node(TreeNode<KeyType, ValueType> *which)
+    {
+        size_type left_height = height(which->left);
+        size_type right_height = height(which->right);
+        TreeNode<KeyType, ValueType>* replacement;;
+        if (left_height > right_height)
+        {
+            replacement = get_largest_node(which->left);
+            if (replacement->left)
+            {
+                detach_one_child_node(replacement);
+            }
+            else
+            {
+                detach_leaf(replacement);
+            }
+        }
+        else
+        {
+            replacement = get_least_node(which->right);
+            if (replacement->right)
+            {
+                detach_one_child_node(replacement);
+            }
+            else
+            {
+                detach_leaf(replacement);
+            }
+        }
+        replace(which, replacement);
+        return replacement;
+    }
+
     // leaf does not have any successor, it always return nullptr.
     template <typename KeyType, typename ValueType>
     TreeNode<KeyType, ValueType>* detach(TreeNode<KeyType, ValueType>* which) {
-        if (!which)
+        assert(which);
+        if (!(which->left) && !(which->right))
         {
+            detach_leaf(which);
             return nullptr;
         }
-
-        /*if (!(which->left) && !(which->right))
+        if (!(which->left) || !(which->right))
         {
-            if (which->parent)
-            {
-                if (which->parent->left == which)
-                {
-                    which->parent->left = nullptr;
-                }
-                if (which->parent->right == which)
-                {
-                    which->parent->right = nullptr;
-                }
-            }
-            return nullptr;
+            return detach_one_child_node(which);
         }
-
-        if ((which->left) && !(which->right))
-        {
-            which->left->parent = which->parent;
-            if (which->parent)
-            {
-                if (which->parent->left == which)
-                {
-                    which->parent->left = which->left;
-                }
-                if (which->parent->right == which)
-                {
-                    which->parent->right = which->right;
-                }
-            }
-            return which->left;
-        }
-
-        if ((which->right) && !(which->left))
-        {
-            which->right->parent = which->parent;
-            if (which->parent)
-            {
-                if (which->parent->left == which)
-                {
-                    which->parent->left = which->right;
-                }
-                if (which->parent->right == which)
-                {
-                    which->parent->right = which->right;
-                }
-            }
-            return which->right;
-        }*/
-
-        // from now the "which" has two child
-        size_type left_child_height = height(which->left);
-        size_type right_child_height = height(which->right);
-
-
-        TreeNode<KeyType, ValueType>* node_to_be_lifted;
-        if (left_child_height > right_child_height){
-            node_to_be_lifted = get_largest_node(which->left);
-            assert(node_to_be_lifted);
-            assert(!(node_to_be_lifted->right));
-        } else {
-            node_to_be_lifted = get_least_node(which->right);
-        }
-        detach(node_to_be_lifted);
-        if (node_to_be_lifted)
-        {
-            node_to_be_lifted->right = which->right;
-            node_to_be_lifted->left = which->left;
-            node_to_be_lifted->parent = which->parent;
-        }
-
-        if (which->parent){
-            if (which->parent->left == which){
-                which->parent->left = node_to_be_lifted;
-            }
-            if (which->parent->right == which){
-                which->parent->right = node_to_be_lifted;
-            }
-        }
-        return node_to_be_lifted;
+        return detach_two_child_node(which);
     }
 
     template<typename KeyType, typename ValueType>

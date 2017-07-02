@@ -5,6 +5,7 @@
 #ifndef ALGORITHM_DATA_STRUCTURE_RB_TREE_H
 #define ALGORITHM_DATA_STRUCTURE_RB_TREE_H
 
+
 #include <cassert>
 #include "tree_node.h"
 
@@ -98,9 +99,11 @@ namespace algorithm
         }
 
     protected:
-        node* find_ex(const key_type& key)
+        node* fuzzy_find(const key_type& key, node* from)
         {
-            
+            node* current = from;
+
+
         }
 
         void insert_fix()
