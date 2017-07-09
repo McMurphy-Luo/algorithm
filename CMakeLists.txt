@@ -22,8 +22,6 @@ list(APPEND data_structure_source
 list(APPEND windows_source
         ${source_dir}/windows/render/tree_render.h
         ${source_dir}/windows/render/tree_render.cpp
-        ${source_dir}/windows/render/node_render.h
-        ${source_dir}/windows/render/node_render.cpp
         ${source_dir}/windows/controller.h
         ${source_dir}/windows/controller.cpp
         ${source_dir}/windows/main_window.h

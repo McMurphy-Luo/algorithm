@@ -4,6 +4,7 @@
 #include <d2d1_1.h>
 #include "main_window.h"
 #include "render/tree_render.h"
+#include "data_structure/rb_tree.h"
 
 namespace algorithm
 {
@@ -41,17 +42,19 @@ namespace algorithm
         private:
             MainWindow *main_window_;
 
-            ID2D1Factory* factory_;
-
-            ID2D1HwndRenderTarget* render_target_;
-
             MainWindow::Callback resize_callback_;
             
             MainWindow::Callback paint_callback_;
 
             bool need_resize_;
 
-            TreeRender<detail::string_comparator>* tree_render_;
+            RBTree<std::string, std::string, detail::string_comparator> the_tree_;
+
+            TreeRender tree_render_;
+
+            ID2D1Factory* factory_;
+
+            ID2D1HwndRenderTarget* render_target_;
         };
     }
 };

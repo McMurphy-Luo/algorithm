@@ -1,7 +1,6 @@
 ﻿#include "controller.h"
 #include <cassert>
 #include <thread>
-#include "data_structure/binary_tree.h"
 #include "./render/tree_render.h"
 
 using namespace algorithm;
@@ -54,7 +53,8 @@ paint_callback_(
         )
     )
 ),
-need_resize_(false)
+need_resize_(true),
+the_tree_(RBTree<std::string, std::string, detail::string_comparator>())
 {
     HRESULT result = CoInitialize(NULL);
     assert(result == S_OK);
@@ -73,13 +73,12 @@ need_resize_(false)
 
     main_window->bind(Event::SIZE, resize_callback_);
 
-    auto the_tree = std::make_shared<BinaryTree<std::string, std::string, detail::string_comparator>>();
-    the_tree->put("1", "1");
-    the_tree->put("2", "2");
-    the_tree->put("3", "3");
-    the_tree->put("4", "4");
-    the_tree->put("5", "5");
-    tree_render_ = new TreeRender<detail::string_comparator>(the_tree, render_target_);
+    the_tree_.put("1", "1");
+    the_tree_.put("2", "2");
+    the_tree_.put("3", "3");
+    the_tree_.put("4", "4");
+    the_tree_.put("5", "5");
+    tree_render_ = TreeRender(the_tree_.getRootNode());
 
     startRender();
 }
@@ -88,7 +87,6 @@ Controller::~Controller()
 {
     main_window_->unbind(Event::SIZE, resize_callback_);
     stopRender();
-    delete tree_render_;
     if (factory_)
     {
         factory_->Release();
@@ -107,7 +105,7 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
     render_target->BeginDraw();
     render_target->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
 
-    tree_render_->render();
+    tree_render_.render();
 
     result = render_target->EndDraw();
     assert(result == S_OK);

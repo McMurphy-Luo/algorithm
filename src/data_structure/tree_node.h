@@ -166,31 +166,59 @@ namespace algorithm {
     }
 
     template<typename KeyType, typename ValueType>
-    void left_rotate(TreeNode<KeyType, ValueType>* target){
+    TreeNode<KeyType, ValueType>* left_rotate(TreeNode<KeyType, ValueType>* target){
         assert(target);
         assert(target->right);
         TreeNode<KeyType, ValueType>* node_to_be_lifted = target->right;
         target->right = node_to_be_lifted->left;
-        target->right->parent = target;
+        if (target->right)
+        {
+            target->right->parent = target;
+        }
         node_to_be_lifted->left = target;
         node_to_be_lifted->parent = target->parent;
         target->parent = node_to_be_lifted;
+        if (node_to_be_lifted->parent)
+        {
+            if (node_to_be_lifted->parent->left == target)
+            {
+                node_to_be_lifted->parent->left = node_to_be_lifted;
+            }
+            // Never use else even though it is faster, In my opinion
+            if (node_to_be_lifted->parent->right == target)
+            {
+                node_to_be_lifted->parent->right = node_to_be_lifted;
+            }
+        }
+        return node_to_be_lifted;
     }
 
     template<typename KeyType, typename ValueType>
-    void right_rotate(TreeNode<KeyType, ValueType>* target, TreeNode<KeyType, ValueType>* target_parent)
+    TreeNode<KeyType, ValueType>* right_rotate(TreeNode<KeyType, ValueType>* target)
     {
         assert(target);
         assert(target->left);
         TreeNode<KeyType, ValueType>* node_to_be_lifted = target->left;
         target->left = node_to_be_lifted->right;
-        target->left->parent = target;
+        if (target->left)
+        {
+            target->left->parent = target;
+        }
         node_to_be_lifted->right = target;
         node_to_be_lifted->parent = target->parent;
-        if (target->parent)
+        target->parent = node_to_be_lifted;
+        if (node_to_be_lifted->parent)
         {
-            target->parent = node_to_be_lifted;
+            if (node_to_be_lifted->parent->left == target)
+            {
+                node_to_be_lifted->parent->left = node_to_be_lifted;
+            }
+            if (node_to_be_lifted->parent->right == target)
+            {
+                node_to_be_lifted->parent->right = node_to_be_lifted;
+            }
         }
+        return node_to_be_lifted;
     }
 }
 
