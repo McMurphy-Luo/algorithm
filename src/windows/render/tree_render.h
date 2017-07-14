@@ -15,7 +15,7 @@ namespace algorithm
             typedef TreeNode<std::string, std::string> node;
 
         public:
-            explicit TreeRender(const node* root_node);
+            explicit TreeRender();
 
             TreeRender(const TreeRender&) = delete;
 
@@ -23,7 +23,7 @@ namespace algorithm
 
             ~TreeRender();
 
-            void render(ID2D1RenderTarget* render_target);
+            void render(ID2D1RenderTarget* render_target, const node* which);
 
         protected:
             void reCreateD2D1Resource(ID2D1RenderTarget* render_target);
@@ -32,10 +32,9 @@ namespace algorithm
 
             void render_line(ID2D1RenderTarget* render_target, double x1, double y1, double x2, double y2);
 
-            void render_key(ID2D1RenderTarget* render_target);
+            void render_key(ID2D1RenderTarget* render_target, const node* current, double x, double y);
 
         private:
-            const node* root_;
             ID2D1SolidColorBrush* black_brush_;
             ID2D1SolidColorBrush* white_brush_;
             ID2D1SolidColorBrush* red_brush_;

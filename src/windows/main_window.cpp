@@ -27,7 +27,7 @@ namespace //unamed namespace start for this file static staff
 
         case WM_PAINT:
             reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::PAINT, w_param, l_param);
-            return DefWindowProc(h_wnd, msg, w_param, l_param);
+            return 0;
 
         case WM_LBUTTONUP:
             reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_UP, w_param, l_param);
@@ -67,8 +67,8 @@ namespace //unamed namespace start for this file static staff
 
 
 MainWindow::MainWindow(HINSTANCE app_handler):
-window_name_(L"Main Window"),
-app_handler_(app_handler)
+    window_name_(L"Main Window"),
+    app_handler_(app_handler)
 {
     registerWindowClass(this);
     window_handler_ = CreateWindowEx(

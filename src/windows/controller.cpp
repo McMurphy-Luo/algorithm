@@ -3,58 +3,52 @@
 #include <thread>
 #include "./render/tree_render.h"
 
-using namespace algorithm;
-using namespace windows;
+using namespace algorithm::windows;
 
-namespace algorithm
+namespace detail
 {
-    namespace windows
+    int string_comparator(const std::string& lhs, const std::string& rhs)
     {
-        namespace detail
+        if (lhs < rhs)
         {
-            int string_comparator(const std::string& lhs, const std::string& rhs)
-            {
-                if (lhs < rhs)
-                {
-                    return -1;
-                }
-                if (lhs > rhs)
-                {
-                    return 1;
-                }
-                return 0;
-            }
+            return -1;
         }
+        if (lhs > rhs)
+        {
+            return 1;
+        }
+        return 0;
     }
 }
 
 Controller::Controller(MainWindow* main_window):
-main_window_(main_window),
-resize_callback_(
-    std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-        std::bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
-            {
-                controller->setNeedResize(true);
-                return 0;
-            },
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2
+    main_window_(main_window),
+    resize_callback_(
+        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
+            std::bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
+                {
+                    controller->setNeedResize(true);
+                    return 0;
+                },
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2
+            )
         )
-    )
-),
-paint_callback_(
-    std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-        std::bind(
-            std::mem_fn(&Controller::render),
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2
+    ),
+    paint_callback_(
+        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
+            std::bind(
+                std::mem_fn(&Controller::render),
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2
+            )
         )
-    )
-),
-need_resize_(true),
-the_tree_(RBTree<std::string, std::string, detail::string_comparator>())
+    ),
+    need_resize_(true),
+    the_tree_(RBTree<std::string, std::string, detail::string_comparator>()),
+    tree_render_()
 {
     HRESULT result = CoInitialize(NULL);
     assert(result == S_OK);
@@ -70,16 +64,12 @@ the_tree_(RBTree<std::string, std::string, detail::string_comparator>())
         &render_target_
     );
     assert(result == S_OK);
-
     main_window->bind(Event::SIZE, resize_callback_);
-
     the_tree_.put("1", "1");
     the_tree_.put("2", "2");
     the_tree_.put("3", "3");
     the_tree_.put("4", "4");
     the_tree_.put("5", "5");
-    tree_render_ = TreeRender(the_tree_.getRootNode());
-
     startRender();
 }
 
@@ -105,7 +95,7 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
     render_target->BeginDraw();
     render_target->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
 
-    tree_render_.render();
+    tree_render_.render(render_target_, the_tree_.getRootNode());
 
     result = render_target->EndDraw();
     assert(result == S_OK);
