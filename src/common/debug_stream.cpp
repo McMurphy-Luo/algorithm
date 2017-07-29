@@ -1,6 +1,6 @@
 ﻿#include "debug_stream.h"
-#include <cstdio>
 #include <cinttypes>
+#include <locale>
 #if defined(_WIN32) || defined(_WIN64)
 #include <Windows.h>
 #else
@@ -23,6 +23,10 @@ DebugStream::DebugStream(const DebugStream& to)
 
 DebugStream& DebugStream::operator=(const DebugStream& rhs)
 {
+    if (&rhs == this)
+    {
+        return;
+    }
     buf_ = rhs.buf_; // wstring.operator=
     return *this;
 }
@@ -37,35 +41,36 @@ void DebugStream::flush()
 #if defined(_WIN32) || defined(_WIN64)
     OutputDebugStringW(buf_.c_str());
 #else
-    cerr << buf_;
+    wcout << buf_;
 #endif
     buf_.clear();
 }
 
 DebugStream& DebugStream::operator<<(int32_t what)
 {
-    buf_ += std::to_wstring(what);
+    buf_ += what;
     return *this;
 }
 
 DebugStream& DebugStream::operator<<(int64_t what)
 {
-    buf_ += std::to_wstring(what);
+    buf_ += what;
     return *this;
 }
 
 DebugStream& DebugStream::operator<<(double what)
 {
-    buf_ += std::to_wstring(what);
+    buf_ += what;
     return *this;
 }
 
-DebugStream& DebugStream::operator<<(std::string what)
+DebugStream& DebugStream::operator<<(const std::wstring& what)
 {
-    
+    buf_ += what;
+    return *this;
 }
 
-DebugStream& DebugStream::operator<<(std::wstring what)
-{
+DebugStream& DebugStream::operator<<(std::ostream& (*endl)(std::ostream&)){
+    buf_.push_back(L'\n');
     return *this;
 }

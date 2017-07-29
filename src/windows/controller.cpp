@@ -3,23 +3,29 @@
 #include <thread>
 #include "./render/tree_render.h"
 
-using namespace algorithm::windows;
-
-namespace detail
+namespace algorithm
 {
-    int string_comparator(const std::string& lhs, const std::string& rhs)
+    namespace windows
     {
-        if (lhs < rhs)
+        namespace detail
         {
-            return -1;
+            int string_comparator(const std::string& lhs, const std::string& rhs)
+            {
+                if (lhs < rhs)
+                {
+                    return -1;
+                }
+                if (lhs > rhs)
+                {
+                    return 1;
+                }
+                return 0;
+            }
         }
-        if (lhs > rhs)
-        {
-            return 1;
-        }
-        return 0;
     }
 }
+
+using namespace algorithm::windows;
 
 Controller::Controller(MainWindow* main_window):
     main_window_(main_window),
@@ -70,6 +76,16 @@ Controller::Controller(MainWindow* main_window):
     the_tree_.put("3", "3");
     the_tree_.put("4", "4");
     the_tree_.put("5", "5");
+    the_tree_.put("6", "6");
+    the_tree_.put("7", "7");
+    the_tree_.put("8", "8");
+    the_tree_.put("9", "9");
+    the_tree_.put("10", "10");
+    the_tree_.put("11", "11");
+    the_tree_.put("12", "12");
+    the_tree_.put("13", "13");
+    the_tree_.put("14", "14");
+    the_tree_.put("15", "15");
     startRender();
 }
 

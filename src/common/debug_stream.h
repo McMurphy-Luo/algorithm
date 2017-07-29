@@ -3,7 +3,6 @@
 
 #include <string>
 #include <cstdint>
-#include <iostream>
 
 namespace algorithm
 {
@@ -21,16 +20,16 @@ namespace algorithm
             ~DebugStream();
 
             void flush();
-            
-            DebugStream& operator<<(std::string what);
 
-            DebugStream& operator<<(std::wstring what);
+            DebugStream& operator<<(const std::wstring& what);
 
             DebugStream& operator<<(int32_t what);
 
             DebugStream& operator<<(int64_t what);
 
             DebugStream& operator<<(double what);
+
+            DebugStream& DebugStream::operator<<(std::ostream& (*endl)(std::ostream&));
 
         private:
             std::wstring buf_;
