@@ -1,12 +1,16 @@
 ﻿#include "tree_render.h"
 #include <cassert>
+#include "dwrite.h"
 
 using namespace algorithm::windows;
 
 TreeRender::TreeRender():
     black_brush_(nullptr),
     red_brush_(nullptr),
-    white_brush_(nullptr)
+    white_brush_(nullptr),
+    green_brush_(nullptr),
+    write_factory_(nullptr),
+    text_format_(nullptr)
 {
             
 }
@@ -28,6 +32,21 @@ TreeRender::~TreeRender()
         red_brush_->Release();
         red_brush_ = nullptr;
     }
+    if (green_brush_)
+    {
+        green_brush_->Release();
+        green_brush_ = nullptr;
+    }
+    if (text_format_)
+    {
+        text_format_->Release();
+        text_format_ = nullptr;
+    }
+    if (write_factory_)
+    {
+        write_factory_->Release();
+        write_factory_ = nullptr;
+    }
 }
 
 void TreeRender::reCreateD2D1Resource(ID2D1RenderTarget* render_target)
@@ -37,19 +56,32 @@ void TreeRender::reCreateD2D1Resource(ID2D1RenderTarget* render_target)
         black_brush_->Release();
     }
     HRESULT result = render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f), &black_brush_);
-    assert(result == S_OK);
+    assert(SUCCEEDED(result));
     if (red_brush_)
     {
         red_brush_->Release();
     }
     result = render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Red, 1.0F), &red_brush_);
-    assert(result == S_OK);
+    assert(SUCCEEDED(result));
     if (white_brush_)
     {
         white_brush_->Release();
     }
     result = render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0F), &white_brush_);
-    assert(result == S_OK);
+    assert(SUCCEEDED(result));
+    result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, _uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&write_factory_));
+    assert(SUCCEEDED(result));
+    result = write_factory_->CreateTextFormat(
+        L"Consolas",
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        16.0,
+        LC_ALL,
+        &text_format_
+    );
+    assert(SUCCEEDED(result));
 }
 
 void TreeRender::render(ID2D1RenderTarget* render_target, const node* which)

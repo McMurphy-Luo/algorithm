@@ -71,21 +71,21 @@ Controller::Controller(MainWindow* main_window):
     );
     assert(result == S_OK);
     main_window->bind(Event::SIZE, resize_callback_);
-    the_tree_.put("1", "1");
-    the_tree_.put("2", "2");
-    the_tree_.put("3", "3");
-    the_tree_.put("4", "4");
-    the_tree_.put("5", "5");
-    the_tree_.put("6", "6");
-    the_tree_.put("7", "7");
-    the_tree_.put("8", "8");
-    the_tree_.put("9", "9");
-    the_tree_.put("10", "10");
-    the_tree_.put("11", "11");
-    the_tree_.put("12", "12");
-    the_tree_.put("13", "13");
-    the_tree_.put("14", "14");
-    the_tree_.put("15", "15");
+    the_tree_.put(u8"1", u8"1");
+    the_tree_.put(u8"2", u8"2");
+    the_tree_.put(u8"3", u8"3");
+    the_tree_.put(u8"4", u8"4");
+    the_tree_.put(u8"5", u8"5");
+    the_tree_.put(u8"6", u8"6");
+    the_tree_.put(u8"7", u8"7");
+    the_tree_.put(u8"8", u8"8");
+    the_tree_.put(u8"9", u8"9");
+    the_tree_.put(u8"10", u8"10");
+    the_tree_.put(u8"11", u8"11");
+    the_tree_.put(u8"12", u8"12");
+    the_tree_.put(u8"13", u8"13");
+    the_tree_.put(u8"14", u8"14");
+    the_tree_.put(u8"15", u8"15");
     startRender();
 }
 

@@ -2,8 +2,10 @@
 #define ALGORITHM_WINDOWS_TREE_RENDER_H
 
 #include <string>
-#include "data_structure/tree_node.h"
+#include <dwrite.h>
 #include <d2d1_1.h>
+#include "data_structure/tree_node.h"
+
 
 namespace algorithm
 {
@@ -38,6 +40,9 @@ namespace algorithm
             ID2D1SolidColorBrush* black_brush_;
             ID2D1SolidColorBrush* white_brush_;
             ID2D1SolidColorBrush* red_brush_;
+            ID2D1SolidColorBrush* green_brush_;
+            IDWriteFactory* write_factory_;
+            IDWriteTextFormat* text_format_;
         };
     }
 }
