@@ -1,4 +1,4 @@
-cmake-build-debug
+﻿cmake-build-debug
 .idea
 bin
 lib
@@ -7,5 +7,5 @@ CMakeFiles
 *.cbp
 CMakeCache.txt
 cmake_install.cmake
-Makefile
 .vs
+build
