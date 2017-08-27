@@ -1,4 +1,4 @@
-﻿#include "controller.h"
+#include "controller.h"
 #include <cassert>
 #include <thread>
 #include "./render/tree_render.h"

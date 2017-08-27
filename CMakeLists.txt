@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.5)
 project(algorithm C CXX)
 set(CMAKE_CXX_STANDARD 11)
 
@@ -7,9 +7,16 @@ set(bin_output_dir ${PROJECT_BINARY_DIR}/bin)
 set(source_dir ${PROJECT_SOURCE_DIR}/src)
 set(test_source_dir ${PROJECT_SOURCE_DIR}/test)
 include_directories(${source_dir})
+include_directories("D:\\c++\\boost\\boost_1_65_0")
+link_directories("D:\\c++\\boost\\boost_1_65_0\\stage\\lib")
+
 if(${UNIX})
     set(CMAKE_CXX_FLAGS "-Werror -Wall -O0 -g")
 endif(${UNIX})
+
+list(APPEND common_source
+        ${source_dir}/common/string_util.h
+        ${source_dir}/common/string_util.cpp)
 
 list(APPEND data_structure_source
         ${source_dir}/data_structure/tree_node.h
@@ -33,7 +40,7 @@ add_executable(list_test ${test_source_dir}/list.cpp)
 add_executable(simple_test ${test_source_dir}/test.cpp)
 add_executable(binary_tree_test ${test_source_dir}/binary_tree.cpp)
 if(${WIN32})
-add_executable(render ${windows_source})
+add_executable(render ${windows_source} ${common_source})
 target_compile_definitions(render PUBLIC "UNICODE" "_UNICODE")
 endif(${WIN32})
 
@@ -53,7 +60,7 @@ list(APPEND all_target
         ${all_lib})
 
 if(${WIN32})
-    target_link_libraries(render d2d1.lib)
+    target_link_libraries(render d2d1.lib dwrite.lib)
 endif(${WIN32})
 
 

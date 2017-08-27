@@ -1,6 +1,7 @@
-﻿#ifndef ALGORITHM_WINDOWS_CONTROLLER_H
+#ifndef ALGORITHM_WINDOWS_CONTROLLER_H
 #define ALGORITHM_WINDOWS_CONTROLLER_H
 
+#include <string>
 #include <d2d1_1.h>
 #include "main_window.h"
 #include "render/tree_render.h"

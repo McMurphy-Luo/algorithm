@@ -1,4 +1,4 @@
-﻿#ifndef ALGORITHM_WINDOWS_MAIN_WINDOW_H
+#ifndef ALGORITHM_WINDOWS_MAIN_WINDOW_H
 #define ALGORITHM_WINDOWS_MAIN_WINDOW_H
 
 #include <string>
@@ -69,6 +69,8 @@ namespace algorithm
             HWND window_handler_;
 
             HINSTANCE app_handler_;
+
+            HWND button_;
         };
     }
 }

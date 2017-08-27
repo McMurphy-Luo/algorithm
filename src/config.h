@@ -1,0 +1,8 @@
+﻿#ifndef ALGORITHM_CONFIG_H
+#define ALGORITHM_CONFIG_H
+
+#ifdef WIN32
+#define ALGORITHM_WINDOWS
+#endif
+
+#endif // ALGORITHM_CONFIG_H

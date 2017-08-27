@@ -1,8 +1,10 @@
 ﻿#include "tree_render.h"
 #include <cassert>
-#include "dwrite.h"
+#include <dwrite.h>
+#include "common/string_util.h"
 
 using namespace algorithm::windows;
+using namespace algorithm::common;
 
 TreeRender::TreeRender():
     black_brush_(nullptr),
@@ -77,10 +79,12 @@ void TreeRender::reCreateD2D1Resource(ID2D1RenderTarget* render_target)
         DWRITE_FONT_WEIGHT_NORMAL,
         DWRITE_FONT_STYLE_NORMAL,
         DWRITE_FONT_STRETCH_NORMAL,
-        16.0,
-        LC_ALL,
+        24.0f,
+        L"en-us",
         &text_format_
     );
+    assert(SUCCEEDED(result));
+    result = render_target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Green, 1.0f), &green_brush_);
     assert(SUCCEEDED(result));
 }
 
@@ -117,7 +121,6 @@ void TreeRender::render_node(ID2D1RenderTarget* render_target, const node* curre
     {
         render_target->FillEllipse(ellipse, red_brush_);
     }
-    render_key(render_target, current, x, y);
     if (current->left)
     {
         render_node(render_target, current->left, x - offset_to_parent / 2, y + 50, offset_to_parent / 2);
@@ -128,6 +131,7 @@ void TreeRender::render_node(ID2D1RenderTarget* render_target, const node* curre
         render_node(render_target, current->right, x + offset_to_parent / 2, y + 50, offset_to_parent / 2);
         render_line(render_target, x, y, x + offset_to_parent / 2, y + 50);
     }
+    render_key(render_target, current, x, y);
 }
 
 void TreeRender::render_line(ID2D1RenderTarget* render_target, double x1, double y1, double x2, double y2)
@@ -142,5 +146,12 @@ void TreeRender::render_line(ID2D1RenderTarget* render_target, double x1, double
 
 void TreeRender::render_key(ID2D1RenderTarget* render_target, const node* current, double x, double y)
 {
-    
+    std::wstring node_text = u8StringToWString(current->key);
+    render_target->DrawText(
+        node_text.c_str(),
+        node_text.length(),
+        text_format_,
+        D2D1::RectF(x-12, y-12, x+100, y+24),
+        green_brush_
+    );
 }

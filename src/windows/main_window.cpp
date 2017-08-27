@@ -1,7 +1,8 @@
-﻿#include "main_window.h"
+#include "main_window.h"
 #include <cassert>
 #include <algorithm>
 #include <Windows.h>
+#include <boost/log/trivial.hpp>
 
 
 using namespace algorithm::windows;
@@ -40,6 +41,11 @@ namespace //unamed namespace start for this file static staff
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
+
+
+        case BN_CLICKED:
+
+            return 0;
         }
         return DefWindowProc(h_wnd, msg, w_param, l_param);
     }
@@ -75,7 +81,7 @@ MainWindow::MainWindow(HINSTANCE app_handler):
         WS_EX_OVERLAPPEDWINDOW,
         window_name_.c_str(),
         window_name_.c_str(),
-        WS_OVERLAPPEDWINDOW,
+        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
@@ -85,6 +91,21 @@ MainWindow::MainWindow(HINSTANCE app_handler):
         app_handler,
         this
     );
+
+    button_ = CreateWindow(
+        L"BUTTON",
+        L"OK",
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        10,
+        10,
+        70,
+        40,
+        window_handler_,
+        nullptr,
+        app_handler,
+        nullptr
+    );
+
 }
 
 MainWindow::~MainWindow()
