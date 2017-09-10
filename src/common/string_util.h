@@ -1,5 +1,6 @@
-﻿#ifndef ALGORITHM_COMMON_STRING_UTIL
+#ifndef ALGORITHM_COMMON_STRING_UTIL
 #define ALGORITHM_COMMON_STRING_UTIL
+
 #include <string>
 
 namespace algorithm

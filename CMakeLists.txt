@@ -7,8 +7,6 @@ set(bin_output_dir ${PROJECT_BINARY_DIR}/bin)
 set(source_dir ${PROJECT_SOURCE_DIR}/src)
 set(test_source_dir ${PROJECT_SOURCE_DIR}/test)
 include_directories(${source_dir})
-include_directories("D:\\c++\\boost\\boost_1_65_0")
-link_directories("D:\\c++\\boost\\boost_1_65_0\\stage\\lib")
 
 if(${UNIX})
     set(CMAKE_CXX_FLAGS "-Werror -Wall -O0 -g")

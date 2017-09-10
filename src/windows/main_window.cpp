@@ -2,7 +2,6 @@
 #include <cassert>
 #include <algorithm>
 #include <Windows.h>
-#include <boost/log/trivial.hpp>
 
 
 using namespace algorithm::windows;
