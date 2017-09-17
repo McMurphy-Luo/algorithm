@@ -14,7 +14,11 @@ endif(${UNIX})
 
 list(APPEND common_source
         ${source_dir}/common/string_util.h
-        ${source_dir}/common/string_util.cpp)
+        ${source_dir}/common/string_util.cpp
+        ${source_dir}/common/log_manager.h
+        ${source_dir}/common/log_manager.cpp
+        ${source_dir}/common/logger.h
+        ${source_dir}/common/logger.cpp)
 
 list(APPEND data_structure_source
         ${source_dir}/data_structure/tree_node.h

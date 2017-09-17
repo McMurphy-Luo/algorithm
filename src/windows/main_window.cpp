@@ -26,7 +26,9 @@ namespace //unamed namespace start for this file static staff
             return 0;
 
         case WM_PAINT:
+            BeginPaint(h_wnd, nullptr);
             reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::PAINT, w_param, l_param);
+            EndPaint(h_wnd, nullptr);
             return 0;
 
         case WM_LBUTTONUP:
