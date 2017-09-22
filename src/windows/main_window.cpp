@@ -2,10 +2,12 @@
 #include <cassert>
 #include <algorithm>
 #include <Windows.h>
-
+#include "common/log_manager.h"
+#include "common/logger.h"
 
 using namespace algorithm::windows;
-
+using algorithm::common::LogManager;
+using algorithm::common::Logger;
 
 namespace //unamed namespace start for this file static staff
 {
@@ -41,11 +43,6 @@ namespace //unamed namespace start for this file static staff
 
         case WM_DESTROY:
             PostQuitMessage(0);
-            return 0;
-
-
-        case BN_CLICKED:
-
             return 0;
         }
         return DefWindowProc(h_wnd, msg, w_param, l_param);
@@ -114,9 +111,10 @@ MainWindow::~MainWindow()
 
 }
 
-
 void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
 {
+    Logger main_window_event_logger = LogManager::getLogger("algorithm.windows.MainWindow");
+    main_window_event_logger.log("event is triggered!");
     CallbackContainer* callback_list = getCallbackContainer(which);
     CallbackContainer::const_iterator iter;
     for (iter = callback_list->cbegin(); iter != callback_list->cend(); ++iter)
@@ -124,7 +122,6 @@ void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
         (*(*iter))(w_param, l_param);
     }
 }
-
 
 MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which) {
     switch (which)

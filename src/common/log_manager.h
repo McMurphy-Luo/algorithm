@@ -10,9 +10,8 @@ namespace algorithm
 {
     namespace common
     {
-        typedef std::function<bool(LogLevel, const std::string&)> Predictor;
-        typedef std::shared_ptr<Predictor> Filter;
-        typedef std::shared_ptr<std::function<void(const char* buf, std::size_t buf_size)>> Receiver;
+        typedef std::function<bool(LogLevel, const std::string&)> Filter;
+        typedef std::shared_ptr<std::function<void(const std::string& content)>> Receiver;
 
         struct Appender
         {
@@ -22,26 +21,33 @@ namespace algorithm
 
         class LogManager
         {
+            friend class Logger;
         public:
             static Logger getLogger(const std::string &logger_name);
 
-            static void setGlobalFilter(const Predictor &predictor);
+            static void setGlobalFilter(const Filter &filter);
 
             static void registerAppender(const Filter &filter, const Receiver &receiver);
 
+            static void unRegisterAppender(const Receiver &receiver);
+
             static void enableBuffer(bool enable_or_not);
+
+            static void enableEnsureLineEnding(bool enable_or_not);
 
         private:
             static LogManager* instance_;
 
         protected:
             LogManager();
+            void write(const std::string &from, LogLevel level, const std::string &content);
 
         private:
-            std::shared_ptr<Predictor> global_filter_;
+            Filter global_filter_;
             std::vector<Appender> appender_list_;
             bool buf_enabled_;
             std::string buf_;
+            bool ensure_line_ending_;
         };
     }
 }

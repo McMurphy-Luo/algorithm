@@ -12,7 +12,7 @@ log_manager_(log_manager)
 
 void Logger::write(const LogLevel level, const std::string& what)
 {
-    
+    log_manager_->write(name_, level, what);
 }
 
 void Logger::debug(const std::string& what)
