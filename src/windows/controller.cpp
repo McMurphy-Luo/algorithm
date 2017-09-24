@@ -58,7 +58,7 @@ Controller::Controller(MainWindow* main_window):
 {
     HRESULT result = CoInitialize(NULL);
     assert(result == S_OK);
-    result = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory), reinterpret_cast<void**>(&factory_));
+    result = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), reinterpret_cast<void**>(&factory_));
     assert(result == S_OK);
     RECT client_rect = main_window->getSize();
     D2D1_SIZE_U client_size;

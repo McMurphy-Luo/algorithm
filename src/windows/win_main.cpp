@@ -24,6 +24,7 @@ void registerDebugOutputLogAppender()
         }
     );
     LogManager::registerAppender(log_filter, log_receiver);
+    LogManager::enableEnsureLineEnding(true);
 }
 
 int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR cmd_string, int cmd_show) {

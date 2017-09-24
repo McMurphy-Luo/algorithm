@@ -1,4 +1,4 @@
-﻿#include "tree_render.h"
+#include "tree_render.h"
 #include <cassert>
 #include <dwrite.h>
 #include "common/string_util.h"

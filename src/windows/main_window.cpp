@@ -113,8 +113,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
 {
-    Logger main_window_event_logger = LogManager::getLogger("algorithm.windows.MainWindow");
-    main_window_event_logger.log("event is triggered!");
     CallbackContainer* callback_list = getCallbackContainer(which);
     CallbackContainer::const_iterator iter;
     for (iter = callback_list->cbegin(); iter != callback_list->cend(); ++iter)
@@ -124,15 +122,20 @@ void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
 }
 
 MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which) {
+    Logger main_window_event_logger = LogManager::getLogger("algorithm.windows.MainWindow");
     switch (which)
     {
     case Event::LBUTTON_DOWN:
+        main_window_event_logger.log("EVENT.LBUTTON_DOWN is triggered!");
         return &l_button_down_callback_container_;
     case Event::LBUTTON_UP:
+        main_window_event_logger.log("EVENT.LBUTTON_UP is triggered!");
         return &l_button_up_callback_container_;
     case Event::SIZE:
+        main_window_event_logger.log("EVENT.SIZE is triggered!");
         return &resize_callback_container_;
     case Event::PAINT:
+        main_window_event_logger.log("EVENT.PAINT is triggered!");
         return &paint_callback_container_;
     }
     assert(false); //should never be here

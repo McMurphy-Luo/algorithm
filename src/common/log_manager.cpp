@@ -54,6 +54,13 @@ void LogManager::enableBuffer(bool enable_or_not)
     instance_->buf_enabled_ = enable_or_not;
 }
 
+void LogManager::enableEnsureLineEnding(bool ensure_or_not) {
+    if (!instance_) {
+        instance_ = new LogManager();
+    }
+    instance_->ensure_line_ending_ = ensure_or_not;
+}
+
 LogManager::LogManager():
 global_filter_(),
 appender_list_(),
@@ -77,11 +84,19 @@ void LogManager::write(const std::string &from, LogLevel level, const std::strin
             return;
         }
     }
+
+    std::string copy_of_raw_log = content;
+    if (ensure_line_ending_) {
+        if (content.back() != '\n' && content.back() != '\r') {
+            copy_of_raw_log.push_back('\n');
+        }
+    }
+
     for (const Appender &appender : instance_->appender_list_)
     {
         if (appender.filter(level, from))
         {
-            appender.receiver->operator()(content);
+            appender.receiver->operator()(copy_of_raw_log);
         }
     }
 }
