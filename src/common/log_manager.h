@@ -21,7 +21,6 @@ namespace algorithm
 
         class LogManager
         {
-            friend class Logger;
         public:
             static Logger getLogger(const std::string &logger_name);
 
@@ -35,12 +34,15 @@ namespace algorithm
 
             static void enableEnsureLineEnding(bool enable_or_not);
 
+            // Loggers use next method to write their record to appender.
+            void write(const std::string &from, LogLevel level, const std::string &content);
+
         private:
             static LogManager* instance_;
 
         protected:
+            // Prevent public instance construct. This is a singleton class.
             LogManager();
-            void write(const std::string &from, LogLevel level, const std::string &content);
 
         private:
             Filter global_filter_;

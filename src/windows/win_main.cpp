@@ -27,7 +27,8 @@ void registerDebugOutputLogAppender()
     LogManager::enableEnsureLineEnding(true);
 }
 
-int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR cmd_string, int cmd_show) {
+int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR cmd_string, int cmd_show)
+{
     registerDebugOutputLogAppender();
     algorithm::windows::MainWindow *the_main_window = new algorithm::windows::MainWindow(h_instance);
     the_main_window->show();

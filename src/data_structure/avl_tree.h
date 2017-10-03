@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by luojiayi on 5/20/17.
 //
 
@@ -87,23 +87,19 @@ namespace algorithm{
 
         node* fuzzy_find(node* current, const key_type& key)
         {
-            if (!current)
-            {
+            if (!current) {
                 return nullptr;
             }
             int compare_result = Comparator(key, current->key);
-            if (compare_result > 0)
-            {
+            if (compare_result > 0) {
                 if (!(current->right))
                 {
                     return current;
                 }
                 return find(current->right, key);
             }
-            if (compare_result < 0)
-            {
-                if (!(current->left))
-                {
+            if (compare_result < 0) {
+                if (!(current->left)) {
                     return current;
                 }
                 return find(current->left, key);

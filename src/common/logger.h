@@ -35,6 +35,7 @@ namespace algorithm
             void error(const std::string &what);
 
         protected:
+            // Prevent public logger construct, Logger can not be obtained from LogManager::getLogger
             explicit Logger(const std::string &name, LogManager *log_manager);
 
         private:

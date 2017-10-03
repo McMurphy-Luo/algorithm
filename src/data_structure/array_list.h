@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by luojiayi on 5/17/17.
 //
 #ifndef ALGORITHM_DATA_STRUCTURE_ARRAY_LIST_H
@@ -23,13 +23,15 @@ namespace algorithm {
         }
 
         ArrayList(const ArrayList &another)
-                : ArrayList() {
+                : ArrayList()
+        {
             for (size_type index = 0; index < another.size_; ++index) {
                 add(another[index]);
             }
         }
 
-        ArrayList &operator=(const ArrayList &rhs) {
+        ArrayList &operator=(const ArrayList &rhs)
+        {
             if (this == &rhs) return *this;
             clear();
             for (size_type index = 0; index < rhs.size_; ++index) {
@@ -38,27 +40,33 @@ namespace algorithm {
             return *this;
         }
 
-        ~ArrayList() {
+        ~ArrayList()
+        {
             clear();
         }
 
-        size_type size() const {
+        size_type size() const
+        {
             return size_;
         }
 
-        value_type get(size_type index) const {
+        value_type get(size_type index) const
+        {
             return (*this)[index];
         }
 
-        value_type &operator[](size_type index) {
+        value_type &operator[](size_type index)
+        {
             return *(begin_ + index);
         }
 
-        const value_type &operator[](size_type index) const {
+        const value_type &operator[](size_type index) const
+        {
             return *(begin_ + index);
         }
 
-        void add(const value_type &data) {
+        void add(const value_type &data)
+        {
             if (size_ == located_) {
                 reallocate();
             }
@@ -67,7 +75,8 @@ namespace algorithm {
             ++size_;
         }
 
-        value_type remove(size_type index) {
+        value_type remove(size_type index)
+        {
             value_type result = *(begin_ + index);
             (begin_ + index)->~value_type();
             for (value_type *moving = begin_ + index + 1; moving < begin_ + size_; moving++) {
@@ -78,7 +87,8 @@ namespace algorithm {
             return result;
         }
 
-        void insert(const value_type &data, size_type before) {
+        void insert(const value_type &data, size_type before)
+        {
             if (size_ == located_) reallocate();
             value_type *moving = begin_ + size_ - 1;
             for (; moving >= begin_ + before; --moving) {
@@ -89,7 +99,8 @@ namespace algorithm {
             ++size_;
         }
 
-        void clear() {
+        void clear()
+        {
             for (size_type index = 0; index < size_; ++index) {
                 (begin_ + index)->~value_type();
             }
@@ -99,7 +110,8 @@ namespace algorithm {
         }
 
     protected:
-        void reallocate() {
+        void reallocate()
+        {
             if (size_ == 0) {
                 begin_ = static_cast<value_type *>(malloc(sizeof(value_type)));
                 located_ = 1;
@@ -111,7 +123,8 @@ namespace algorithm {
             located_ = next_located;
         }
 
-        void move(value_type *new_begin, value_type *new_end) {
+        void move(value_type *new_begin, value_type *new_end)
+        {
             assert(new_end > new_begin);
             assert(new_end == size_ * 2 + new_begin - 1);
 

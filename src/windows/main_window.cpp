@@ -121,7 +121,8 @@ void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
     }
 }
 
-MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which) {
+MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which)
+{
     Logger main_window_event_logger = LogManager::getLogger("algorithm.windows.MainWindow");
     switch (which)
     {
