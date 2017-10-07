@@ -31,8 +31,8 @@ int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR
 {
     registerDebugOutputLogAppender();
     algorithm::windows::MainWindow *the_main_window = new algorithm::windows::MainWindow(h_instance);
-    the_main_window->show();
     algorithm::windows::Controller *the_controller = new algorithm::windows::Controller(the_main_window);
+    the_main_window->show();
     MSG msg;
     while (GetMessage(&msg, nullptr, 0, 0))
     {

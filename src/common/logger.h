@@ -26,13 +26,23 @@ namespace algorithm
 
             void debug(const std::string &what);
 
+            void debug(const char *format_str, ...);
+
             void log(const std::string &what);
+
+            void log(const char *format_str, ...);
 
             void info(const std::string &what);
 
+            void info(const char *format_str, ...);
+
             void warn(const std::string &what);
 
+            void warn(const char *format_str, ...);
+
             void error(const std::string &what);
+
+            void error(const char *format_str, ...);
 
         protected:
             // Prevent public logger construct, Logger can not be obtained from LogManager::getLogger

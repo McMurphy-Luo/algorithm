@@ -31,14 +31,12 @@ namespace algorithm
 
             ID2D1HwndRenderTarget* getRenderTarget() const { return render_target_; };
 
-            void startRender() const;
-
-            void stopRender() const;
-
             void setNeedResize(bool value) { need_resize_ = value; };
 
         protected:
             LRESULT render(WPARAM w_param, LPARAM l_param);
+
+            LRESULT onCommand(WPARAM w_param, LPARAM l_param);
         
         private:
             MainWindow *main_window_;
@@ -46,6 +44,8 @@ namespace algorithm
             MainWindow::Callback resize_callback_;
             
             MainWindow::Callback paint_callback_;
+
+            MainWindow::Callback command_callback_;
 
             bool need_resize_;
 
@@ -56,6 +56,8 @@ namespace algorithm
             ID2D1Factory* factory_;
 
             ID2D1HwndRenderTarget* render_target_;
+
+            HWND button_;
         };
     }
 };

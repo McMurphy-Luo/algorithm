@@ -30,6 +30,7 @@ list(APPEND data_structure_source
 
 list(APPEND windows_source
         ${source_dir}/windows/render/tree_render.h
+        ${source_dir}/windows/render.manifest
         ${source_dir}/windows/render/tree_render.cpp
         ${source_dir}/windows/controller.h
         ${source_dir}/windows/controller.cpp
@@ -62,7 +63,7 @@ list(APPEND all_target
         ${all_lib})
 
 if(${WIN32})
-    target_link_libraries(render d2d1.lib dwrite.lib)
+    target_link_libraries(render d2d1.lib dwrite.lib ComCtl32.lib)
 endif(${WIN32})
 
 

@@ -16,8 +16,10 @@ namespace algorithm
             LBUTTON_DOWN,
             LBUTTON_UP,
             SIZE,
-            PAINT
+            PAINT,
+            COMMAND
         };
+
         class MainWindow
         {
         public:
@@ -64,13 +66,13 @@ namespace algorithm
 
             CallbackContainer paint_callback_container_;
 
+            CallbackContainer command_callback_container_;
+
             std::wstring window_name_;
 
             HWND window_handler_;
 
             HINSTANCE app_handler_;
-
-            HWND button_;
         };
     }
 }

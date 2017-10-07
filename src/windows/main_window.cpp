@@ -44,6 +44,10 @@ namespace //unamed namespace start for this file static staff
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;
+
+        case WM_COMMAND:
+            reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::COMMAND, w_param, l_param);
+            return 0;
         }
         return DefWindowProc(h_wnd, msg, w_param, l_param);
     }
@@ -89,26 +93,12 @@ MainWindow::MainWindow(HINSTANCE app_handler):
         app_handler,
         this
     );
-
-    button_ = CreateWindow(
-        L"BUTTON",
-        L"OK",
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-        10,
-        10,
-        70,
-        40,
-        window_handler_,
-        nullptr,
-        app_handler,
-        nullptr
-    );
-
+    assert(window_handler_ != nullptr);
 }
 
 MainWindow::~MainWindow()
 {
-
+    
 }
 
 void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
@@ -127,17 +117,20 @@ MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which)
     switch (which)
     {
     case Event::LBUTTON_DOWN:
-        main_window_event_logger.log("EVENT.LBUTTON_DOWN is triggered!");
+        main_window_event_logger.log("Event.LBUTTON_DOWN is triggered!");
         return &l_button_down_callback_container_;
     case Event::LBUTTON_UP:
-        main_window_event_logger.log("EVENT.LBUTTON_UP is triggered!");
+        main_window_event_logger.log("Event.LBUTTON_UP is triggered!");
         return &l_button_up_callback_container_;
     case Event::SIZE:
-        main_window_event_logger.log("EVENT.SIZE is triggered!");
+        main_window_event_logger.log("Event.SIZE is triggered!");
         return &resize_callback_container_;
     case Event::PAINT:
-        main_window_event_logger.log("EVENT.PAINT is triggered!");
+        main_window_event_logger.log("Event.PAINT is triggered!");
         return &paint_callback_container_;
+    case Event::COMMAND:
+        main_window_event_logger.log("Event.COMMAND is triggered!");
+        return &command_callback_container_;
     }
     assert(false); //should never be here
     return nullptr;

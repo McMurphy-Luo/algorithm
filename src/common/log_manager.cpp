@@ -85,7 +85,8 @@ void LogManager::write(const std::string &from, LogLevel level, const std::strin
         }
     }
 
-    std::string copy_of_raw_log = content;
+    std::string copy_of_raw_log;
+    copy_of_raw_log = content;
     if (ensure_line_ending_) {
         if (content.back() != '\n' && content.back() != '\r') {
             copy_of_raw_log.push_back('\n');
