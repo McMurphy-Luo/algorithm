@@ -10,8 +10,7 @@
 using algorithm::common::dumpBufferAsHexString;
 
 int main(int argc, char* argv[]){
-    
-    std::cout << dumpBufferAsHexString("abcd", 4) << std::endl;
-
+    int a = -1;
+    std::cout << dumpBufferAsHexString((char*)&a, 4) << std::endl;
     std::cin.get();
 }
