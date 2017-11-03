@@ -6,9 +6,10 @@ namespace algorithm
     {
         namespace {
             char hexdecimal_character[17] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+            char binary_decimal_character[2] = { '0', '1' };
         }
 
-        std::string dumpBufferAsHexString(char *buf, std::size_t buf_size)
+        std::string dumpBufferAsHexString(char* buf, std::size_t buf_size)
         {
             std::string result;
             for (std::size_t buf_counter = 0; buf_counter < buf_size; ++buf_counter) {
@@ -23,6 +24,8 @@ namespace algorithm
         std::string dumpBufferAsBinaryString(char *buf, std::size_t buf_size)
         {
             std::string result;
+
+            
             return result;
         }
     }

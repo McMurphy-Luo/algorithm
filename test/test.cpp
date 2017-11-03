@@ -11,6 +11,8 @@ using algorithm::common::dumpBufferAsHexString;
 
 int main(int argc, char* argv[]){
     int a = -1;
-    std::cout << dumpBufferAsHexString((char*)&a, 4) << std::endl;
+    std::cout << dumpBufferAsHexString(reinterpret_cast<char*>(&a), sizeof(a)) << std::endl;
+    double b = 2.0;
+    std::cout << dumpBufferAsHexString(reinterpret_cast<char*>(&b), sizeof(b)) << std::endl;
     std::cin.get();
 }
