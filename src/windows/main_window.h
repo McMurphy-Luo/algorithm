@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <Windows.h>
+#include "common/logger.h"
 
 namespace algorithm
 {
@@ -24,6 +25,9 @@ namespace algorithm
         {
         public:
             typedef std::shared_ptr<std::function<LRESULT(WPARAM, LPARAM)>> Callback;
+            // Because unbind function require the event hanlder could be compared.
+            // At the begining, I want just to use std::function<> as callback type,
+            // but std::function<> does not support compare.
 
             typedef std::vector<Callback> CallbackContainer;
 
@@ -54,10 +58,14 @@ namespace algorithm
 
             void unbind(Event which, Callback callback);
 
+            void unbind(Event which); // remove all event handler of one event type
+
         protected:
             CallbackContainer* getCallbackContainer(Event which);
 
         private:
+            algorithm::common::Logger class_logger;
+
             CallbackContainer l_button_down_callback_container_;
 
             CallbackContainer l_button_up_callback_container_;

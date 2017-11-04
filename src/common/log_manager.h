@@ -43,6 +43,8 @@ namespace algorithm
         protected:
             // Prevent public instance construct. This is a singleton class.
             LogManager();
+            LogManager(const LogManager& another) = delete; // forbid copy
+            LogManager& operator=(const LogManager& another) = delete; // forbid copy
 
         private:
             Filter global_filter_;

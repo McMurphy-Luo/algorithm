@@ -5,6 +5,7 @@
 #include <d2d1_1.h>
 #include "main_window.h"
 #include "render/tree_render.h"
+#include "common/logger.h"
 #include "data_structure/rb_tree.h"
 
 namespace algorithm
@@ -39,6 +40,8 @@ namespace algorithm
             LRESULT onCommand(WPARAM w_param, LPARAM l_param);
         
         private:
+            algorithm::common::Logger class_logger;
+
             MainWindow *main_window_;
 
             MainWindow::Callback resize_callback_;
@@ -58,6 +61,8 @@ namespace algorithm
             ID2D1HwndRenderTarget* render_target_;
 
             HWND button_;
+
+            HWND input_;
         };
     }
 };

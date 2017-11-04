@@ -5,9 +5,9 @@
 #include "common/log_manager.h"
 #include "common/logger.h"
 
-using namespace algorithm::windows;
+using algorithm::windows::MainWindow;
+using algorithm::windows::Event;
 using algorithm::common::LogManager;
-using algorithm::common::Logger;
 
 namespace //unamed namespace start for this file static staff
 {
@@ -75,7 +75,8 @@ namespace //unamed namespace start for this file static staff
 
 
 MainWindow::MainWindow(HINSTANCE app_handler):
-    window_name_(L"Main Window"),
+    class_logger(LogManager::getLogger("algorithm.windows.MainWindow")),
+    window_name_(L"MainWindow"),
     app_handler_(app_handler)
 {
     registerWindowClass(this);
@@ -113,23 +114,22 @@ void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
 
 MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which)
 {
-    Logger main_window_event_logger = LogManager::getLogger("algorithm.windows.MainWindow");
     switch (which)
     {
     case Event::LBUTTON_DOWN:
-        main_window_event_logger.log("Event.LBUTTON_DOWN is triggered!");
+        class_logger.log("Event.LBUTTON_DOWN is triggered!");
         return &l_button_down_callback_container_;
     case Event::LBUTTON_UP:
-        main_window_event_logger.log("Event.LBUTTON_UP is triggered!");
+        class_logger.log("Event.LBUTTON_UP is triggered!");
         return &l_button_up_callback_container_;
     case Event::SIZE:
-        main_window_event_logger.log("Event.SIZE is triggered!");
+        class_logger.log("Event.SIZE is triggered!");
         return &resize_callback_container_;
     case Event::PAINT:
-        main_window_event_logger.log("Event.PAINT is triggered!");
+        class_logger.log("Event.PAINT is triggered!");
         return &paint_callback_container_;
     case Event::COMMAND:
-        main_window_event_logger.log("Event.COMMAND is triggered!");
+        class_logger.log("Event.COMMAND is triggered!");
         return &command_callback_container_;
     }
     assert(false); //should never be here
@@ -152,4 +152,9 @@ void MainWindow::unbind(Event which, Callback call_back)
 {
     CallbackContainer* container_of_which = getCallbackContainer(which);
     container_of_which->erase(std::remove(container_of_which->begin(), container_of_which->end(), call_back), container_of_which->end());
+}
+
+void MainWindow::unbind(Event which)
+{
+    getCallbackContainer(which)->clear();
 }

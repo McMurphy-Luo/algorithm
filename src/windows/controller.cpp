@@ -3,83 +3,90 @@
 #include <thread>
 #include <cinttypes>
 #include "common/log_manager.h"
-#include "common/logger.h"
 #include "./render/tree_render.h"
 
-namespace algorithm {
-    namespace windows {
-        namespace detail {
-            int string_comparator(const std::string& lhs, const std::string& rhs)
-            {
-                if (lhs < rhs)
-                {
-                    return -1;
-                }
-                if (lhs > rhs)
-                {
-                    return 1;
-                }
-                return 0;
-            }
-        }
+using algorithm::common::LogManager;
+using algorithm::windows::MainWindow;
+using algorithm::windows::Controller;
+
+int algorithm::windows::detail::string_comparator(const std::string& lhs, const std::string& rhs)
+{
+    if (lhs < rhs)
+    {
+        return -1;
     }
+    if (lhs > rhs)
+    {
+        return 1;
+    }
+    return 0;
 }
 
-using namespace algorithm::windows;
-using algorithm::common::Logger;
-using algorithm::common::LogManager;
-
 Controller::Controller(MainWindow *main_window):
-main_window_(main_window),
-resize_callback_(
-    std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-        std::bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
-            {
-                controller->setNeedResize(true);
-                return 0;
-            },
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2
+    class_logger(LogManager::getLogger("algorithm.windows.Controller")),
+    main_window_(main_window),
+    resize_callback_(
+        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
+            std::bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
+                {
+                    controller->setNeedResize(true);
+                    return 0;
+                },
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2
+            )
         )
-    )
-),
-paint_callback_(
-    std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-        std::bind(
-            std::mem_fn(&Controller::render),
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2
+    ),
+    paint_callback_(
+        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
+            std::bind(
+                std::mem_fn(&Controller::render),
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2
+            )
         )
-    )
-),
-command_callback_(
-    std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-        std::bind(
-            std::mem_fn(&Controller::onCommand),
-            this,
-            std::placeholders::_1,
-            std::placeholders::_2
+    ),
+    command_callback_(
+        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
+            std::bind(
+                std::mem_fn(&Controller::onCommand),
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2
+            )
         )
-    )
-),
-need_resize_(true),
-the_tree_(RBTree<std::string, std::string, detail::string_comparator>()),
-tree_render_(),
-button_(CreateWindow(
-    L"BUTTON",
-    L"OK",
-    WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-    10,
-    10,
-    70,
-    40,
-    main_window->getWindowHandler(),
-    nullptr,
-    main_window->getAppHandler(),
-    nullptr
-))
+    ),
+    need_resize_(true),
+    the_tree_(RBTree<std::string, std::string, detail::string_comparator>()),
+    tree_render_(),
+    button_(CreateWindow(
+        L"BUTTON",
+        L"OK",
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        10,
+        10,
+        70,
+        40,
+        main_window->getWindowHandler(),
+        nullptr,
+        main_window->getAppHandler(),
+        nullptr
+    )),
+    input_(CreateWindow(
+        L"EDIT",
+        L"EDIT",
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD,
+        100,
+        100,
+        100,
+        100,
+        main_window->getWindowHandler(),
+        nullptr,
+        main_window->getAppHandler(),
+        nullptr
+    ))
 {
     HRESULT result = CoInitialize(NULL);
     assert(result == S_OK);
@@ -121,13 +128,14 @@ Controller::~Controller()
     main_window_->unbind(Event::COMMAND, command_callback_);
     main_window_->unbind(Event::PAINT, paint_callback_);
     DestroyWindow(button_);
-    if (factory_)
-    {
-        factory_->Release();
-    }
+    DestroyWindow(input_);
     if (render_target_)
     {
         render_target_->Release();
+    }
+    if (factory_)
+    {
+        factory_->Release();
     }
     CoUninitialize();
 }
@@ -135,11 +143,10 @@ Controller::~Controller()
 LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 {
     HRESULT result;
-    ID2D1RenderTarget* render_target = this->getRenderTarget();
-    render_target->BeginDraw();
-    render_target->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
+    render_target_->BeginDraw();
+    render_target_->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
     tree_render_.render(render_target_, the_tree_.getRootNode());
-    result = render_target->EndDraw();
+    result = render_target_->EndDraw();
     assert(result == S_OK);
     if (need_resize_)
     {
@@ -155,8 +162,7 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 
 LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
 {
-    Logger controller_logger = LogManager::getLogger("algorithm.windows.Controller");
-    controller_logger.log("w_param is %" PRIu64 ".", w_param);
+    class_logger.log("w_param is %" PRIu64 ".", w_param);
     if (HIWORD(w_param) == BN_CLICKED) {
         MessageBox(main_window_->getWindowHandler(), L"Btn clicked", L"Btn clicked", 0);
     }
