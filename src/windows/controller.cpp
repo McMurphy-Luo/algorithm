@@ -2,10 +2,14 @@
 #include <cassert>
 #include <thread>
 #include <cinttypes>
+#include <string>
+#include "common/string_util.h"
 #include "common/log_manager.h"
 #include "./render/tree_render.h"
 
+using std::wstring;
 using algorithm::common::LogManager;
+using algorithm::common::wStringToU8String;
 using algorithm::windows::MainWindow;
 using algorithm::windows::Controller;
 
@@ -61,7 +65,8 @@ Controller::Controller(MainWindow *main_window):
     need_resize_(true),
     the_tree_(RBTree<std::string, std::string, detail::string_comparator>()),
     tree_render_(),
-    button_(CreateWindow(
+    button_(CreateWindowExW(
+        0,
         L"BUTTON",
         L"OK",
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
@@ -74,10 +79,11 @@ Controller::Controller(MainWindow *main_window):
         main_window->getAppHandler(),
         nullptr
     )),
-    input_(CreateWindow(
+    input_(CreateWindowExW(
+        0,
         L"EDIT",
-        L"EDIT",
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD,
+        L"罗",
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER,
         100,
         100,
         100,
@@ -105,21 +111,6 @@ Controller::Controller(MainWindow *main_window):
     main_window->bind(Event::SIZE, resize_callback_);
     main_window->bind(Event::COMMAND, command_callback_);
     main_window->bind(Event::PAINT, paint_callback_);
-    the_tree_.put(u8"1", u8"1");
-    the_tree_.put(u8"2", u8"2");
-    the_tree_.put(u8"3", u8"3");
-    the_tree_.put(u8"4", u8"4");
-    the_tree_.put(u8"5", u8"5");
-    the_tree_.put(u8"6", u8"6");
-    the_tree_.put(u8"7", u8"7");
-    the_tree_.put(u8"8", u8"8");
-    the_tree_.put(u8"9", u8"9");
-    the_tree_.put(u8"10", u8"10");
-    the_tree_.put(u8"11", u8"11");
-    the_tree_.put(u8"12", u8"12");
-    the_tree_.put(u8"13", u8"13");
-    the_tree_.put(u8"14", u8"14");
-    the_tree_.put(u8"15", u8"15");
 }
 
 Controller::~Controller()
@@ -162,9 +153,14 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 
 LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
 {
-    class_logger.log("w_param is %" PRIu64 ".", w_param);
     if (HIWORD(w_param) == BN_CLICKED) {
-        MessageBox(main_window_->getWindowHandler(), L"Btn clicked", L"Btn clicked", 0);
+        int input_text_length = GetWindowTextLengthW(input_);
+        wchar_t* buf = new wchar_t[input_text_length + 1];
+        GetWindowTextW(input_, buf, input_text_length + 1);
+        buf[input_text_length] = '\0';
+        the_tree_.put(wStringToU8String(wstring(buf)), wStringToU8String(wstring(buf)));
+        main_window_->update();
+        delete[] buf;
     }
     return 0;
 }

@@ -80,7 +80,7 @@ MainWindow::MainWindow(HINSTANCE app_handler):
     app_handler_(app_handler)
 {
     registerWindowClass(this);
-    window_handler_ = CreateWindowEx(
+    window_handler_ = CreateWindowExW(
         WS_EX_OVERLAPPEDWINDOW,
         window_name_.c_str(),
         window_name_.c_str(),

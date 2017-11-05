@@ -48,9 +48,13 @@ namespace algorithm
 
             RECT getSize() const;
 
-            void show() const { ShowWindow(window_handler_, SW_SHOW); UpdateWindow(window_handler_); }
+            void show() const { ShowWindow(window_handler_, SW_SHOW); update(); }
+
+            POINT getMouseOffset() const;
 
             void hide() const { ShowWindow(window_handler_, SW_HIDE); }
+
+            void update() const { UpdateWindow(window_handler_); }
 
             void trigger(Event whitch, WPARAM w_param, LPARAM l_param);
 

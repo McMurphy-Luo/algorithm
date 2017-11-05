@@ -1,4 +1,4 @@
-﻿#include "../config.h"
+#include "../config.h"
 #include "string_util.h"
 #include <cassert>
 #ifdef ALGORITHM_WINDOWS
@@ -26,7 +26,7 @@ namespace algorithm
 #endif
         }
 
-        std::string wstringToU8String(const std::wstring& wstring)
+        std::string wStringToU8String(const std::wstring& wstring)
         {
 #ifdef ALGORITHM_WINDOWS
             std::size_t char_buf_size_required = WideCharToMultiByte(CP_UTF8, 0, wstring.c_str(), -1, nullptr, 0, nullptr, nullptr);

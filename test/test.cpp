@@ -5,14 +5,17 @@
 #include <iostream>
 #include <cassert>
 #include <Windows.h>
-#include "common/buffer_util.h"
 
-using algorithm::common::dumpBufferAsHexString;
+using std::cout;
+using std::cin;
+using std::endl;
 
-int main(int argc, char* argv[]){
-    int a = -1;
-    std::cout << dumpBufferAsHexString(reinterpret_cast<char*>(&a), sizeof(a)) << std::endl;
-    double b = 2.0;
-    std::cout << dumpBufferAsHexString(reinterpret_cast<char*>(&b), sizeof(b)) << std::endl;
-    std::cin.get();
+int main(int argc, char* argv[]) {
+    wchar_t *test_string = L"b";
+    wchar_t *test_string2 = L"a";
+
+    cout << wcslen(test_string) << endl;
+    cout << wcslen(test_string2) << endl;
+
+    cin.get();
 }

@@ -38,7 +38,7 @@ namespace algorithm
             LRESULT render(WPARAM w_param, LPARAM l_param);
 
             LRESULT onCommand(WPARAM w_param, LPARAM l_param);
-        
+
         private:
             algorithm::common::Logger class_logger;
 
