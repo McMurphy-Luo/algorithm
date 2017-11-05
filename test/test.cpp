@@ -11,11 +11,11 @@ using std::cin;
 using std::endl;
 
 int main(int argc, char* argv[]) {
-    wchar_t *test_string = L"b";
-    wchar_t *test_string2 = L"a";
-
-    cout << wcslen(test_string) << endl;
-    cout << wcslen(test_string2) << endl;
+    cout << sizeof(int) << endl;
+    cout << sizeof(long) << endl;
+    cout << sizeof(long long) << endl;
+    cout << sizeof(float) << endl;
+    cout << sizeof(double) << endl;
 
     cin.get();
 }

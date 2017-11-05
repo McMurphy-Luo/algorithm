@@ -19,26 +19,26 @@ namespace //unamed namespace start for this file static staff
             {
             CREATESTRUCT* p_create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
             MainWindow* p_created_wnd = reinterpret_cast<MainWindow*>(p_create_struct->lpCreateParams);
-            SetWindowLongPtr(h_wnd, GWLP_USERDATA, (LONG_PTR)p_created_wnd);
+            SetWindowLongPtrW(h_wnd, GWLP_USERDATA, (LONG_PTR)p_created_wnd);
             return 0;
             }
 
         case WM_LBUTTONDOWN:
-            reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_DOWN, w_param, l_param);
+            reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_DOWN, w_param, l_param);
             return 0;
 
         case WM_PAINT:
             BeginPaint(h_wnd, nullptr);
-            reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::PAINT, w_param, l_param);
+            reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::PAINT, w_param, l_param);
             EndPaint(h_wnd, nullptr);
             return 0;
 
         case WM_LBUTTONUP:
-            reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_UP, w_param, l_param);
+            reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_UP, w_param, l_param);
             return 0;
 
         case WM_SIZE:
-            reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::SIZE, w_param, l_param);
+            reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::SIZE, w_param, l_param);
             return 0;
 
         case WM_DESTROY:
@@ -46,10 +46,10 @@ namespace //unamed namespace start for this file static staff
             return 0;
 
         case WM_COMMAND:
-            reinterpret_cast<MainWindow*>(GetWindowLongPtr(h_wnd, GWLP_USERDATA))->trigger(Event::COMMAND, w_param, l_param);
+            reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::COMMAND, w_param, l_param);
             return 0;
         }
-        return DefWindowProc(h_wnd, msg, w_param, l_param);
+        return DefWindowProcW(h_wnd, msg, w_param, l_param);
     }
 
     void registerWindowClass(const MainWindow* main_window)
@@ -60,7 +60,7 @@ namespace //unamed namespace start for this file static staff
         window_class.hInstance = main_window->getAppHandler();
         window_class.hIcon = nullptr;
         window_class.style = 0;
-        window_class.hCursor = LoadCursor(nullptr, MAKEINTRESOURCE(32512));
+        window_class.hCursor = LoadCursorW(nullptr, MAKEINTRESOURCEW(32512));
         window_class.cbWndExtra = 0;
         window_class.hIcon = nullptr;
         window_class.hIconSm = nullptr;
@@ -69,7 +69,7 @@ namespace //unamed namespace start for this file static staff
         window_class.lpfnWndProc = windowProcedure;
         std::wstring class_name = main_window->getWindowName();
         window_class.lpszClassName = class_name.c_str();
-        RegisterClassEx(&window_class);
+        RegisterClassExW(&window_class);
     }
 }//unamed namespace end
 
@@ -157,4 +157,12 @@ void MainWindow::unbind(Event which, Callback call_back)
 void MainWindow::unbind(Event which)
 {
     getCallbackContainer(which)->clear();
+}
+
+POINT MainWindow::getMouseOffset() const
+{
+    POINT result;
+    result.x = 0;
+    result.y = 0;
+    return result;
 }

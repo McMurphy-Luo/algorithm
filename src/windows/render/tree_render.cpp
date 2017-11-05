@@ -147,7 +147,7 @@ void TreeRender::render_line(ID2D1RenderTarget* render_target, double x1, double
 void TreeRender::render_key(ID2D1RenderTarget* render_target, const node* current, double x, double y)
 {
     std::wstring node_text = u8StringToWString(current->key);
-    render_target->DrawText(
+    render_target->DrawTextW(
         node_text.c_str(),
         node_text.length(),
         text_format_,

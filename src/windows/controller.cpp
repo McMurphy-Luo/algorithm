@@ -82,7 +82,7 @@ Controller::Controller(MainWindow *main_window):
     input_(CreateWindowExW(
         0,
         L"EDIT",
-        L"罗",
+        L"",
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER,
         100,
         100,
@@ -157,7 +157,7 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         int input_text_length = GetWindowTextLengthW(input_);
         wchar_t* buf = new wchar_t[input_text_length + 1];
         GetWindowTextW(input_, buf, input_text_length + 1);
-        buf[input_text_length] = '\0';
+        buf[input_text_length] = 0;
         the_tree_.put(wStringToU8String(wstring(buf)), wStringToU8String(wstring(buf)));
         main_window_->update();
         delete[] buf;

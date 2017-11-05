@@ -34,27 +34,27 @@ namespace algorithm
         public:
             MainWindow(HINSTANCE app_handler);
 
-            MainWindow(const MainWindow&) = delete;
+            MainWindow(const MainWindow&) = delete; // forbid copy
 
-            MainWindow& operator=(MainWindow& rhs) = delete;
+            MainWindow& operator=(MainWindow& rhs) = delete; // forbid assign
 
             ~MainWindow();
 
-            std::wstring getWindowName() const { return window_name_; }
+            std::wstring getWindowName() const { return window_name_; } // inline
 
-            HWND getWindowHandler() const { return window_handler_; }
+            HWND getWindowHandler() const { return window_handler_; } // inline
 
-            HINSTANCE getAppHandler() const { return app_handler_; }
+            HINSTANCE getAppHandler() const { return app_handler_; } // inline
 
             RECT getSize() const;
 
-            void show() const { ShowWindow(window_handler_, SW_SHOW); update(); }
+            void show() const { ShowWindow(window_handler_, SW_SHOW); update(); } // inline
 
             POINT getMouseOffset() const;
 
-            void hide() const { ShowWindow(window_handler_, SW_HIDE); }
+            void hide() const { ShowWindow(window_handler_, SW_HIDE); } // inline
 
-            void update() const { UpdateWindow(window_handler_); }
+            void update() const { UpdateWindow(window_handler_); } // inline
 
             void trigger(Event whitch, WPARAM w_param, LPARAM l_param);
 
