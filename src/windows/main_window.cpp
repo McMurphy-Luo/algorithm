@@ -16,12 +16,10 @@ namespace //unamed namespace start for this file static staff
         switch(msg)
         {
         case WM_CREATE:
-            {
             CREATESTRUCT* p_create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
             MainWindow* p_created_wnd = reinterpret_cast<MainWindow*>(p_create_struct->lpCreateParams);
             SetWindowLongPtrW(h_wnd, GWLP_USERDATA, (LONG_PTR)p_created_wnd);
             return 0;
-            }
 
         case WM_LBUTTONDOWN:
             reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_DOWN, w_param, l_param);
@@ -31,6 +29,10 @@ namespace //unamed namespace start for this file static staff
             BeginPaint(h_wnd, nullptr);
             reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::PAINT, w_param, l_param);
             EndPaint(h_wnd, nullptr);
+            return 0;
+
+        case WM_MOUSEMOVE:
+            reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::MOUSE_MOVE, w_param, l_param);
             return 0;
 
         case WM_LBUTTONUP:
@@ -131,6 +133,9 @@ MainWindow::CallbackContainer* MainWindow::getCallbackContainer(Event which)
     case Event::COMMAND:
         class_logger.log("Event.COMMAND is triggered!");
         return &command_callback_container_;
+    case Event::MOUSE_MOVE:
+        class_logger.log("Event.MOUSE_MOVE is triggerd!");
+        return &mouse_move_callback_container_;
     }
     assert(false); //should never be here
     return nullptr;

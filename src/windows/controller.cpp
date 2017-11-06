@@ -159,7 +159,7 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         GetWindowTextW(input_, buf, input_text_length + 1);
         buf[input_text_length] = 0;
         the_tree_.put(wStringToU8String(wstring(buf)), wStringToU8String(wstring(buf)));
-        main_window_->update();
+        render(w_param, l_param);
         delete[] buf;
     }
     return 0;

@@ -11,11 +11,6 @@ using std::cin;
 using std::endl;
 
 int main(int argc, char* argv[]) {
-    cout << sizeof(int) << endl;
-    cout << sizeof(long) << endl;
-    cout << sizeof(long long) << endl;
-    cout << sizeof(float) << endl;
-    cout << sizeof(double) << endl;
 
     cin.get();
 }

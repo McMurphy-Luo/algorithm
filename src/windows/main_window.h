@@ -18,7 +18,8 @@ namespace algorithm
             LBUTTON_UP,
             SIZE,
             PAINT,
-            COMMAND
+            COMMAND,
+            MOUSE_MOVE
         };
 
         class MainWindow
@@ -70,21 +71,23 @@ namespace algorithm
         private:
             algorithm::common::Logger class_logger;
 
+            std::wstring window_name_;
+
+            HINSTANCE app_handler_;
+
+            HWND window_handler_;
+
             CallbackContainer l_button_down_callback_container_;
 
             CallbackContainer l_button_up_callback_container_;
+
+            CallbackContainer mouse_move_callback_container_;
 
             CallbackContainer resize_callback_container_;
 
             CallbackContainer paint_callback_container_;
 
             CallbackContainer command_callback_container_;
-
-            std::wstring window_name_;
-
-            HWND window_handler_;
-
-            HINSTANCE app_handler_;
         };
     }
 }
