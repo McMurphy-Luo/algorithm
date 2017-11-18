@@ -1,9 +1,9 @@
-#include "tree_node.h"
+#include "circle.h"
 #include <cmath>
 
-using algorithm::windows::TreeNode;
+using algorithm::windows::Circle;
 
-bool TreeNode::containsPoint(double x, double y)
+bool Circle::containsPoint(double x, double y)
 {
     double top = getTop();
     double left = getLeft();

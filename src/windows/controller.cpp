@@ -3,11 +3,16 @@
 #include <thread>
 #include <cinttypes>
 #include <string>
-#include "common/string_util.h"
-#include "common/log_manager.h"
-#include "./render/tree_render.h"
+#include <memory>
+#include <common/string_util.h>
+#include <common/log_manager.h>
+#include "./render/color.h"
+#include "./render/text.h"
 
 using std::wstring;
+using std::string;
+using std::make_shared;
+using std::shared_ptr;
 using algorithm::common::LogManager;
 using algorithm::common::wStringToU8String;
 using algorithm::windows::MainWindow;
@@ -63,8 +68,8 @@ Controller::Controller(MainWindow *main_window):
         )
     ),
     need_resize_(true),
-    the_tree_(RBTree<std::string, std::string, detail::string_comparator>()),
-    tree_render_(),
+    main_scene_(),
+    the_tree_(),
     button_(CreateWindowExW(
         0,
         L"BUTTON",
@@ -136,7 +141,6 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
     HRESULT result;
     render_target_->BeginDraw();
     render_target_->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
-    tree_render_.render(render_target_, the_tree_.getRootNode());
     result = render_target_->EndDraw();
     assert(result == S_OK);
     if (need_resize_)
@@ -163,4 +167,29 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         delete[] buf;
     }
     return 0;
+}
+
+void Controller::createRenderObjects()
+{
+    const TreeNode<string, string> *root_node = the_tree_.getRootNode();
+    if (!root_node) {
+        return;
+    }
+    Color black(0, 0, 0);
+    Color red(255, 0, 0);
+    Color node_color(0, 0, 0);
+    if (NodeColor::black == root_node->color) {
+        node_color = black;
+    } else if (NodeColor::red == root_node->color) {
+        node_color = red;
+    }
+    RECT scene_size = main_window_->getSize();
+    double circle_radius = 5;
+    double circle_x = (scene_size.right - scene_size.left) / 2 - circle_radius;
+    double circle_y = circle_radius;
+    shared_ptr<Circle> tree_node = make_shared<Circle>(5, node_color, node_color, circle_x, circle_y, main_scene_);
+    main_scene_->appendChild(tree_node);
+    shared_ptr<Text> node_text = make_shared<Text>(root_node->value, 0, 0, tree_node);
+
+    
 }

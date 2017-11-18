@@ -2,8 +2,8 @@
 #include <cassert>
 #include <algorithm>
 #include <Windows.h>
-#include "common/log_manager.h"
-#include "common/logger.h"
+#include <common/log_manager.h>
+#include <common/logger.h>
 
 using algorithm::windows::MainWindow;
 using algorithm::windows::Event;

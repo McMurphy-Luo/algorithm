@@ -20,8 +20,8 @@ list(APPEND common_source
 
 list(APPEND windows_source
         ${source_dir}/windows/render.manifest
-        ${source_dir}/windows/render/tree_render.cpp
-        ${source_dir}/windows/render/tree_node.cpp
+        ${source_dir}/windows/render/graphics_base.cpp
+        ${source_dir}/windows/render/circle.cpp
         ${source_dir}/windows/controller.cpp
         ${source_dir}/windows/main_window.cpp
         ${source_dir}/windows/win_main.cpp)

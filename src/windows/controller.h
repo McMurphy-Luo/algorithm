@@ -3,10 +3,11 @@
 
 #include <string>
 #include <d2d1_1.h>
-#include "main_window.h"
-#include "render/tree_render.h"
-#include "common/logger.h"
-#include "data_structure/rb_tree.h"
+#include <data_structure/rb_tree.h>
+#include <common/logger.h>
+#include "./main_window.h"
+#include "./scene.h"
+#include "./render/circle.h"
 
 namespace algorithm
 {
@@ -39,6 +40,8 @@ namespace algorithm
 
             LRESULT onCommand(WPARAM w_param, LPARAM l_param);
 
+            void createRenderObjects();
+
         private:
             algorithm::common::Logger class_logger;
 
@@ -52,15 +55,17 @@ namespace algorithm
 
             bool need_resize_;
 
+            std::shared_ptr<Scene> main_scene_;
+
             RBTree<std::string, std::string, detail::string_comparator> the_tree_;
-
-            ID2D1Factory* factory_;
-
-            ID2D1HwndRenderTarget* render_target_;
 
             HWND button_;
 
             HWND input_;
+
+            ID2D1Factory* factory_;
+
+            ID2D1HwndRenderTarget* render_target_;
         };
     }
 };

@@ -57,6 +57,14 @@ namespace algorithm
 
             std::weak_ptr<GraphicsBase> getParent() { return parent_; }
 
+            void appendChild(std::shared_ptr<GraphicsBase> child) { children_.push_back(child); }
+
+            void removeChild(std::shared_ptr<GraphicsBase> child);
+
+            void clearChild() { children_.clear(); }
+
+            bool hasChild() { return children_.size() == 0; }
+
             virtual bool containsPoint(double x, double y) = 0;
 
         private:

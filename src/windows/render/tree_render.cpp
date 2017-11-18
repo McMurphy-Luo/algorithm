@@ -1,7 +1,7 @@
 #include "tree_render.h"
 #include <cassert>
 #include <dwrite.h>
-#include "common/string_util.h"
+#include <common/string_util.h>
 
 using namespace algorithm::windows;
 using namespace algorithm::common;

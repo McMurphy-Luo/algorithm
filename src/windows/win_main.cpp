@@ -1,8 +1,8 @@
 #include <string>
 #include <memory>
 #include <Windows.h>
-#include "common/log_manager.h"
-#include "common/logger.h"
+#include <common/log_manager.h>
+#include <common/logger.h>
 #include "main_window.h"
 #include "controller.h"
 
