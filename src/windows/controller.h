@@ -6,8 +6,8 @@
 #include <data_structure/rb_tree.h>
 #include <common/logger.h>
 #include "./main_window.h"
-#include "./scene.h"
-#include "./render/circle.h"
+#include "./graphics/scene.h"
+#include "./graphics/circle.h"
 
 namespace algorithm
 {

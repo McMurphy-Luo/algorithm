@@ -71,6 +71,8 @@ namespace algorithm
 
             bool hasChild() const { return children_.size() == 0; }
 
+            GraphicsContainer getChildren() { return children_; }
+
             virtual bool containsPoint(double x, double y) = 0;
 
         private:

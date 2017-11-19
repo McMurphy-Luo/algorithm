@@ -6,8 +6,8 @@
 #include <memory>
 #include <common/string_util.h>
 #include <common/log_manager.h>
-#include "./render/color.h"
-#include "./render/text.h"
+#include "./graphics/color.h"
+#include "./graphics/text.h"
 
 using std::wstring;
 using std::string;
@@ -145,6 +145,20 @@ void Controller::preRender(WPARAM w_param, LPARAM l_param)
 LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 {
     preRender(w_param, l_param);
+
+    GraphicsContainer all_graphics = main_scene_->getChildren();
+
+    /*
+    for (const shared_ptr<GraphicsBase> graphics : all_graphics) {
+        Graphics graphics_type = graphics->getType();
+
+        switch (graphics_type)
+        {
+        case Graphics::circle:
+            
+        }
+    }
+    */
 
     
 
