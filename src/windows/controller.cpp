@@ -136,11 +136,24 @@ Controller::~Controller()
     CoUninitialize();
 }
 
-LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
+void Controller::preRender(WPARAM w_param, LPARAM l_param)
 {
-    HRESULT result;
     render_target_->BeginDraw();
     render_target_->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
+}
+
+LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
+{
+    preRender(w_param, l_param);
+
+    
+
+    return postRender(w_param, l_param);
+}
+
+LRESULT Controller::postRender(WPARAM w_param, LPARAM l_param)
+{
+    HRESULT result;
     result = render_target_->EndDraw();
     assert(result == S_OK);
     if (need_resize_)
@@ -152,7 +165,7 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
         result = render_target_->Resize(client_size);
         assert(result == S_OK);
     }
-    return 0;
+    return result;
 }
 
 LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)

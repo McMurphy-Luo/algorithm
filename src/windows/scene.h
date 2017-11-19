@@ -11,7 +11,7 @@ namespace algorithm
         {
         public:
             Scene() :
-                GraphicsBase(0, 0, nullptr)
+                GraphicsBase(Graphics::scene, 0, 0)
             {
                 /* do nothing */
             }

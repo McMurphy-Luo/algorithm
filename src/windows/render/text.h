@@ -13,8 +13,8 @@ namespace algorithm
         class Text : public GraphicsBase
         {
         public:
-            Text(std::string content, double x, double y, std::shared_ptr<GraphicsBase> parent) :
-                GraphicsBase(x, y, parent),
+            Text(std::string content, double x, double y):
+                GraphicsBase(Graphics::text, x, y),
                 content_(content),
                 font_color_(Color(0, 0, 0))
             {

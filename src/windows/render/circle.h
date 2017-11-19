@@ -11,8 +11,8 @@ namespace algorithm
         class Circle : public GraphicsBase
         {
         public:
-            Circle(double radius, Color background_color, Color border_color, double top, double left, std::shared_ptr<GraphicsBase> parent):
-                GraphicsBase(top, left, parent),
+            Circle(double radius, Color background_color, Color border_color, double top, double left):
+                GraphicsBase(Graphics::circle, top, left),
                 background_color_(background_color),
                 border_color_(border_color),
                 radius_(radius)
@@ -20,20 +20,14 @@ namespace algorithm
                 /* do nothing */
             }
 
-            Circle(double radius, double top, double left, std::shared_ptr<GraphicsBase> parent):
-                Circle(radius, Color(0, 0, 0), Color(0, 0, 0), top, left, parent)
-            {
-                /* do nothing */
-            }
-
-            Circle(double radius, std::shared_ptr<GraphicsBase> parent):
-                Circle(radius, Color(0, 0, 0), Color(0, 0, 0), 0, 0, parent)
+            Circle(double radius, double top, double left):
+                Circle(radius, Color(255, 255, 255), Color(255, 0, 0), top, left)
             {
                 /* do nothing */
             }
 
             Circle(double radius):
-                Circle(radius, Color(0, 0, 0), Color(0, 0, 0), 0, 0, nullptr)
+                Circle(radius, Color(255, 255, 255), Color(255, 0, 0), 0, 0)
             {
                 /* do nothing */
             }
