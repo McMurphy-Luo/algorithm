@@ -68,7 +68,7 @@ Controller::Controller(MainWindow *main_window):
         )
     ),
     need_resize_(true),
-    main_scene_(),
+    main_scene_(make_shared<Scene>()),
     the_tree_(),
     button_(CreateWindowExW(
         0,
@@ -214,8 +214,8 @@ void Controller::createRenderObjects()
     double circle_radius = 5;
     double circle_x = (scene_size.right - scene_size.left) / 2 - circle_radius;
     double circle_y = circle_radius;
-    shared_ptr<Circle> tree_node = make_shared<Circle>(5, node_color, node_color, circle_x, circle_y, main_scene_);
+    shared_ptr<Circle> tree_node = make_shared<Circle>(5, node_color, node_color, circle_x, circle_y);
     main_scene_->appendChild(tree_node);
-    shared_ptr<Text> node_text = make_shared<Text>(root_node->value, 0, 0, tree_node);
+    shared_ptr<Text> node_text = make_shared<Text>(root_node->value, 0, 0);
     tree_node->appendChild(node_text);
 }

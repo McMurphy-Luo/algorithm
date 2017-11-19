@@ -31,7 +31,7 @@ namespace algorithm
                 type_(type),
                 top_(top),
                 left_(left),
-                parent_(shared_ptr<GraphicsBase>(nullptr)),
+                parent_(std::shared_ptr<GraphicsBase>()),
                 children_()
             {
                 /* do nothing */

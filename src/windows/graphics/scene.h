@@ -1,7 +1,7 @@
 #ifndef ALGORITHM_WINDOWS_SCENE_H
 #define ALGORITHM_WINDOWS_SCENE_H
 
-#include "./render/graphics_base.h"
+#include "./graphics_base.h"
 
 namespace algorithm
 {
