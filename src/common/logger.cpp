@@ -2,31 +2,33 @@
 #include <cstdarg>
 #include "log_manager.h"
 
+using std::string;
 using algorithm::common::Logger;
 using algorithm::common::LogManager;
+using algorithm::common::LogLevel;
 
 namespace {
-    std::string buildStringFromVariadicArguments(const char *format_str, va_list vlist)
+    string buildStringFromVariadicArguments(const char *format_str, va_list vlist)
     {
         char buf[BUFSIZ];
         vsnprintf_s(buf, BUFSIZ, format_str, vlist);
-        return std::string(buf);
+        return string(buf);
     }
 }
 
-Logger::Logger(const std::string &name, LogManager *log_manager):
+Logger::Logger(const string &name, LogManager *log_manager):
 name_(name),
 log_manager_(log_manager)
 {
 
 }
 
-void Logger::write(const LogLevel level, const std::string &what)
+void Logger::write(const LogLevel level, const string &what)
 {
     log_manager_->write(name_, level, what);
 }
 
-void Logger::debug(const std::string &what)
+void Logger::debug(const string &what)
 {
     write(LogLevel::debug, what);
 }
@@ -39,7 +41,7 @@ void Logger::debug(const char *format_str, ...)
     va_end(args);
 }
 
-void Logger::log(const std::string &what)
+void Logger::log(const string &what)
 {
     write(LogLevel::debug, what);
 }
@@ -52,7 +54,7 @@ void Logger::log(const char *format_str, ...)
     va_end(args);
 }
 
-void Logger::info(const std::string &what)
+void Logger::info(const string &what)
 {
     write(LogLevel::info, what);
 }
@@ -65,7 +67,7 @@ void Logger::info(const char *format_str, ...)
     va_end(args);
 }
 
-void Logger::warn(const std::string &what)
+void Logger::warn(const string &what)
 {
     write(LogLevel::warn, what);
 }
@@ -78,7 +80,7 @@ void Logger::warn(const char *format_str, ...)
     va_end(args);
 }
 
-void Logger::error(const std::string &what)
+void Logger::error(const string &what)
 {
     write(LogLevel::error, what);
 }

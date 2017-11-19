@@ -25,6 +25,8 @@ namespace algorithm
 
             Color getColor() { return font_color_; }
 
+            bool containsPoint(double x, double y) { return false; }
+
         private:
             Color font_color_;
             std::string content_;

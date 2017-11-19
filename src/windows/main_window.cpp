@@ -16,11 +16,12 @@ namespace //unamed namespace start for this file static staff
         switch(msg)
         {
         case WM_CREATE:
-            CREATESTRUCT* p_create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
-            MainWindow* p_created_wnd = reinterpret_cast<MainWindow*>(p_create_struct->lpCreateParams);
-            SetWindowLongPtrW(h_wnd, GWLP_USERDATA, (LONG_PTR)p_created_wnd);
-            return 0;
-
+            {
+                CREATESTRUCT* p_create_struct = reinterpret_cast<CREATESTRUCT*>(l_param);
+                MainWindow* p_created_wnd = reinterpret_cast<MainWindow*>(p_create_struct->lpCreateParams);
+                SetWindowLongPtrW(h_wnd, GWLP_USERDATA, (LONG_PTR)p_created_wnd);
+                return 0;
+            }
         case WM_LBUTTONDOWN:
             reinterpret_cast<MainWindow*>(GetWindowLongPtrW(h_wnd, GWLP_USERDATA))->trigger(Event::LBUTTON_DOWN, w_param, l_param);
             return 0;

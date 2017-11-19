@@ -190,6 +190,5 @@ void Controller::createRenderObjects()
     shared_ptr<Circle> tree_node = make_shared<Circle>(5, node_color, node_color, circle_x, circle_y, main_scene_);
     main_scene_->appendChild(tree_node);
     shared_ptr<Text> node_text = make_shared<Text>(root_node->value, 0, 0, tree_node);
-
-    
+    tree_node->appendChild(node_text);
 }

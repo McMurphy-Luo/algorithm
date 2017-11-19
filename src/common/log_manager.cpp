@@ -2,8 +2,13 @@
 #include <algorithm>
 #include "logger.h"
 
+using std::string;
 using algorithm::common::LogManager;
 using algorithm::common::Logger;
+using algorithm::common::Filter;
+using algorithm::common::Receiver;
+using algorithm::common::Appender;
+using algorithm::common::LogLevel;
 
 LogManager* LogManager::instance_ = nullptr;
 
@@ -72,7 +77,7 @@ ensure_line_ending_(false)
     
 }
 
-void LogManager::write(const std::string &from, LogLevel level, const std::string &content)
+void LogManager::write(const string &from, LogLevel level, const string &content)
 {
     if (!instance_)
     {
@@ -86,7 +91,7 @@ void LogManager::write(const std::string &from, LogLevel level, const std::strin
         }
     }
 
-    std::string copy_of_raw_log;
+    string copy_of_raw_log;
     copy_of_raw_log = content;
     if (ensure_line_ending_) {
         if (content.back() != '\n' && content.back() != '\r') {
