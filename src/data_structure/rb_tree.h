@@ -1,4 +1,4 @@
-﻿//
+//
 // Created by luojiayi on 5/18/17.
 //
 
@@ -6,7 +6,7 @@
 #define ALGORITHM_DATA_STRUCTURE_RB_TREE_H
 
 #include <cassert>
-#include "tree_node.h"
+#include "./tree_node.h"
 
 namespace algorithm
 {

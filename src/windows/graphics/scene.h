@@ -4,6 +4,7 @@
 #include <memory>
 #include <d2d1_1.h>
 #include "./graphics_base.h"
+#include "./color.h"
 
 namespace algorithm
 {
@@ -13,18 +14,22 @@ namespace algorithm
         {
         public:
             Scene():
-                GraphicsBase(Graphics::scene, 0, 0)
+                GraphicsBase(Graphics::scene, 0, 0),
+                background_color_(135, 206, 235)
             {
                 /* do nothing */
             }
+
+            virtual ~Scene();
 
             void render(ID2D1Factory *factory, ID2D1RenderTarget *render_target);
 
             virtual bool containsPoint(double x, double y) override { return true; }
 
-            void createD2D1Resource(ID2D1Factory *factory);
+            void createD2D1Resource(ID2D1Factory *factory, ID2D1RenderTarget *render_target);
 
         private:
+            Color background_color_;
             IDWriteFactory *write_factory_;
             IDWriteTextFormat *text_format_;
         };

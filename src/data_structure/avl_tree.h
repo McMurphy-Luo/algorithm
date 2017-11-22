@@ -6,7 +6,7 @@
 #define ALGORITHM_DATA_STRUCTURE_AVL_TREE_H
 
 #include <cassert>
-#include "tree_node.h"
+#include "./tree_node.h"
 
 namespace algorithm{
     /*

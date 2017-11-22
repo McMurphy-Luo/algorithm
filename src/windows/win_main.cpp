@@ -3,8 +3,8 @@
 #include <Windows.h>
 #include <common/log_manager.h>
 #include <common/logger.h>
-#include "main_window.h"
-#include "controller.h"
+#include "./main_window.h"
+#include "./controller.h"
 
 using algorithm::common::Filter;
 using algorithm::common::LogManager;

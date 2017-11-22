@@ -1,6 +1,6 @@
-#include "logger.h"
+#include "./logger.h"
 #include <cstdarg>
-#include "log_manager.h"
+#include "./log_manager.h"
 
 using std::string;
 using algorithm::common::Logger;

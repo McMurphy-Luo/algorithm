@@ -1,5 +1,5 @@
 #include "../config.h"
-#include "string_util.h"
+#include "./string_util.h"
 #include <cassert>
 #ifdef ALGORITHM_WINDOWS
 #include <Windows.h>

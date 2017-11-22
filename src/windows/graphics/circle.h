@@ -38,6 +38,10 @@ namespace algorithm
 
             virtual ~Circle() = default;
 
+            double getRadius() const { return radius_; }
+
+            void setRadius(double value) { radius_ = value; }
+
             Color getBorderColor() const { return border_color_; }
 
             Color getBackgroundColor() const { return background_color_; }
