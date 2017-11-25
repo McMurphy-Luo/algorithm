@@ -1,6 +1,8 @@
 #ifndef ALGORITHM_WINDOWS_COLOR_H
 #define ALGORITHM_WINDOWS_COLOR_H
 
+#include <cassert>
+
 namespace algorithm
 {
     namespace windows
@@ -21,7 +23,7 @@ namespace algorithm
                 red_(red),
                 green_(green),
                 blue_(blue),
-                alpha_(1)
+                alpha_(100)
             {
                 /* do nothing */
             }
@@ -32,17 +34,21 @@ namespace algorithm
 
             ~Color() = default;
 
-            int getRed() { return red_; }
+            int getRed() const { return red_; }
 
-            int getGreen() { return green_; }
+            int getGreen() const { return green_; }
 
-            int getBlue() { return blue_; }
+            int getBlue() const { return blue_; }
 
-            void setRed(int value) { red_ = value; }
+            int getAlpha() const { return alpha_; }
 
-            void setGreen(int value) { green_ = value; }
+            void setRed(int value) { assert(value >= 0 && value <= 255); red_ = value; }
 
-            void setBlue(int value) { blue_ = value; }
+            void setGreen(int value) { assert(value >= 0 && value <= 255); green_ = value; }
+
+            void setBlue(int value) { assert(value >= 0 && value <= 255); blue_ = value; }
+
+            void setAlpha(int value) { assert(value >= 0 && value <= 100); alpha_ = value; }
 
         private:
             int red_;

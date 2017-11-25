@@ -14,7 +14,7 @@ using algorithm::common::LogLevel;
 void registerDebugOutputLogAppender()
 {
     Filter log_filter = [](LogLevel log_level, const std::string &log_name) -> bool {
-        return true;
+        return log_name != "algorithm.windows.MainWindow";
     };
     Receiver log_receiver = 
         std::make_shared<std::function<void(const std::string& content)>>(

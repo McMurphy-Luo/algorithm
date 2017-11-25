@@ -21,13 +21,13 @@ namespace algorithm
             }
 
             Circle(double radius, double top, double left):
-                Circle(radius, Color(255, 255, 255), Color(255, 0, 0), top, left)
+                Circle(radius, Color(255, 255, 255), Color(0, 0, 0), top, left)
             {
                 /* do nothing */
             }
 
             Circle(double radius):
-                Circle(radius, Color(255, 255, 255), Color(255, 0, 0), 0, 0)
+                Circle(radius, Color(255, 255, 255), Color(0, 0, 0), 0, 0)
             {
                 /* do nothing */
             }

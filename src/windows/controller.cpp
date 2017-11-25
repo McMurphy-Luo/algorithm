@@ -116,6 +116,7 @@ Controller::Controller(MainWindow *main_window):
     main_window->bind(Event::SIZE, resize_callback_);
     main_window->bind(Event::COMMAND, command_callback_);
     main_window->bind(Event::PAINT, paint_callback_);
+    main_scene_->createD2D1Resource(factory_, render_target_);
 }
 
 Controller::~Controller()
@@ -139,28 +140,13 @@ Controller::~Controller()
 void Controller::preRender(WPARAM w_param, LPARAM l_param)
 {
     render_target_->BeginDraw();
-    render_target_->Clear(D2D1::ColorF(D2D1::ColorF::SkyBlue));
 }
 
 LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 {
     preRender(w_param, l_param);
 
-    GraphicsContainer all_graphics = main_scene_->getChildren();
-
-    /*
-    for (const shared_ptr<GraphicsBase> graphics : all_graphics) {
-        Graphics graphics_type = graphics->getType();
-
-        switch (graphics_type)
-        {
-        case Graphics::circle:
-            
-        }
-    }
-    */
-
-    
+    main_scene_->render(factory_, render_target_);
 
     return postRender(w_param, l_param);
 }

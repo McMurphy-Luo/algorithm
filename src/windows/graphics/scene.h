@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <d2d1_1.h>
+#include <common/log_manager.h>
+#include <common/logger.h>
 #include "./graphics_base.h"
 #include "./color.h"
 
@@ -15,6 +17,7 @@ namespace algorithm
         public:
             Scene():
                 GraphicsBase(Graphics::scene, 0, 0),
+                class_logger_(algorithm::common::LogManager::getLogger("algorithm.windows.Scene")),
                 background_color_(135, 206, 235)
             {
                 /* do nothing */
@@ -24,11 +27,16 @@ namespace algorithm
 
             void render(ID2D1Factory *factory, ID2D1RenderTarget *render_target);
 
+            Color getBackgroundColor() const { return background_color_; }
+
+            void setBackgroundColor(const Color& value) { background_color_ = value; }
+
             virtual bool containsPoint(double x, double y) override { return true; }
 
             void createD2D1Resource(ID2D1Factory *factory, ID2D1RenderTarget *render_target);
 
         private:
+            algorithm::common::Logger class_logger_;
             Color background_color_;
             IDWriteFactory *write_factory_;
             IDWriteTextFormat *text_format_;
