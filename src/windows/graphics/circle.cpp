@@ -1,3 +1,4 @@
+#include <common/macro.h> // config macro staff
 #include "./circle.h"
 #include <cmath>
 

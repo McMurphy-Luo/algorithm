@@ -1,3 +1,4 @@
+#include <common/macro.h> // config macro staff
 #include "./graphics_base.h"
 #include <algorithm>
 

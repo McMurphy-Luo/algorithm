@@ -1,3 +1,4 @@
+#include <common/macro.h> // config macro staff
 #include "./scene.h"
 #include <cassert>
 #include <memory>
@@ -34,15 +35,6 @@ namespace
         Point circle_top_left_point = circle->getAbsolutePosition();
         circle_center_point.x = circle_top_left_point.left + circle->getRadius();
         circle_center_point.y = circle_top_left_point.top + circle->getRadius();
-
-        logger.debug(
-            "Going to a circle, circle's x is %f, circle's y is %f. After calculation, its center point is %f,%f, its radius is %f.",
-            circle->getLeft(),
-            circle->getTop(),
-            circle_center_point.x,
-            circle_center_point.y,
-            circle->getRadius()
-        );
         D2D1_ELLIPSE d2d_ellipse = D2D1::Ellipse(circle_center_point, circle->getRadius(), circle->getRadius());
 
         ID2D1SolidColorBrush* background_brush = nullptr;

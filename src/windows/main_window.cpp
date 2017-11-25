@@ -1,3 +1,4 @@
+#include <common/macro.h> // config macro staff
 #include "./main_window.h"
 #include <cassert>
 #include <algorithm>

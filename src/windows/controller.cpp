@@ -1,3 +1,4 @@
+#include <common/macro.h> // config macro staff
 #include "./controller.h"
 #include <cassert>
 #include <thread>

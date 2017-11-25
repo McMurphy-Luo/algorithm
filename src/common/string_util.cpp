@@ -1,4 +1,4 @@
-#include "../config.h"
+#include "./macro.h" // config macro staff
 #include "./string_util.h"
 #include <cassert>
 #ifdef ALGORITHM_WINDOWS

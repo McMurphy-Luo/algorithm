@@ -1,3 +1,4 @@
+#include "./macro.h" // config macro staff
 #include "./log_manager.h"
 #include <algorithm>
 #include "./logger.h"

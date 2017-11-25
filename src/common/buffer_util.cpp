@@ -1,3 +1,4 @@
+#include "./macro.h" // config macro staff
 #include "./buffer_util.h"
 
 namespace {
