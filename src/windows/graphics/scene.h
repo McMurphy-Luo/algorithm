@@ -18,14 +18,16 @@ namespace algorithm
             Scene():
                 GraphicsBase(Graphics::scene, 0, 0),
                 class_logger_(algorithm::common::LogManager::getLogger("algorithm.windows.Scene")),
-                background_color_(135, 206, 235)
+                background_color_(135, 206, 235),
+                write_factory_(nullptr),
+                text_format_(nullptr)
             {
                 /* do nothing */
             }
 
             virtual ~Scene();
 
-            void render(ID2D1Factory *factory, ID2D1RenderTarget *render_target);
+            void render(ID2D1RenderTarget *render_target);
 
             Color getBackgroundColor() const { return background_color_; }
 
@@ -33,7 +35,8 @@ namespace algorithm
 
             virtual bool containsPoint(double x, double y) override { return true; }
 
-            void createD2D1Resource(ID2D1Factory *factory, ID2D1RenderTarget *render_target);
+        protected:
+            void createD2D1Resource();
 
         private:
             algorithm::common::Logger class_logger_;

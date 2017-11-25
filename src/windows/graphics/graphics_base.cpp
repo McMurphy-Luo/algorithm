@@ -22,13 +22,13 @@ void GraphicsBase::appendChild(std::shared_ptr<GraphicsBase> child)
 Point GraphicsBase::getAbsolutePosition() const
 {
     Point result;
-    result.x = left_;
-    result.y = top_;
+    result.left = left_;
+    result.top = top_;
     for (weak_ptr<GraphicsBase> ancestor = parent_; !ancestor.expired();)
     {
         shared_ptr<GraphicsBase> ancestor_pointer = ancestor.lock();
-        result.x += ancestor_pointer->left_;
-        result.y += ancestor_pointer->top_;
+        result.left += ancestor_pointer->left_;
+        result.top += ancestor_pointer->top_;
         ancestor = ancestor_pointer->parent_;
     }
     return result;

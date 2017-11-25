@@ -17,8 +17,8 @@ namespace algorithm
 
         struct Point
         {
-            double x;
-            double y;
+            double left;
+            double top;
         };
 
         class GraphicsBase;
@@ -67,7 +67,7 @@ namespace algorithm
 
             void removeChild(std::shared_ptr<GraphicsBase> child);
 
-            void clearChild() { children_.clear(); }
+            void clearChildren() { children_.clear(); }
 
             bool hasChild() const { return children_.size() == 0; }
 

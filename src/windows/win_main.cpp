@@ -41,6 +41,5 @@ int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR
     }
     delete the_controller;
     delete the_main_window;
-    
     return static_cast<int>(msg.wParam);
 }

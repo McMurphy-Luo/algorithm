@@ -97,7 +97,9 @@ Controller::Controller(MainWindow *main_window):
         nullptr,
         main_window->getAppHandler(),
         nullptr
-    ))
+    )),
+    factory_(nullptr),
+    render_target_(nullptr)
 {
     HRESULT result = CoInitialize(NULL);
     assert(result == S_OK);
@@ -116,7 +118,6 @@ Controller::Controller(MainWindow *main_window):
     main_window->bind(Event::SIZE, resize_callback_);
     main_window->bind(Event::COMMAND, command_callback_);
     main_window->bind(Event::PAINT, paint_callback_);
-    main_scene_->createD2D1Resource(factory_, render_target_);
 }
 
 Controller::~Controller()
@@ -137,25 +138,10 @@ Controller::~Controller()
     CoUninitialize();
 }
 
-void Controller::preRender(WPARAM w_param, LPARAM l_param)
-{
-    render_target_->BeginDraw();
-}
-
 LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 {
-    preRender(w_param, l_param);
-
-    main_scene_->render(factory_, render_target_);
-
-    return postRender(w_param, l_param);
-}
-
-LRESULT Controller::postRender(WPARAM w_param, LPARAM l_param)
-{
+    main_scene_->render(render_target_);
     HRESULT result;
-    result = render_target_->EndDraw();
-    assert(result == S_OK);
     if (need_resize_)
     {
         RECT client_rect = main_window_->getSize();
@@ -164,8 +150,9 @@ LRESULT Controller::postRender(WPARAM w_param, LPARAM l_param)
         client_size.height = client_rect.bottom - client_rect.top;
         result = render_target_->Resize(client_size);
         assert(result == S_OK);
+        createRenderObjects();
     }
-    return result;
+    return 0; // always succeed
 }
 
 LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
@@ -176,6 +163,7 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         GetWindowTextW(input_, buf, input_text_length + 1);
         buf[input_text_length] = 0;
         the_tree_.put(wStringToU8String(wstring(buf)), wStringToU8String(wstring(buf)));
+        createRenderObjects();
         render(w_param, l_param);
         delete[] buf;
     }
@@ -184,6 +172,7 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
 
 void Controller::createRenderObjects()
 {
+    main_scene_->clearChildren();
     const TreeNode<string, string> *root_node = the_tree_.getRootNode();
     if (!root_node) {
         return;
@@ -197,10 +186,11 @@ void Controller::createRenderObjects()
         node_color = red;
     }
     RECT scene_size = main_window_->getSize();
-    double circle_radius = 5;
+    double circle_radius = 30;
     double circle_x = (scene_size.right - scene_size.left) / 2 - circle_radius;
     double circle_y = circle_radius;
-    shared_ptr<Circle> tree_node = make_shared<Circle>(5, node_color, node_color, circle_x, circle_y);
+    class_logger.debug("Creating circle, its x,y is set to %f,%f, its radius is set to %f.", circle_x, circle_y, circle_radius);
+    shared_ptr<Circle> tree_node = make_shared<Circle>(circle_radius, node_color, node_color, circle_y, circle_x);
     main_scene_->appendChild(tree_node);
     shared_ptr<Text> node_text = make_shared<Text>(root_node->value, 0, 0);
     tree_node->appendChild(node_text);

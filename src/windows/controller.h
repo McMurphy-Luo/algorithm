@@ -36,11 +36,7 @@ namespace algorithm
             void setNeedResize(bool value) { need_resize_ = value; };
 
         protected:
-            void preRender(WPARAM w_param, LPARAM l_param);
-
             LRESULT render(WPARAM w_param, LPARAM l_param);
-
-            LRESULT postRender(WPARAM w_param, LPARAM l_param);
 
             LRESULT onCommand(WPARAM w_param, LPARAM l_param);
 

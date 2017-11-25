@@ -102,7 +102,7 @@ MainWindow::MainWindow(HINSTANCE app_handler):
 
 MainWindow::~MainWindow()
 {
-    
+    DestroyWindow(window_handler_);
 }
 
 void MainWindow::trigger(Event which, WPARAM w_param, LPARAM l_param)
