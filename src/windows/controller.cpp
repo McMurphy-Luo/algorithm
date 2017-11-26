@@ -20,9 +20,12 @@ using algorithm::data_structure::RBTree;
 using algorithm::data_structure::TreeNode;
 using algorithm::data_structure::NodeColor;
 using algorithm::windows::MainWindow;
+using algorithm::windows::Color;
 using algorithm::windows::Controller;
 using algorithm::windows::GraphicsBase;
 using algorithm::windows::Scene;
+using algorithm::windows::Text;
+using algorithm::windows::Circle;
 using algorithm::windows::detail::string_comparator;
 
 int algorithm::windows::detail::string_comparator(const std::string& lhs, const std::string& rhs)
@@ -41,12 +44,32 @@ int algorithm::windows::detail::string_comparator(const std::string& lhs, const 
 namespace // unamed namespace for this file static staff
 {
     void createRenderObjectsForEveryNode(
-        ID2D1RenderTarget *render_target,
         const TreeNode<string, string> *node,
-        const shared_ptr<GraphicsBase> parent
+        const shared_ptr<GraphicsBase> parent,
+        double radius,
+        double x,
+        double y,
+        double offset
     )
     {
-        
+        Color black(0, 0, 0);
+        Color red(255, 0, 0);
+        Color node_color(0, 0, 0);
+        if (NodeColor::black == node->color) {
+            node_color = black;
+        } else if (NodeColor::red == node->color) {
+            node_color = red;
+        }
+        shared_ptr<Circle> new_circle = make_shared<Circle>(radius, node_color, node_color, x, y);
+        shared_ptr<Text> circle_content = make_shared<Text>(node->value, 0, 0);
+        new_circle->appendChild(circle_content);
+        parent->appendChild(new_circle);
+        if (node->left) {
+            createRenderObjectsForEveryNode(node->left, new_circle, radius, x - offset, y + radius, offset / 2);
+        }
+        if (node->right) {
+            createRenderObjectsForEveryNode(node->right, new_circle, radius, x + offset, y + radius, offset / 2);
+        }
     }
 
     void createRenderObjects(
@@ -55,7 +78,9 @@ namespace // unamed namespace for this file static staff
         const shared_ptr<Scene> &parent
     )
     {
+        parent->clearChildren();
         
+
     }
 } // end unamed namespace
 
@@ -155,12 +180,10 @@ Controller::~Controller()
     main_window_->unbind(Event::PAINT, paint_callback_);
     DestroyWindow(button_);
     DestroyWindow(input_);
-    if (render_target_)
-    {
+    if (render_target_) {
         render_target_->Release();
     }
-    if (factory_)
-    {
+    if (factory_) {
         factory_->Release();
     }
     CoUninitialize();
@@ -170,15 +193,14 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 {
     main_scene_->render(render_target_);
     HRESULT result;
-    if (need_resize_)
-    {
+    if (need_resize_) {
         RECT client_rect = main_window_->getSize();
         D2D1_SIZE_U client_size;
         client_size.width = client_rect.right - client_rect.left;
         client_size.height = client_rect.bottom - client_rect.top;
         result = render_target_->Resize(client_size);
         assert(result == S_OK);
-        createRenderObjects();
+        createRenderObjects(render_target_, the_tree_, main_scene_);
     }
     return 0; // always succeed
 }
@@ -191,35 +213,9 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         GetWindowTextW(input_, buf, input_text_length + 1);
         buf[input_text_length] = 0;
         the_tree_.put(wStringToU8String(wstring(buf)), wStringToU8String(wstring(buf)));
-        createRenderObjects();
+        createRenderObjects(render_target_, the_tree_, main_scene_);
         render(w_param, l_param);
         delete[] buf;
     }
     return 0;
-}
-
-void Controller::createRenderObjects()
-{
-    main_scene_->clearChildren();
-    const TreeNode<string, string> *root_node = the_tree_.getRootNode();
-    if (!root_node) {
-        return;
-    }
-    Color black(0, 0, 0);
-    Color red(255, 0, 0);
-    Color node_color(0, 0, 0);
-    if (NodeColor::black == root_node->color) {
-        node_color = black;
-    }
-    else if (NodeColor::red == root_node->color) {
-        node_color = red;
-    }
-    RECT scene_size = main_window_->getSize();
-    double circle_radius = 30;
-    double circle_x = (scene_size.right - scene_size.left) / 2 - circle_radius;
-    double circle_y = circle_radius;
-    shared_ptr<Circle> tree_node = make_shared<Circle>(circle_radius, node_color, node_color, circle_y, circle_x);
-    main_scene_->appendChild(tree_node);
-    shared_ptr<Text> node_text = make_shared<Text>(root_node->value, 0, 0);
-    tree_node->appendChild(node_text);
 }

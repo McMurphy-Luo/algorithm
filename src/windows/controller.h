@@ -38,8 +38,6 @@ namespace algorithm
 
             LRESULT onCommand(WPARAM w_param, LPARAM l_param);
 
-            void createRenderObjects();
-
         private:
             algorithm::common::Logger class_logger;
 
