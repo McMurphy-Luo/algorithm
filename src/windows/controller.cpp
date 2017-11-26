@@ -199,7 +199,7 @@ Controller::~Controller()
 void Controller::resize()
 {
     need_resize_ = true;
-    RedrawWindow(main_window_->getWindowHandler(), nullptr, nullptr, 0);
+    UpdateWindow(main_window_->getWindowHandler());
 }
 
 LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
