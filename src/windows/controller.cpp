@@ -45,13 +45,16 @@ namespace // unamed namespace for this file static staff
 {
     void createRenderObjectsForEveryNode(
         const TreeNode<string, string> *node,
-        const shared_ptr<GraphicsBase> parent,
+        shared_ptr<GraphicsBase> parent,
         double radius,
-        double x,
-        double y,
+        double top,
+        double left,
         double offset
     )
     {
+        if (!node) {
+            return;
+        }
         Color black(0, 0, 0);
         Color red(255, 0, 0);
         Color node_color(0, 0, 0);
@@ -60,27 +63,31 @@ namespace // unamed namespace for this file static staff
         } else if (NodeColor::red == node->color) {
             node_color = red;
         }
-        shared_ptr<Circle> new_circle = make_shared<Circle>(radius, node_color, node_color, x, y);
+        shared_ptr<Circle> new_circle = make_shared<Circle>(radius, node_color, node_color, top, left);
         shared_ptr<Text> circle_content = make_shared<Text>(node->value, 0, 0);
         new_circle->appendChild(circle_content);
         parent->appendChild(new_circle);
-        if (node->left) {
-            createRenderObjectsForEveryNode(node->left, new_circle, radius, x - offset, y + radius, offset / 2);
-        }
-        if (node->right) {
-            createRenderObjectsForEveryNode(node->right, new_circle, radius, x + offset, y + radius, offset / 2);
-        }
+        createRenderObjectsForEveryNode(node->left, parent, radius, top + radius * 2, left + offset, offset / 2);
+        createRenderObjectsForEveryNode(node->right, parent, radius, top + radius * 2, left - offset, offset / 2);
     }
 
     void createRenderObjects(
         ID2D1RenderTarget *render_target,
         const RBTree<std::string, std::string, string_comparator> &the_tree,
-        const shared_ptr<Scene> &parent
+        shared_ptr<Scene> scene
     )
     {
-        parent->clearChildren();
-        
-
+        float radius = 30.0;
+        scene->clearChildren();
+        D2D1_SIZE_F render_target_size = render_target->GetSize();
+        createRenderObjectsForEveryNode(
+            the_tree.getRootNode(),
+            scene,
+            radius,
+            radius,
+            (render_target_size.width / 2) - radius,
+            (render_target_size.width / 4)
+        );
     }
 } // end unamed namespace
 
@@ -91,7 +98,7 @@ Controller::Controller(MainWindow *main_window):
         std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
             std::bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
                 {
-                    controller->setNeedResize(true);
+                    controller->resize();
                     return 0;
                 },
                 this,
@@ -189,6 +196,12 @@ Controller::~Controller()
     CoUninitialize();
 }
 
+void Controller::resize()
+{
+    need_resize_ = true;
+    RedrawWindow(main_window_->getWindowHandler(), nullptr, nullptr, 0);
+}
+
 LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
 {
     main_scene_->render(render_target_);
@@ -202,6 +215,7 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
         assert(result == S_OK);
         createRenderObjects(render_target_, the_tree_, main_scene_);
     }
+    need_resize_ = false;
     return 0; // always succeed
 }
 

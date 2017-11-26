@@ -31,7 +31,7 @@ namespace algorithm
 
             ID2D1HwndRenderTarget* getRenderTarget() const { return render_target_; };
 
-            void setNeedResize(bool value) { need_resize_ = value; };
+            void resize();
 
         protected:
             LRESULT render(WPARAM w_param, LPARAM l_param);
