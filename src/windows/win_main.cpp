@@ -30,20 +30,22 @@ void registerDebugOutputLogAppender()
 
 int CALLBACK wWinMain(HINSTANCE h_instance, HINSTANCE h_preview_instance, LPWSTR cmd_string, int cmd_show)
 {
+    registerDebugOutputLogAppender();
+    algorithm::windows::MainWindow *the_main_window = new algorithm::windows::MainWindow(h_instance);
+    algorithm::windows::Controller *the_controller = new algorithm::windows::Controller(the_main_window);
+    the_main_window->show();
     MSG msg;
+    while (GetMessage(&msg, nullptr, 0, 0))
     {
-        registerDebugOutputLogAppender();
-        algorithm::windows::MainWindow *the_main_window = new algorithm::windows::MainWindow(h_instance);
-        algorithm::windows::Controller *the_controller = new algorithm::windows::Controller(the_main_window);
-        the_main_window->show();
-        while (GetMessage(&msg, nullptr, 0, 0))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-        delete the_controller;
-        delete the_main_window;
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
+    delete the_controller;
+    delete the_main_window;
+#ifdef _CRTDBG_MAP_ALLOC // When define this, uses visual studio crt memory leaks detection feature
+    LogManager::freeLogManager(); // only for memory leaks detection tools.
+    // free the global singleton instance of LogManager to prevent leak.
+#endif // _CRTDBG_MAP_ALLOC
     _CrtDumpMemoryLeaks();
-    return static_cast<int>(0);
+    return static_cast<int>(msg.wParam);
 }

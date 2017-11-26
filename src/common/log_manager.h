@@ -37,6 +37,14 @@ namespace algorithm
             // Loggers use next method to write their record to appender.
             void write(const std::string &from, LogLevel level, const std::string &content);
 
+            // This should only be called for debug reasons. Beacause the instance_ is created
+            // first call to LogManager and never be freed. "instance_" is considered memory leak.
+            // When using some tool to detect memory leaks, users could use next function to free
+            // the global singleton instance_ so that prevent memory leaks in this module.
+            // In normal release build, never call it. "instance_" is an safe memory leak, it will
+            // be recycled when the program shuts down.
+            static void freeLogManager() { delete instance_; };
+
         private:
             static LogManager* instance_;
 

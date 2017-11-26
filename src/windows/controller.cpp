@@ -16,8 +16,14 @@ using std::make_shared;
 using std::shared_ptr;
 using algorithm::common::LogManager;
 using algorithm::common::wStringToU8String;
+using algorithm::data_structure::RBTree;
+using algorithm::data_structure::TreeNode;
+using algorithm::data_structure::NodeColor;
 using algorithm::windows::MainWindow;
 using algorithm::windows::Controller;
+using algorithm::windows::GraphicsBase;
+using algorithm::windows::Scene;
+using algorithm::windows::detail::string_comparator;
 
 int algorithm::windows::detail::string_comparator(const std::string& lhs, const std::string& rhs)
 {
@@ -31,6 +37,27 @@ int algorithm::windows::detail::string_comparator(const std::string& lhs, const 
     }
     return 0;
 }
+
+namespace // unamed namespace for this file static staff
+{
+    void createRenderObjectsForEveryNode(
+        ID2D1RenderTarget *render_target,
+        const TreeNode<string, string> *node,
+        const shared_ptr<GraphicsBase> parent
+    )
+    {
+        
+    }
+
+    void createRenderObjects(
+        ID2D1RenderTarget *render_target,
+        const RBTree<std::string, std::string, string_comparator> &the_tree,
+        const shared_ptr<Scene> &parent
+    )
+    {
+        
+    }
+} // end unamed namespace
 
 Controller::Controller(MainWindow *main_window):
     class_logger(LogManager::getLogger("algorithm.windows.Controller")),
@@ -183,14 +210,14 @@ void Controller::createRenderObjects()
     Color node_color(0, 0, 0);
     if (NodeColor::black == root_node->color) {
         node_color = black;
-    } else if (NodeColor::red == root_node->color) {
+    }
+    else if (NodeColor::red == root_node->color) {
         node_color = red;
     }
     RECT scene_size = main_window_->getSize();
     double circle_radius = 30;
     double circle_x = (scene_size.right - scene_size.left) / 2 - circle_radius;
     double circle_y = circle_radius;
-    class_logger.debug("Creating circle, its x,y is set to %f,%f, its radius is set to %f.", circle_x, circle_y, circle_radius);
     shared_ptr<Circle> tree_node = make_shared<Circle>(circle_radius, node_color, node_color, circle_y, circle_x);
     main_scene_->appendChild(tree_node);
     shared_ptr<Text> node_text = make_shared<Text>(root_node->value, 0, 0);

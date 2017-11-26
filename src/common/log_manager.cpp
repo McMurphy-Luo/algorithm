@@ -15,8 +15,7 @@ LogManager* LogManager::instance_ = nullptr;
 
 Logger LogManager::getLogger(const std::string &logger_name)
 {
-    if (!instance_)
-    {
+    if (!instance_) {
         instance_ = new LogManager();
     }
     return Logger(logger_name, instance_);
@@ -24,8 +23,7 @@ Logger LogManager::getLogger(const std::string &logger_name)
 
 void LogManager::setGlobalFilter(const Filter &filter)
 {
-    if (!instance_)
-    {
+    if (!instance_) {
         instance_ = new LogManager();
     }
     instance_->global_filter_ = filter;
@@ -33,8 +31,7 @@ void LogManager::setGlobalFilter(const Filter &filter)
 
 void LogManager::registerAppender(const Filter &filter, const Receiver &receiver)
 {
-    if (!instance_)
-    {
+    if (!instance_) {
         instance_ = new LogManager();
     }
     Appender new_appender;
@@ -45,8 +42,7 @@ void LogManager::registerAppender(const Filter &filter, const Receiver &receiver
 
 void LogManager::unRegisterAppender(const Receiver &receiver)
 {
-    if (!instance_)
-    {
+    if (!instance_) {
         return;
     }
     instance_->appender_list_.erase(std::remove_if(instance_->appender_list_.begin(), instance_->appender_list_.end(), [&](const Appender &appender) { return appender.receiver == receiver; }), instance_->appender_list_.end());
@@ -54,8 +50,7 @@ void LogManager::unRegisterAppender(const Receiver &receiver)
 
 void LogManager::enableBuffer(bool enable_or_not)
 {
-    if (!instance_)
-    {
+    if (!instance_) {
         instance_ = new LogManager();
     }
     instance_->buf_enabled_ = enable_or_not;
@@ -75,19 +70,16 @@ buf_enabled_(false),
 buf_(),
 ensure_line_ending_(false)
 {
-    
+    // do nothing
 }
 
 void LogManager::write(const string &from, LogLevel level, const string &content)
 {
-    if (!instance_)
-    {
+    if (!instance_) {
         instance_ = new LogManager();
     }
-    if (global_filter_)
-    {
-        if (!global_filter_(level, from))
-        {
+    if (global_filter_) {
+        if (!global_filter_(level, from)) {
             return;
         }
     }
@@ -100,10 +92,8 @@ void LogManager::write(const string &from, LogLevel level, const string &content
         }
     }
 
-    for (const Appender &appender : instance_->appender_list_)
-    {
-        if (appender.filter(level, from))
-        {
+    for (const Appender &appender : instance_->appender_list_) {
+        if (appender.filter(level, from)) {
             appender.receiver->operator()(copy_of_raw_log);
         }
     }

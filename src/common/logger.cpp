@@ -8,7 +8,8 @@ using algorithm::common::Logger;
 using algorithm::common::LogManager;
 using algorithm::common::LogLevel;
 
-namespace {
+namespace
+{
     string buildStringFromVariadicArguments(const char *format_str, va_list vlist)
     {
         char buf[BUFSIZ];

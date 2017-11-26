@@ -29,8 +29,6 @@ namespace algorithm
 
             ~Controller();
 
-            ID2D1Factory* getFactory() const { return factory_; };
-
             ID2D1HwndRenderTarget* getRenderTarget() const { return render_target_; };
 
             void setNeedResize(bool value) { need_resize_ = value; };
@@ -57,7 +55,7 @@ namespace algorithm
 
             std::shared_ptr<Scene> main_scene_;
 
-            RBTree<std::string, std::string, detail::string_comparator> the_tree_;
+            algorithm::data_structure::RBTree<std::string, std::string, detail::string_comparator> the_tree_;
 
             HWND button_;
 
