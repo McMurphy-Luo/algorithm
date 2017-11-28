@@ -22,7 +22,7 @@ namespace algorithm
                 write_factory_(nullptr),
                 text_format_(nullptr)
             {
-                /* do nothing */
+                createD2D1Resource();
             }
 
             virtual ~Scene();

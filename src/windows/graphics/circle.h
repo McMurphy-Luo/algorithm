@@ -11,8 +11,8 @@ namespace algorithm
         class Circle : public GraphicsBase
         {
         public:
-            Circle(double radius, Color background_color, Color border_color, double top, double left):
-                GraphicsBase(Graphics::circle, top, left),
+            Circle(double radius, Color background_color, Color border_color, double left, double top):
+                GraphicsBase(Graphics::circle, left, top),
                 background_color_(background_color),
                 border_color_(border_color),
                 radius_(radius)
@@ -20,8 +20,8 @@ namespace algorithm
                 /* do nothing */
             }
 
-            Circle(double radius, double top, double left):
-                Circle(radius, Color(255, 255, 255), Color(0, 0, 0), top, left)
+            Circle(double radius, double left, double top):
+                Circle(radius, Color(255, 255, 255), Color(0, 0, 0), left, top)
             {
                 /* do nothing */
             }

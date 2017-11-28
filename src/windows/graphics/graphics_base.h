@@ -27,10 +27,10 @@ namespace algorithm
         class GraphicsBase : public std::enable_shared_from_this<GraphicsBase>
         {
         public:
-            GraphicsBase(Graphics type, double top, double left):
+            GraphicsBase(Graphics type, double left, double top):
                 type_(type),
-                top_(top),
                 left_(left),
+                top_(top),
                 parent_(std::shared_ptr<GraphicsBase>()),
                 children_()
             {
@@ -77,8 +77,8 @@ namespace algorithm
 
         private:
             Graphics type_;
-            double top_;
             double left_;
+            double top_;
             std::weak_ptr<GraphicsBase> parent_;
             GraphicsContainer children_;
         };

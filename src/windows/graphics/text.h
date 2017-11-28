@@ -21,6 +21,10 @@ namespace algorithm
 
             }
 
+            void setContent(const std::string &content) { content_ = content; }
+
+            std::string getContent() { return content_; }
+
             void setColor(Color value){ font_color_ = value; }
 
             Color getColor() { return font_color_; }

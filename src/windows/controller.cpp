@@ -12,8 +12,11 @@
 
 using std::wstring;
 using std::string;
+using std::function;
 using std::make_shared;
 using std::shared_ptr;
+using std::bind;
+using std::mem_fn;
 using algorithm::common::LogManager;
 using algorithm::common::wStringToU8String;
 using algorithm::data_structure::RBTree;
@@ -28,7 +31,7 @@ using algorithm::windows::Text;
 using algorithm::windows::Circle;
 using algorithm::windows::detail::string_comparator;
 
-int algorithm::windows::detail::string_comparator(const std::string& lhs, const std::string& rhs)
+int algorithm::windows::detail::string_comparator(const string& lhs, const string& rhs)
 {
     if (lhs < rhs)
     {
@@ -47,8 +50,8 @@ namespace // unamed namespace for this file static staff
         const TreeNode<string, string> *node,
         shared_ptr<GraphicsBase> parent,
         double radius,
-        double top,
         double left,
+        double top,
         double offset
     )
     {
@@ -57,23 +60,25 @@ namespace // unamed namespace for this file static staff
         }
         Color black(0, 0, 0);
         Color red(255, 0, 0);
+        Color white(255, 255, 255);
         Color node_color(0, 0, 0);
         if (NodeColor::black == node->color) {
             node_color = black;
         } else if (NodeColor::red == node->color) {
             node_color = red;
         }
-        shared_ptr<Circle> new_circle = make_shared<Circle>(radius, node_color, node_color, top, left);
+        shared_ptr<Circle> new_circle = make_shared<Circle>(radius, node_color, node_color, left, top);
         shared_ptr<Text> circle_content = make_shared<Text>(node->value, 0, 0);
+        circle_content->setColor(white);
         new_circle->appendChild(circle_content);
         parent->appendChild(new_circle);
-        createRenderObjectsForEveryNode(node->left, parent, radius, top + radius * 2, left + offset, offset / 2);
-        createRenderObjectsForEveryNode(node->right, parent, radius, top + radius * 2, left - offset, offset / 2);
+        createRenderObjectsForEveryNode(node->left, parent, radius, left + offset, top + radius * 2, offset / 2);
+        createRenderObjectsForEveryNode(node->right, parent, radius, left - offset, top + radius * 2, offset / 2);
     }
 
     void createRenderObjects(
         ID2D1RenderTarget *render_target,
-        const RBTree<std::string, std::string, string_comparator> &the_tree,
+        const RBTree<string, string, string_comparator> &the_tree,
         shared_ptr<Scene> scene
     )
     {
@@ -84,8 +89,8 @@ namespace // unamed namespace for this file static staff
             the_tree.getRootNode(),
             scene,
             radius,
-            radius,
             (render_target_size.width / 2) - radius,
+            radius,
             (render_target_size.width / 4)
         );
     }
@@ -95,8 +100,8 @@ Controller::Controller(MainWindow *main_window):
     class_logger(LogManager::getLogger("algorithm.windows.Controller")),
     main_window_(main_window),
     resize_callback_(
-        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-            std::bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
+        make_shared<function<LRESULT(WPARAM, LPARAM)>>(
+            bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
                 {
                     controller->resize();
                     return 0;
@@ -108,9 +113,9 @@ Controller::Controller(MainWindow *main_window):
         )
     ),
     paint_callback_(
-        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-            std::bind(
-                std::mem_fn(&Controller::render),
+        make_shared<function<LRESULT(WPARAM, LPARAM)>>(
+            bind(
+                mem_fn(&Controller::render),
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2
@@ -118,9 +123,19 @@ Controller::Controller(MainWindow *main_window):
         )
     ),
     command_callback_(
-        std::make_shared<std::function<LRESULT(WPARAM, LPARAM)>>(
-            std::bind(
-                std::mem_fn(&Controller::onCommand),
+        make_shared<function<LRESULT(WPARAM, LPARAM)>>(
+            bind(
+                mem_fn(&Controller::onCommand),
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2
+            )
+        )
+    ),
+    mouse_move_callback_(
+        make_shared<function<LRESULT(WPARAM, LPARAM)>>(
+            bind(
+                mem_fn(&Controller::onMouseMove),
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2
@@ -178,6 +193,7 @@ Controller::Controller(MainWindow *main_window):
     main_window->bind(Event::SIZE, resize_callback_);
     main_window->bind(Event::COMMAND, command_callback_);
     main_window->bind(Event::PAINT, paint_callback_);
+    main_window->bind(Event::MOUSE_MOVE, mouse_move_callback_);
 }
 
 Controller::~Controller()
@@ -231,5 +247,11 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         render(w_param, l_param);
         delete[] buf;
     }
+    return 0;
+}
+
+LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
+{
+
     return 0;
 }

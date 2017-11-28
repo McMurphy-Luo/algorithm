@@ -38,6 +38,8 @@ namespace algorithm
 
             LRESULT onCommand(WPARAM w_param, LPARAM l_param);
 
+            LRESULT onMouseMove(WPARAM w_param, LPARAM l_param);
+
         private:
             algorithm::common::Logger class_logger;
 
@@ -48,6 +50,8 @@ namespace algorithm
             MainWindow::Callback paint_callback_;
 
             MainWindow::Callback command_callback_;
+
+            MainWindow::Callback mouse_move_callback_;
 
             bool need_resize_;
 
