@@ -17,6 +17,7 @@ using std::make_shared;
 using std::shared_ptr;
 using std::bind;
 using std::mem_fn;
+using std::dynamic_pointer_cast;
 using algorithm::common::LogManager;
 using algorithm::common::wStringToU8String;
 using algorithm::data_structure::RBTree;
@@ -252,6 +253,26 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
 
 LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
 {
+    int top = HIWORD(l_param);
+    int left = LOWORD(l_param);
+    class_logger.debug("controller::onMouseMove callback is fired; pointer left is %d, pointer top is %d.", left, top);
 
+    Color green(0, 255, 0);
+
+    for (shared_ptr<GraphicsBase> child : main_scene_->getChildren()) {
+        if (child->getType() != Graphics::circle) {
+            continue;
+        }
+        shared_ptr<Circle> child_circle = dynamic_pointer_cast<Circle>(child);
+        Color previous_color = child_circle->getBorderColor();
+        if (child->containsPoint(left, top))
+        {
+            class_logger.debug("mouse pointer is in an circle");
+            child_circle->setBorderColor(green);
+        } else {
+            child_circle->setBorderColor(previous_color);
+        }
+        render(0, 0);
+    }
     return 0;
 }

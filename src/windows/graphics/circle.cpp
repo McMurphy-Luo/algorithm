@@ -8,5 +8,5 @@ bool Circle::containsPoint(double x, double y)
 {
     double top = getTop();
     double left = getLeft();
-    return std::sqrt(std::pow(top - x, 2) + std::pow(left - y, 2) ) < radius_;
+    return std::sqrt(std::pow(top + radius_ - y, 2) + std::pow(left + radius_ - x, 2) ) < radius_;
 }

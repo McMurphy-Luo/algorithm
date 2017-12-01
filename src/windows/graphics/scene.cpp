@@ -31,6 +31,8 @@ namespace
 
     void renderCircle(shared_ptr<Circle> circle, ID2D1RenderTarget *render_target)
     {
+        Logger class_logger = LogManager::getLogger(LOGGER_NAME);
+        class_logger.debug("rendering an circle");
         D2D1_POINT_2F circle_center_point;
         Point circle_top_left_point = circle->getAbsolutePosition();
         circle_center_point.x = circle_top_left_point.left + circle->getRadius();
@@ -46,9 +48,7 @@ namespace
         D2D1_COLOR_F border_color_of_d2d = colorToD2D1Color(circle->getBorderColor());
         render_target->CreateSolidColorBrush(border_color_of_d2d, &border_brush);
 
-        Logger class_logger = LogManager::getLogger(LOGGER_NAME);
-
-        render_target->DrawEllipse(d2d_ellipse, border_brush);
+        render_target->DrawEllipse(d2d_ellipse, border_brush, 4);
 
         background_brush->Release();
         border_brush->Release();
@@ -56,7 +56,6 @@ namespace
 
     void renderText(shared_ptr<Text> text, ID2D1RenderTarget *render_target, IDWriteTextFormat* text_format)
     {
-        Logger class_logger = LogManager::getLogger(LOGGER_NAME);
         Color text_color = text->getColor();
         D2D1_COLOR_F d2d_color = colorToD2D1Color(text_color);
         ID2D1SolidColorBrush *text_brush = nullptr;

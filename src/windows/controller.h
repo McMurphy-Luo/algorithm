@@ -53,6 +53,7 @@ namespace algorithm
 
             MainWindow::Callback mouse_move_callback_;
 
+
             bool need_resize_;
 
             std::shared_ptr<Scene> main_scene_;
