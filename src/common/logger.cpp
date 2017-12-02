@@ -2,7 +2,8 @@
 #include <cstdarg>
 #include "log_manager.h"
 
-using namespace algorithm::common;
+using algorithm::common::Logger;
+using algorithm::common::LogManager;
 
 namespace {
     std::string buildStringFromVariadicArguments(const char *format_str, va_list vlist)

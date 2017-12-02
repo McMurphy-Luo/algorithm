@@ -54,8 +54,6 @@ namespace algorithm
 
             RBTree<std::string, std::string, detail::string_comparator> the_tree_;
 
-            TreeRender tree_render_;
-
             ID2D1Factory* factory_;
 
             ID2D1HwndRenderTarget* render_target_;

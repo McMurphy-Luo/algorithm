@@ -2,7 +2,8 @@
 #include <algorithm>
 #include "logger.h"
 
-using namespace algorithm::common;
+using algorithm::common::LogManager;
+using algorithm::common::Logger;
 
 LogManager* LogManager::instance_ = nullptr;
 
