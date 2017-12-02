@@ -15,7 +15,8 @@ namespace algorithm
                 GraphicsBase(Graphics::circle, left, top),
                 background_color_(background_color),
                 border_color_(border_color),
-                radius_(radius)
+                radius_(radius),
+                border_width_(1)
             {
                 /* do nothing */
             }
@@ -44,9 +45,13 @@ namespace algorithm
 
             Color getBorderColor() const { return border_color_; }
 
-            Color getBackgroundColor() const { return background_color_; }
-
             void setBorderColor(Color border_color) { border_color_ = border_color;  }
+
+            double getBorderWidth() const { return border_width_; }
+
+            void setBorderWidth(double value) { border_width_ = value; }
+
+            Color getBackgroundColor() const { return background_color_; }
 
             void setBackgroundColor(Color background_color) { background_color = background_color; }
 
@@ -56,6 +61,7 @@ namespace algorithm
             Color background_color_;
             Color border_color_;
             double radius_;
+            double border_width_;
         };
     }
 }

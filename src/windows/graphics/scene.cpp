@@ -38,18 +38,14 @@ namespace
         circle_center_point.x = circle_top_left_point.left + circle->getRadius();
         circle_center_point.y = circle_top_left_point.top + circle->getRadius();
         D2D1_ELLIPSE d2d_ellipse = D2D1::Ellipse(circle_center_point, circle->getRadius(), circle->getRadius());
-
         ID2D1SolidColorBrush* background_brush = nullptr;
         D2D1_COLOR_F background_color_of_d2d = colorToD2D1Color(circle->getBackgroundColor());
         render_target->CreateSolidColorBrush(background_color_of_d2d, &background_brush);
         render_target->FillEllipse(d2d_ellipse, background_brush);
-
         ID2D1SolidColorBrush* border_brush = nullptr;
         D2D1_COLOR_F border_color_of_d2d = colorToD2D1Color(circle->getBorderColor());
         render_target->CreateSolidColorBrush(border_color_of_d2d, &border_brush);
-
-        render_target->DrawEllipse(d2d_ellipse, border_brush, 4);
-
+        render_target->DrawEllipse(d2d_ellipse, border_brush, circle->getBorderWidth());
         background_brush->Release();
         border_brush->Release();
     }
@@ -74,7 +70,6 @@ namespace
 
     void renderScene(shared_ptr<Scene> scene, ID2D1RenderTarget* render_target)
     {
-        ID2D1SolidColorBrush* background_brush = nullptr;
         D2D1_COLOR_F d2d_color = colorToD2D1Color(scene->getBackgroundColor());
         render_target->Clear(d2d_color);
     }
@@ -115,7 +110,7 @@ void Scene::render(ID2D1RenderTarget *render_target)
     HRESULT result;
     result = render_target->EndDraw();
     if (result == D2DERR_RECREATE_TARGET) {
-        result == S_OK;
+        result = S_OK;
         createD2D1Resource();
     }
     assert(SUCCEEDED(result));

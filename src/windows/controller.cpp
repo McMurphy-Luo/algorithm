@@ -5,6 +5,7 @@
 #include <cinttypes>
 #include <string>
 #include <memory>
+#include <Windowsx.h>
 #include <common/string_util.h>
 #include <common/log_manager.h>
 #include "./graphics/color.h"
@@ -69,6 +70,7 @@ namespace // unamed namespace for this file static staff
             node_color = red;
         }
         shared_ptr<Circle> new_circle = make_shared<Circle>(radius, node_color, node_color, left, top);
+        new_circle->setBorderWidth(2);
         shared_ptr<Text> circle_content = make_shared<Text>(node->value, 0, 0);
         circle_content->setColor(white);
         new_circle->appendChild(circle_content);
@@ -145,6 +147,8 @@ Controller::Controller(MainWindow *main_window):
     ),
     need_resize_(true),
     main_scene_(make_shared<Scene>()),
+    current_graphics_under_mouse_(main_scene_),
+    previous_border_color_of_circle_(0, 0, 0),
     the_tree_(),
     button_(CreateWindowExW(
         0,
@@ -253,26 +257,28 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
 
 LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
 {
-    int top = HIWORD(l_param);
-    int left = LOWORD(l_param);
+
+    int top = GET_Y_LPARAM(l_param);
+    int left = GET_X_LPARAM(l_param);
     class_logger.debug("controller::onMouseMove callback is fired; pointer left is %d, pointer top is %d.", left, top);
-
     Color green(0, 255, 0);
-
+    shared_ptr<GraphicsBase> graphics_under_mouse_now = main_scene_;
     for (shared_ptr<GraphicsBase> child : main_scene_->getChildren()) {
-        if (child->getType() != Graphics::circle) {
+        if (!child->containsPoint(left, top)) {
             continue;
         }
-        shared_ptr<Circle> child_circle = dynamic_pointer_cast<Circle>(child);
-        Color previous_color = child_circle->getBorderColor();
-        if (child->containsPoint(left, top))
-        {
-            class_logger.debug("mouse pointer is in an circle");
-            child_circle->setBorderColor(green);
-        } else {
-            child_circle->setBorderColor(previous_color);
-        }
-        render(0, 0);
+        graphics_under_mouse_now = child;
     }
+    if (current_graphics_under_mouse_ != graphics_under_mouse_now) {
+        if (current_graphics_under_mouse_->getType() == Graphics::circle) {
+            dynamic_pointer_cast<Circle>(current_graphics_under_mouse_)->setBorderColor(previous_border_color_of_circle_);
+        }
+        if (graphics_under_mouse_now->getType() == Graphics::circle) {
+            previous_border_color_of_circle_ = dynamic_pointer_cast<Circle>(graphics_under_mouse_now)->getBorderColor();
+            dynamic_pointer_cast<Circle>(graphics_under_mouse_now)->setBorderColor(green);
+        }
+    }
+    current_graphics_under_mouse_ = graphics_under_mouse_now;
+    render(0, 0);
     return 0;
 }

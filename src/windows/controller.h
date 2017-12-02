@@ -53,10 +53,13 @@ namespace algorithm
 
             MainWindow::Callback mouse_move_callback_;
 
-
             bool need_resize_;
 
             std::shared_ptr<Scene> main_scene_;
+
+            std::shared_ptr<GraphicsBase> current_graphics_under_mouse_;
+
+            Color previous_border_color_of_circle_;
 
             algorithm::data_structure::RBTree<std::string, std::string, detail::string_comparator> the_tree_;
 
