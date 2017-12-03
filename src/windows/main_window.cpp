@@ -169,7 +169,7 @@ void MainWindow::unbind(Event which)
 POINT MainWindow::getMouseOffset() const
 {
     POINT result;
-    result.x = 0;
-    result.y = 0;
+    GetCursorPos(&result);
+    MapWindowPoints(HWND_DESKTOP, window_handler_, &result, 1);
     return result;
 }

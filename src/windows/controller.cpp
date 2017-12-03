@@ -260,7 +260,7 @@ LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
 
     int top = GET_Y_LPARAM(l_param);
     int left = GET_X_LPARAM(l_param);
-    class_logger.debug("controller::onMouseMove callback is fired; pointer left is %d, pointer top is %d.", left, top);
+    POINT cursor_position = main_window_->getMouseOffset();
     Color green(0, 255, 0);
     shared_ptr<GraphicsBase> graphics_under_mouse_now = main_scene_;
     for (shared_ptr<GraphicsBase> child : main_scene_->getChildren()) {

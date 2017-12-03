@@ -32,7 +32,6 @@ namespace
     void renderCircle(shared_ptr<Circle> circle, ID2D1RenderTarget *render_target)
     {
         Logger class_logger = LogManager::getLogger(LOGGER_NAME);
-        class_logger.debug("rendering an circle");
         D2D1_POINT_2F circle_center_point;
         Point circle_top_left_point = circle->getAbsolutePosition();
         circle_center_point.x = circle_top_left_point.left + circle->getRadius();
