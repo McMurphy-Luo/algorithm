@@ -81,8 +81,8 @@ namespace // unamed namespace for this file static staff
         circle_content->setColor(white);
         new_circle->appendChild(circle_content);
         parent->appendChild(new_circle);
-        createRenderObjectsForEveryNode(node->left, parent, radius, left + offset, top + radius * 2, offset / 2);
-        createRenderObjectsForEveryNode(node->right, parent, radius, left - offset, top + radius * 2, offset / 2);
+        createRenderObjectsForEveryNode(node->left, parent, radius, left - offset, top + radius * 2, offset / 2);
+        createRenderObjectsForEveryNode(node->right, parent, radius, left + offset, top + radius * 2, offset / 2);
     }
 
     void createRenderObjects(

@@ -2,6 +2,7 @@
 #define ALGORITHM_WINDOWS_SCENE_H
 
 #include <memory>
+#include <map>
 #include <d2d1_1.h>
 #include <common/log_manager.h>
 #include <common/logger.h>
@@ -40,6 +41,7 @@ namespace algorithm
 
         private:
             algorithm::common::Logger class_logger_;
+            std::map<int, ID2D1BitmapRenderTarget*> layers_;
             Color background_color_;
             IDWriteFactory *write_factory_;
             IDWriteTextFormat *text_format_;
