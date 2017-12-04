@@ -18,7 +18,7 @@ namespace algorithm
             int string_comparator(const std::string& lhs, const std::string& rhs);
         }
 
-        class Controller
+        class Controller final
         {
         public:
             explicit Controller(MainWindow *main_window);
@@ -31,12 +31,16 @@ namespace algorithm
 
             ID2D1HwndRenderTarget* getRenderTarget() const { return render_target_; };
 
-            void resize();
+            void render();
 
         protected:
-            LRESULT render(WPARAM w_param, LPARAM l_param);
+            void reArrangeChildWindow();
 
             LRESULT onCommand(WPARAM w_param, LPARAM l_param);
+
+            LRESULT onPaint(WPARAM w_param, LPARAM l_param);
+
+            LRESULT onSize(WPARAM w_param, LPARAM l_param);
 
             LRESULT onMouseMove(WPARAM w_param, LPARAM l_param);
 

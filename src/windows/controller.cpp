@@ -48,6 +48,12 @@ int algorithm::windows::detail::string_comparator(const string& lhs, const strin
 
 namespace // unamed namespace for this file static staff
 {
+    const int BUTTON_WIDTH = 40;
+    const int BUTTON_HEIGHT = 20;
+    const int INPUT_WIDTH = 150;
+    const int INPUT_HEIGHT = 20;
+    const double RADIUS = 30.0;
+
     void createRenderObjectsForEveryNode(
         const TreeNode<string, string> *node,
         shared_ptr<GraphicsBase> parent,
@@ -85,7 +91,7 @@ namespace // unamed namespace for this file static staff
         shared_ptr<Scene> scene
     )
     {
-        float radius = 30.0;
+        double radius = RADIUS;
         scene->clearChildren();
         D2D1_SIZE_F render_target_size = render_target->GetSize();
         createRenderObjectsForEveryNode(
@@ -104,11 +110,8 @@ Controller::Controller(MainWindow *main_window):
     main_window_(main_window),
     resize_callback_(
         make_shared<function<LRESULT(WPARAM, LPARAM)>>(
-            bind([](Controller* controller, WPARAM w_param, LPARAM l_param) ->LRESULT
-                {
-                    controller->resize();
-                    return 0;
-                },
+            bind(
+                mem_fn(&Controller::onSize),
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2
@@ -118,7 +121,7 @@ Controller::Controller(MainWindow *main_window):
     paint_callback_(
         make_shared<function<LRESULT(WPARAM, LPARAM)>>(
             bind(
-                mem_fn(&Controller::render),
+                mem_fn(&Controller::onPaint),
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2
@@ -157,8 +160,8 @@ Controller::Controller(MainWindow *main_window):
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
         10,
         10,
-        70,
-        40,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
         main_window->getWindowHandler(),
         nullptr,
         main_window->getAppHandler(),
@@ -169,10 +172,10 @@ Controller::Controller(MainWindow *main_window):
         L"EDIT",
         L"",
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | WS_BORDER,
+        30,
         100,
-        100,
-        100,
-        100,
+        INPUT_WIDTH,
+        INPUT_HEIGHT,
         main_window->getWindowHandler(),
         nullptr,
         main_window->getAppHandler(),
@@ -217,13 +220,7 @@ Controller::~Controller()
     CoUninitialize();
 }
 
-void Controller::resize()
-{
-    need_resize_ = true;
-    UpdateWindow(main_window_->getWindowHandler());
-}
-
-LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
+void Controller::render()
 {
     main_scene_->render(render_target_);
     HRESULT result;
@@ -237,7 +234,16 @@ LRESULT Controller::render(WPARAM w_param, LPARAM l_param)
         createRenderObjects(render_target_, the_tree_, main_scene_);
     }
     need_resize_ = false;
-    return 0; // always succeed
+}
+
+void Controller::reArrangeChildWindow()
+{
+    int two_child_window_combined_width = INPUT_WIDTH + BUTTON_WIDTH + 5;
+    RECT main_window_size = main_window_->getSize();
+    int main_window_width = main_window_size.right - main_window_size.left;
+    int left_most_position = main_window_width / 2 - two_child_window_combined_width / 2;
+    SetWindowPos(input_, 0, left_most_position, 5, INPUT_WIDTH, INPUT_HEIGHT, SWP_NOZORDER | SWP_SHOWWINDOW);
+    SetWindowPos(button_, 0, left_most_position + INPUT_WIDTH + 5, 5, BUTTON_WIDTH, BUTTON_HEIGHT, SWP_NOZORDER | SWP_SHOWWINDOW);
 }
 
 LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
@@ -249,7 +255,7 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         buf[input_text_length] = 0;
         the_tree_.put(wStringToU8String(wstring(buf)), wStringToU8String(wstring(buf)));
         createRenderObjects(render_target_, the_tree_, main_scene_);
-        render(w_param, l_param);
+        render();
         delete[] buf;
     }
     return 0;
@@ -257,10 +263,8 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
 
 LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
 {
-
     int top = GET_Y_LPARAM(l_param);
     int left = GET_X_LPARAM(l_param);
-    POINT cursor_position = main_window_->getMouseOffset();
     Color green(0, 255, 0);
     shared_ptr<GraphicsBase> graphics_under_mouse_now = main_scene_;
     for (shared_ptr<GraphicsBase> child : main_scene_->getChildren()) {
@@ -279,6 +283,20 @@ LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
         }
     }
     current_graphics_under_mouse_ = graphics_under_mouse_now;
-    render(0, 0);
+    render();
+    return 0;
+}
+
+LRESULT Controller::onPaint(WPARAM w_param, LPARAM l_param)
+{
+    render();
+    return 0;
+}
+
+LRESULT Controller::onSize(WPARAM w_param, LPARAM l_param)
+{
+    need_resize_ = true;
+    reArrangeChildWindow();
+    UpdateWindow(main_window_->getWindowHandler());
     return 0;
 }

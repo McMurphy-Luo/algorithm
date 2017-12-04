@@ -22,7 +22,7 @@ namespace algorithm
             MOUSE_MOVE
         };
 
-        class MainWindow
+        class MainWindow final
         {
         public:
             typedef std::shared_ptr<std::function<LRESULT(WPARAM, LPARAM)>> Callback;
