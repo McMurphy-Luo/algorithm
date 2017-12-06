@@ -28,6 +28,7 @@ list(APPEND windows_source
         ${source_dir}/windows/win_main.cpp)
 
 add_executable(list_test ${test_source_dir}/list.cpp)
+add_executable(map_util_test ${test_source_dir}/common/map_util_test.cpp)
 add_executable(simple_test ${test_source_dir}/test.cpp ${common_source})
 add_executable(binary_tree_test ${test_source_dir}/binary_tree.cpp)
 
@@ -39,7 +40,7 @@ if(${WIN32})
     set_target_properties(render PROPERTIES WIN32_EXECUTABLE TRUE)
 endif(${WIN32})
 
-list(APPEND all_exe list_test simple_test binary_tree_test)
+list(APPEND all_exe list_test simple_test binary_tree_test map_util_test)
 
 if(${WIN32})
     list(APPEND all_exe render)

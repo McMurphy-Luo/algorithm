@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <map>
+#include <set>
 #include <d2d1_1.h>
 #include <common/log_manager.h>
 #include <common/logger.h>
@@ -19,6 +20,7 @@ namespace algorithm
             Scene():
                 GraphicsBase(Graphics::scene, 0, 0),
                 class_logger_(algorithm::common::LogManager::getLogger("algorithm.windows.Scene")),
+                layers_(),
                 background_color_(135, 206, 235),
                 write_factory_(nullptr),
                 text_format_(nullptr)
@@ -37,11 +39,18 @@ namespace algorithm
             virtual bool containsPoint(double x, double y) override { return true; }
 
         protected:
+            typedef std::map<int, ID2D1BitmapRenderTarget *>::iterator LayerIterator;
+
+            typedef std::map<int, ID2D1BitmapRenderTarget *>::const_iterator ConstLayerIterator;
+
             void createD2D1Resource();
+
+            void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target);
 
         private:
             algorithm::common::Logger class_logger_;
             std::map<int, ID2D1BitmapRenderTarget*> layers_;
+            std::set<int> used_layers_of_render_round_;
             Color background_color_;
             IDWriteFactory *write_factory_;
             IDWriteTextFormat *text_format_;

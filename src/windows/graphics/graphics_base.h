@@ -32,7 +32,8 @@ namespace algorithm
                 left_(left),
                 top_(top),
                 parent_(std::shared_ptr<GraphicsBase>()),
-                children_()
+                children_(),
+                z_index_(0)
             {
                 /* do nothing */
             }
@@ -59,6 +60,10 @@ namespace algorithm
 
             double getLeft() const { return left_; }
 
+            int getZIndex() const { return z_index_; }
+
+            void setZIndex(int value) { z_index_ = value; }
+
             Point getAbsolutePosition() const;
 
             std::weak_ptr<GraphicsBase> getParent() { return parent_; }
@@ -81,6 +86,7 @@ namespace algorithm
             double top_;
             std::weak_ptr<GraphicsBase> parent_;
             GraphicsContainer children_;
+            int z_index_;
         };
     }
 }
