@@ -16,6 +16,7 @@ using std::to_string;
 using algorithm::common::differenceTwoSets;
 using algorithm::common::intersectionTwoSets;
 using algorithm::common::unionTwoSets;
+using algorithm::common::keySet;
 
 template <typename T>
 string setToString(T target)
@@ -36,24 +37,6 @@ void printSet(T target)
     cout << endl;
 }
 
-set<int> union_test(const set<int> &set1, const set<int> &set2)
-{
-    set<int> result;
-    for (set<int>::const_iterator iterator = set1.cbegin(); iterator != set1.end(); ++iterator) {
-        std::pair<set<int>::const_iterator, bool> insert_result = result.insert(*iterator);
-        cout << *insert_result.first;
-        cout << (insert_result.second ? " true" : " false");
-        cout << endl;
-    }
-    for (set<int>::const_iterator iterator = set2.cbegin(); iterator != set2.end(); ++iterator) {
-        std::pair<set<int>::const_iterator, bool> insert_result = result.insert(*iterator);
-        cout << *insert_result.first;
-        cout << (insert_result.second ? " true" : " false");
-        cout << endl;
-    }
-    return result;
-}
-
 int main()
 {
     set<int> test_set1;
@@ -66,9 +49,27 @@ int main()
     test_set2.insert(4);
     test_set2.insert(5);
 
-    assert(setToString(test_set1) == string("1 2 3"));
-    assert(setToString(test_set2) == string("3 4 5"));
-    assert(setToString(union_test(test_set1, test_set2)) == string("1 2 3 4 5"));
+    map<int, int> test_map;
+    test_map[1] = 1;
+    test_map[2] = 2;
+    test_map[3] = 3;
+
+    map<int, string> test_map2;
+    test_map2[2] = "2";
+    test_map2[3] = "3";
+    test_map2[4] = "4";
+
+    assert(setToString(test_set1) == "1 2 3");
+    assert(setToString(test_set2) == "3 4 5");
+    assert(setToString(unionTwoSets(test_set1, test_set2)) == "1 2 3 4 5");
+    assert(setToString(differenceTwoSets(test_set1, test_set2)) == "1 2");
+    assert(setToString(intersectionTwoSets(test_set1, test_set2)) == "3");
+
+    assert(setToString(keySet(test_map)) == "1 2 3");
+
+    assert(setToString(intersectionTwoSets(keySet(test_map), keySet(test_map2))) == "2 3");
+
+    printSet(differenceTwoSets(keySet(test_map2), test_set2));
 
     cin.get();
 }
