@@ -50,6 +50,7 @@ int main()
     test_set2.insert(5);
 
     map<int, int> test_map;
+    cout << test_map[1];
     test_map[1] = 1;
     test_map[2] = 2;
     test_map[3] = 3;

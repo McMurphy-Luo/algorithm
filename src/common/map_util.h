@@ -61,7 +61,6 @@ namespace algorithm
             return result;
         }
 
-
         template<
             class Key,
             class T,

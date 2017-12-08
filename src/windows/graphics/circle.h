@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_WINDOWS_TREE_NODE_H
-#define ALGORITHM_WINDOWS_TREE_NODE_H
+#ifndef ALGORITHM_WINDOWS_CIRCLE_H
+#define ALGORITHM_WINDOWS_CIRCLE_H
 
 #include "./graphics_base.h"
 #include "./color.h"
@@ -66,4 +66,4 @@ namespace algorithm
     }
 }
 
-#endif // ALGORITHM_WINDOWS_TREE_NODE_H
+#endif // ALGORITHM_WINDOWS_CIRCLE_H

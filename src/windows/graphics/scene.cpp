@@ -4,16 +4,22 @@
 #include <memory>
 #include <dwrite.h>
 #include <common/string_util.h>
+#include <common/map_util.h>
 #include "./circle.h"
+#include "./line.h"
 #include "./text.h"
 
 using std::shared_ptr;
 using std::map;
 using std::set;
+using std::pair;
 using std::dynamic_pointer_cast;
 using algorithm::common::Logger;
 using algorithm::common::LogManager;
 using algorithm::common::u8StringToWString;
+using algorithm::common::differenceTwoSets;
+using algorithm::common::keySet;
+using algorithm::windows::Line;
 using algorithm::windows::GraphicsBase;
 using algorithm::windows::Color;
 using algorithm::windows::Point;
@@ -33,6 +39,7 @@ namespace
 
     void renderCircle(shared_ptr<Circle> circle, ID2D1RenderTarget *render_target)
     {
+        render_target->BeginDraw();
         Logger class_logger = LogManager::getLogger(LOGGER_NAME);
         D2D1_POINT_2F circle_center_point;
         Point circle_top_left_point = circle->getAbsolutePosition();
@@ -49,10 +56,12 @@ namespace
         render_target->DrawEllipse(d2d_ellipse, border_brush, circle->getBorderWidth());
         background_brush->Release();
         border_brush->Release();
+        assert(SUCCEEDED(render_target->EndDraw()));
     }
 
     void renderText(shared_ptr<Text> text, ID2D1RenderTarget *render_target, IDWriteTextFormat* text_format)
     {
+        render_target->BeginDraw();
         Color text_color = text->getColor();
         D2D1_COLOR_F d2d_color = colorToD2D1Color(text_color);
         ID2D1SolidColorBrush *text_brush = nullptr;
@@ -67,24 +76,20 @@ namespace
             text_brush
         );
         text_brush->Release();
+        assert(SUCCEEDED(render_target->EndDraw()));
+    }
+
+    void renderLine(shared_ptr<Line> line, ID2D1RenderTarget *render_target)
+    {
+
     }
 
     void renderScene(shared_ptr<Scene> scene, ID2D1RenderTarget* render_target)
     {
+        render_target->BeginDraw();
         D2D1_COLOR_F d2d_color = colorToD2D1Color(scene->getBackgroundColor());
         render_target->Clear(d2d_color);
-    }
-
-    void stripNoLongerUsedLayers(map<int, ID2D1BitmapRenderTarget*> layers_, set<int> used_layers_of_render_round_)
-    {
-        for (
-            set<int>::const_iterator iterator = used_layers_of_render_round_.cbegin();
-            iterator != used_layers_of_render_round_.cend();
-            ++iterator;
-            )
-        {
-
-        }
+        assert(SUCCEEDED(render_target->EndDraw()));
     }
 }
 
@@ -100,40 +105,46 @@ Scene::~Scene()
 
 void Scene::render(ID2D1RenderTarget *render_target)
 {
-    used_layers_of_render_round_.clear();
-    render_target->BeginDraw();
+    preRender(render_target);
     renderGraphics(shared_from_this(), render_target);
     HRESULT result;
-    result = render_target->EndDraw();
+    class_logger_.debug("Got %d layers.", layers_.size());
+    for (ConstLayerIterator iterator = layers_.cbegin(); iterator != layers_.cend(); ++iterator) {
+        ID2D1Bitmap *layer_bitmap;
+        result = iterator->second->GetBitmap(&layer_bitmap);
+        D2D1_SIZE_F render_target_size = render_target->GetSize();
+        D2D1_RECT_F render_target_rect = D2D1::RectF(0, 0, render_target_size.width, render_target_size.height);
+        render_target->DrawBitmap(
+            layer_bitmap,
+            render_target_rect,
+            1.0,
+            D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
+            render_target_rect
+        );
+        assert(SUCCEEDED(result));
+    }
+    postRender(render_target);
+}
+
+void Scene::preRender(ID2D1RenderTarget *render_target)
+{
+    used_layers_of_render_round_.clear();
+    render_target->BeginDraw();
+}
+
+void Scene::postRender(ID2D1RenderTarget* render_target)
+{
+    HRESULT result = render_target->EndDraw();
     if (result == D2DERR_RECREATE_TARGET) {
         result = S_OK;
         createD2D1Resource();
     }
+    set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
+    for (set<int>::const_iterator iterator = useless_layers.cbegin(); iterator != useless_layers.cend(); ++iterator) {
+        layers_[*iterator]->Release();
+        layers_.erase(*iterator);
+    }
     assert(SUCCEEDED(result));
-}
-
-void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target)
-{
-    ID2D1BitmapRenderTarget* render_target;
-    int z_index_of_this_graphics = graphics->getZIndex();
-    std::map<int, ID2D1BitmapRenderTarget*>::iterator layer_iterator = layers_.find(z_index_of_this_graphics);
-    if (layer_iterator == layers_.end()) {
-
-    }
-    switch (graphics->getType())
-    {
-    case Graphics::circle:
-        renderCircle(dynamic_pointer_cast<Circle>(graphics), render_target);
-        break;
-    case Graphics::text:
-        renderText(dynamic_pointer_cast<Text>(graphics), render_target, text_format_);
-        break;
-    case Graphics::scene:
-        renderScene(dynamic_pointer_cast<Scene>(graphics), render_target);
-    }
-    for (shared_ptr<GraphicsBase> child : graphics->getChildren()) {
-        renderGraphics(child, render_target);
-    }
 }
 
 void Scene::createD2D1Resource()
@@ -153,4 +164,31 @@ void Scene::createD2D1Resource()
     );
     text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     assert(SUCCEEDED(result));
+}
+
+void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target)
+{
+    HRESULT result;
+    int z_index_of_this_graphics = graphics->getZIndex();
+    ID2D1BitmapRenderTarget *target_layer_render_target = layers_[z_index_of_this_graphics];
+    if (!target_layer_render_target) {
+        result = render_target->CreateCompatibleRenderTarget(&target_layer_render_target);
+        assert(SUCCEEDED(result));
+        layers_[z_index_of_this_graphics] = target_layer_render_target;
+    }
+    used_layers_of_render_round_.insert(z_index_of_this_graphics);
+    switch (graphics->getType())
+    {
+    case Graphics::circle:
+        renderCircle(dynamic_pointer_cast<Circle>(graphics), target_layer_render_target);
+        break;
+    case Graphics::text:
+        renderText(dynamic_pointer_cast<Text>(graphics), target_layer_render_target, text_format_);
+        break;
+    case Graphics::scene:
+        renderScene(dynamic_pointer_cast<Scene>(graphics), target_layer_render_target);
+    }
+    for (shared_ptr<GraphicsBase> child : graphics->getChildren()) {
+        renderGraphics(child, render_target);
+    }
 }

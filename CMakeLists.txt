@@ -23,6 +23,7 @@ list(APPEND windows_source
         ${source_dir}/windows/graphics/scene.cpp
         ${source_dir}/windows/graphics/graphics_base.cpp
         ${source_dir}/windows/graphics/circle.cpp
+        ${source_dir}/windows/graphics/line.cpp
         ${source_dir}/windows/controller.cpp
         ${source_dir}/windows/main_window.cpp
         ${source_dir}/windows/win_main.cpp)

@@ -43,6 +43,10 @@ namespace algorithm
 
             typedef std::map<int, ID2D1BitmapRenderTarget *>::const_iterator ConstLayerIterator;
 
+            void preRender(ID2D1RenderTarget *render_target);
+
+            void postRender(ID2D1RenderTarget *render_target);
+
             void createD2D1Resource();
 
             void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target);
