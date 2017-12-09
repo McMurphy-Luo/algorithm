@@ -21,6 +21,7 @@ list(APPEND common_source
 list(APPEND windows_source
         ${source_dir}/windows/render.manifest
         ${source_dir}/windows/graphics/scene.cpp
+        ${source_dir}/windows/graphics/layer_manager.cpp
         ${source_dir}/windows/graphics/graphics_base.cpp
         ${source_dir}/windows/graphics/circle.cpp
         ${source_dir}/windows/graphics/line.cpp

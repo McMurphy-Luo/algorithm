@@ -104,8 +104,8 @@ Scene::~Scene()
 void Scene::render(ID2D1RenderTarget *render_target)
 {
     preRender(render_target);
-    D2D1_COLOR_F d2d_color = colorToD2D1Color(getBackgroundColor());
-    render_target->Clear(d2d_color);
+    render_target->BeginDraw();
+    render_target->Clear(colorToD2D1Color(getBackgroundColor()));
     for (shared_ptr<GraphicsBase> child : getChildren()) {
         renderGraphics(child, render_target);
     }
@@ -125,18 +125,20 @@ void Scene::render(ID2D1RenderTarget *render_target)
         );
         assert(SUCCEEDED(result));
     }
+    HRESULT result = render_target->EndDraw();
     postRender(render_target);
 }
 
 void Scene::preRender(ID2D1RenderTarget *render_target)
 {
     used_layers_of_render_round_.clear();
-    render_target->BeginDraw();
+    for (ConstLayerIterator iterator = layers_.cbegin(); iterator != layers_.cend(); ++iterator) {
+        iterator->second->BeginDraw();
+    }
 }
 
 void Scene::postRender(ID2D1RenderTarget* render_target)
 {
-    HRESULT result = render_target->EndDraw();
     if (result == D2DERR_RECREATE_TARGET) {
         result = S_OK;
         createD2D1Resource();

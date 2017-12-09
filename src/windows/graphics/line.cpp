@@ -1,4 +1,4 @@
-#include <common/macro.h>
+#include <common/macro.h> // config macro staff
 #include "./line.h"
 #include <cmath>
 
