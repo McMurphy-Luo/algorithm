@@ -31,6 +31,22 @@ namespace algorithm
                 /* do nothing */
             }
 
+            double getRight() const { return right_; }
+
+            void setRight(double value) { right_ = value; }
+
+            double getBottom() const { return bottom_; }
+
+            void setBottom(double value) { bottom_ = value; }
+
+            Color getColor() const { return color_; }
+
+            void setColor(Color value) { color_ = value; }
+
+            double getWidth() const { return width_; }
+
+            void setWidth(double value) { width_ = value; }
+
             bool containsPoint(double x, double y) override;
 
         private:

@@ -81,14 +81,12 @@ namespace
 
     void renderLine(shared_ptr<Line> line, ID2D1RenderTarget *render_target)
     {
-
-    }
-
-    void renderScene(shared_ptr<Scene> scene, ID2D1RenderTarget* render_target)
-    {
         render_target->BeginDraw();
-        D2D1_COLOR_F d2d_color = colorToD2D1Color(scene->getBackgroundColor());
-        render_target->Clear(d2d_color);
+        ID2D1SolidColorBrush* brush;
+        render_target->CreateSolidColorBrush(colorToD2D1Color(line->getColor()), &brush);
+        D2D1_POINT_2F left_top = D2D1::Point2F(line->getLeft(), line->getTop());
+        D2D1_POINT_2F bottom_right = D2D1::Point2F(line->getRight(), line->getBottom());
+        render_target->DrawLine(left_top, bottom_right, brush);
         assert(SUCCEEDED(render_target->EndDraw()));
     }
 }
@@ -106,7 +104,11 @@ Scene::~Scene()
 void Scene::render(ID2D1RenderTarget *render_target)
 {
     preRender(render_target);
-    renderGraphics(shared_from_this(), render_target);
+    D2D1_COLOR_F d2d_color = colorToD2D1Color(getBackgroundColor());
+    render_target->Clear(d2d_color);
+    for (shared_ptr<GraphicsBase> child : getChildren()) {
+        renderGraphics(child, render_target);
+    }
     HRESULT result;
     class_logger_.debug("Got %d layers.", layers_.size());
     for (ConstLayerIterator iterator = layers_.cbegin(); iterator != layers_.cend(); ++iterator) {
@@ -139,12 +141,12 @@ void Scene::postRender(ID2D1RenderTarget* render_target)
         result = S_OK;
         createD2D1Resource();
     }
+    assert(SUCCEEDED(result));
     set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
     for (set<int>::const_iterator iterator = useless_layers.cbegin(); iterator != useless_layers.cend(); ++iterator) {
         layers_[*iterator]->Release();
         layers_.erase(*iterator);
     }
-    assert(SUCCEEDED(result));
 }
 
 void Scene::createD2D1Resource()
@@ -185,8 +187,9 @@ void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget 
     case Graphics::text:
         renderText(dynamic_pointer_cast<Text>(graphics), target_layer_render_target, text_format_);
         break;
-    case Graphics::scene:
-        renderScene(dynamic_pointer_cast<Scene>(graphics), target_layer_render_target);
+    case Graphics::line:
+        renderLine(dynamic_pointer_cast<Line>(graphics), target_layer_render_target);
+        break;
     }
     for (shared_ptr<GraphicsBase> child : graphics->getChildren()) {
         renderGraphics(child, render_target);

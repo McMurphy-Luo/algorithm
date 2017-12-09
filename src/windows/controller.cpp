@@ -8,6 +8,7 @@
 #include <Windowsx.h>
 #include <common/string_util.h>
 #include <common/log_manager.h>
+#include "./graphics/line.h"
 #include "./graphics/color.h"
 #include "./graphics/text.h"
 
@@ -29,6 +30,7 @@ using algorithm::windows::Color;
 using algorithm::windows::Controller;
 using algorithm::windows::GraphicsBase;
 using algorithm::windows::Scene;
+using algorithm::windows::Line;
 using algorithm::windows::Text;
 using algorithm::windows::Circle;
 using algorithm::windows::detail::string_comparator;
@@ -63,9 +65,6 @@ namespace // unamed namespace for this file static staff
         double offset
     )
     {
-        if (!node) {
-            return;
-        }
         Color black(0, 0, 0);
         Color red(255, 0, 0);
         Color white(255, 255, 255);
@@ -81,8 +80,18 @@ namespace // unamed namespace for this file static staff
         circle_content->setColor(white);
         new_circle->appendChild(circle_content);
         parent->appendChild(new_circle);
-        createRenderObjectsForEveryNode(node->left, parent, radius, left - offset, top + radius * 2, offset / 2);
-        createRenderObjectsForEveryNode(node->right, parent, radius, left + offset, top + radius * 2, offset / 2);
+        if (node->left) {
+            shared_ptr<Line> line = make_shared<Line>(left - offset + radius, top + radius * 2 + radius, left + radius, top + radius);
+            line->setZIndex(-1);
+            parent->appendChild(line);
+            createRenderObjectsForEveryNode(node->left, parent, radius, left - offset, top + radius * 2, offset / 2);
+        }
+        if (node->right) {
+            shared_ptr<Line> line = make_shared<Line>(left + offset + radius, top + radius * 2 + radius, left + radius, top + radius);
+            line->setZIndex(-1);
+            parent->appendChild(line);
+            createRenderObjectsForEveryNode(node->right, parent, radius, left + offset, top + radius * 2, offset / 2);
+        }
     }
 
     void createRenderObjects(
@@ -91,8 +100,11 @@ namespace // unamed namespace for this file static staff
         shared_ptr<Scene> scene
     )
     {
-        double radius = RADIUS;
         scene->clearChildren();
+        if (!the_tree.getRootNode()) {
+            return;
+        }
+        double radius = RADIUS;
         D2D1_SIZE_F render_target_size = render_target->GetSize();
         createRenderObjectsForEveryNode(
             the_tree.getRootNode(),
