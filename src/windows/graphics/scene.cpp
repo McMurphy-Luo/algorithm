@@ -103,14 +103,13 @@ Scene::~Scene()
 
 void Scene::render(ID2D1RenderTarget *render_target)
 {
-    preRender(render_target);
-    render_target->BeginDraw();
-    render_target->Clear(colorToD2D1Color(getBackgroundColor()));
+    used_layers_of_render_round_.clear();
     for (shared_ptr<GraphicsBase> child : getChildren()) {
         renderGraphics(child, render_target);
     }
+    render_target->BeginDraw();
+    render_target->Clear(colorToD2D1Color(getBackgroundColor()));
     HRESULT result;
-    class_logger_.debug("Got %d layers.", layers_.size());
     for (ConstLayerIterator iterator = layers_.cbegin(); iterator != layers_.cend(); ++iterator) {
         ID2D1Bitmap *layer_bitmap;
         result = iterator->second->GetBitmap(&layer_bitmap);
@@ -129,14 +128,6 @@ void Scene::render(ID2D1RenderTarget *render_target)
     postRender(render_target);
 }
 
-void Scene::preRender(ID2D1RenderTarget *render_target)
-{
-    used_layers_of_render_round_.clear();
-    for (ConstLayerIterator iterator = layers_.cbegin(); iterator != layers_.cend(); ++iterator) {
-        iterator->second->BeginDraw();
-    }
-}
-
 void Scene::postRender(ID2D1RenderTarget* render_target)
 {
     if (result == D2DERR_RECREATE_TARGET) {
@@ -153,6 +144,15 @@ void Scene::postRender(ID2D1RenderTarget* render_target)
 
 void Scene::createD2D1Resource()
 {
+    if (text_format_) {
+        text_format_->Release();
+        text_format_ = nullptr;
+    }
+    if (write_factory_) {
+        write_factory_->Release();
+        write_factory_ = nullptr;
+    }
+    layer_manager_.freeLayers();
     HRESULT result;
     result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, _uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&write_factory_));
     assert(SUCCEEDED(result));

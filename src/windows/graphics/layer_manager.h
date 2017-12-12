@@ -10,29 +10,32 @@ namespace algorithm
 {
     namespace windows
     {
-        namespace detail
-        {
-            void release(ID2D1Resource *target) { target->Release(); }
-        }
-
         class LayerManager
         {
         public:
-            LayerManager() :
+            LayerManager():
                 layers_()
             {
                 /* do nothing */
             }
 
+            std::size_t size() { return layers_.size(); }
+
             ID2D1BitmapRenderTarget* getLayer(int index, ID2D1RenderTarget* parent);
+
+            bool hasLayer(int index) { return layers_.find(index) != layers_.end(); };
 
             void freeLayer(int index);
 
             void freeLayers(std::set<int> layers);
 
-            std::size_t size() { return layers_.size(); }
+            void freeLayers();
 
-            std::shared_ptr<ID2D1Bitmap> combineLayers(std::set<int> which);
+            ID2D1Bitmap* combineLayer(int which, ID2D1RenderTarget* parent);
+
+            ID2D1Bitmap* combineLayers(std::set<int> which, ID2D1RenderTarget* parent);
+
+            ID2D1Bitmap* combineLayers(ID2D1RenderTarget* parent);
 
         private:
             std::map<int, ID2D1BitmapRenderTarget*> layers_;

@@ -8,6 +8,7 @@
 #include <common/log_manager.h>
 #include <common/logger.h>
 #include "./graphics_base.h"
+#include "./layer_manager.h"
 #include "./color.h"
 
 namespace algorithm
@@ -43,8 +44,6 @@ namespace algorithm
 
             typedef std::map<int, ID2D1BitmapRenderTarget *>::const_iterator ConstLayerIterator;
 
-            void preRender(ID2D1RenderTarget *render_target);
-
             void postRender(ID2D1RenderTarget *render_target);
 
             void createD2D1Resource();
@@ -53,7 +52,7 @@ namespace algorithm
 
         private:
             algorithm::common::Logger class_logger_;
-            std::map<int, ID2D1BitmapRenderTarget*> layers_;
+            LayerManager layer_manager_;
             std::set<int> used_layers_of_render_round_;
             Color background_color_;
             IDWriteFactory *write_factory_;
