@@ -109,37 +109,20 @@ void Scene::render(ID2D1RenderTarget *render_target)
     }
     render_target->BeginDraw();
     render_target->Clear(colorToD2D1Color(getBackgroundColor()));
-    HRESULT result;
-    for (ConstLayerIterator iterator = layers_.cbegin(); iterator != layers_.cend(); ++iterator) {
-        ID2D1Bitmap *layer_bitmap;
-        result = iterator->second->GetBitmap(&layer_bitmap);
-        D2D1_SIZE_F render_target_size = render_target->GetSize();
-        D2D1_RECT_F render_target_rect = D2D1::RectF(0, 0, render_target_size.width, render_target_size.height);
-        render_target->DrawBitmap(
-            layer_bitmap,
-            render_target_rect,
-            1.0,
-            D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-            render_target_rect
-        );
-        assert(SUCCEEDED(result));
-    }
+    ID2D1Bitmap* bitmap = layer_manager_.combineLayers(render_target);
+    render_target->DrawBitmap(bitmap);
+    bitmap->Release();
     HRESULT result = render_target->EndDraw();
-    postRender(render_target);
-}
-
-void Scene::postRender(ID2D1RenderTarget* render_target)
-{
     if (result == D2DERR_RECREATE_TARGET) {
         result = S_OK;
         createD2D1Resource();
     }
     assert(SUCCEEDED(result));
-    set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
-    for (set<int>::const_iterator iterator = useless_layers.cbegin(); iterator != useless_layers.cend(); ++iterator) {
-        layers_[*iterator]->Release();
-        layers_.erase(*iterator);
-    }
+    //set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
+    //for (set<int>::const_iterator iterator = useless_layers.cbegin(); iterator != useless_layers.cend(); ++iterator) {
+    //    layers_[*iterator]->Release();
+    //    layers_.erase(*iterator);
+    //}
 }
 
 void Scene::createD2D1Resource()
@@ -174,12 +157,7 @@ void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget 
 {
     HRESULT result;
     int z_index_of_this_graphics = graphics->getZIndex();
-    ID2D1BitmapRenderTarget *target_layer_render_target = layers_[z_index_of_this_graphics];
-    if (!target_layer_render_target) {
-        result = render_target->CreateCompatibleRenderTarget(&target_layer_render_target);
-        assert(SUCCEEDED(result));
-        layers_[z_index_of_this_graphics] = target_layer_render_target;
-    }
+    ID2D1BitmapRenderTarget *target_layer_render_target = layer_manager_.getLayer(z_index_of_this_graphics, render_target);
     used_layers_of_render_round_.insert(z_index_of_this_graphics);
     switch (graphics->getType())
     {

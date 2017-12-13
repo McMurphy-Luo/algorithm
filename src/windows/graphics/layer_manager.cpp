@@ -6,6 +6,7 @@
 using std::set;
 using std::map;
 using algorithm::windows::LayerManager;
+using algorithm::common::keySet;
 
 ID2D1BitmapRenderTarget* LayerManager::getLayer(int index, ID2D1RenderTarget* parent)
 {
@@ -40,7 +41,8 @@ void LayerManager::freeLayers()
         map<int, ID2D1BitmapRenderTarget*>::const_iterator layer_iterator = layers_.cbegin();
         layer_iterator != layers_.cend();
         ++layer_iterator
-        ) {
+        )
+    {
         layer_iterator->second->Release();
     }
     layers_.clear();
@@ -76,5 +78,5 @@ ID2D1Bitmap* LayerManager::combineLayers(set<int> which, ID2D1RenderTarget* pare
 
 ID2D1Bitmap* LayerManager::combineLayers(ID2D1RenderTarget* parent)
 {
-    
+    return combineLayers(keySet(layers_), parent);
 }

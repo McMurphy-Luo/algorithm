@@ -21,7 +21,7 @@ namespace algorithm
             Scene():
                 GraphicsBase(Graphics::scene, 0, 0),
                 class_logger_(algorithm::common::LogManager::getLogger("algorithm.windows.Scene")),
-                layers_(),
+                layer_manager_(),
                 background_color_(135, 206, 235),
                 write_factory_(nullptr),
                 text_format_(nullptr)
@@ -43,8 +43,6 @@ namespace algorithm
             typedef std::map<int, ID2D1BitmapRenderTarget *>::iterator LayerIterator;
 
             typedef std::map<int, ID2D1BitmapRenderTarget *>::const_iterator ConstLayerIterator;
-
-            void postRender(ID2D1RenderTarget *render_target);
 
             void createD2D1Resource();
 
