@@ -3,8 +3,8 @@
 
 #include <map>
 #include <set>
+#include <string>
 #include <d2d1_1.h>
-#include <memory>
 
 namespace algorithm
 {
@@ -36,6 +36,8 @@ namespace algorithm
             ID2D1Bitmap* combineLayers(std::set<int> which, ID2D1RenderTarget* parent);
 
             ID2D1Bitmap* combineLayers(ID2D1RenderTarget* parent);
+
+            std::string toString();
 
         private:
             std::map<int, ID2D1BitmapRenderTarget*> layers_;

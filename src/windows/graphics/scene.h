@@ -33,6 +33,8 @@ namespace algorithm
 
             void render(ID2D1RenderTarget *render_target);
 
+            void discard();
+
             Color getBackgroundColor() const { return background_color_; }
 
             void setBackgroundColor(const Color& value) { background_color_ = value; }
@@ -40,10 +42,6 @@ namespace algorithm
             virtual bool containsPoint(double x, double y) override { return true; }
 
         protected:
-            typedef std::map<int, ID2D1BitmapRenderTarget *>::iterator LayerIterator;
-
-            typedef std::map<int, ID2D1BitmapRenderTarget *>::const_iterator ConstLayerIterator;
-
             void createD2D1Resource();
 
             void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target);

@@ -93,11 +93,15 @@ namespace
 
 Scene::~Scene()
 {
+    class_logger_.debug("Scene::~Scene is called!");
+    layer_manager_.freeLayers();
     if (text_format_) {
         text_format_->Release();
+        text_format_ = nullptr;
     }
     if (write_factory_) {
         write_factory_->Release();
+        write_factory_ = nullptr;
     }
 }
 
@@ -118,15 +122,24 @@ void Scene::render(ID2D1RenderTarget *render_target)
         createD2D1Resource();
     }
     assert(SUCCEEDED(result));
-    //set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
-    //for (set<int>::const_iterator iterator = useless_layers.cbegin(); iterator != useless_layers.cend(); ++iterator) {
-    //    layers_[*iterator]->Release();
-    //    layers_.erase(*iterator);
-    //}
+    /*
+    set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
+    for (set<int>::const_iterator iterator = useless_layers.cbegin(); iterator != useless_layers.cend(); ++iterator) {
+        layers_[*iterator]->Release();
+        layers_.erase(*iterator);
+    }
+    */
+}
+
+void Scene::discard()
+{
+    class_logger_.debug("Scene::discard is called!");
+    layer_manager_.freeLayers();
 }
 
 void Scene::createD2D1Resource()
 {
+    class_logger_.debug("Scene::createD2D1Resource is called!");
     if (text_format_) {
         text_format_->Release();
         text_format_ = nullptr;
@@ -155,9 +168,13 @@ void Scene::createD2D1Resource()
 
 void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target)
 {
-    HRESULT result;
     int z_index_of_this_graphics = graphics->getZIndex();
     ID2D1BitmapRenderTarget *target_layer_render_target = layer_manager_.getLayer(z_index_of_this_graphics, render_target);
+    if (used_layers_of_render_round_.find(z_index_of_this_graphics) == used_layers_of_render_round_.end()) {
+        target_layer_render_target->BeginDraw();
+        target_layer_render_target->Clear();
+        target_layer_render_target->EndDraw();
+    }
     used_layers_of_render_round_.insert(z_index_of_this_graphics);
     switch (graphics->getType())
     {

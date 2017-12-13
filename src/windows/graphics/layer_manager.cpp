@@ -5,6 +5,8 @@
 
 using std::set;
 using std::map;
+using std::string;
+using std::to_string;
 using algorithm::windows::LayerManager;
 using algorithm::common::keySet;
 
@@ -79,4 +81,11 @@ ID2D1Bitmap* LayerManager::combineLayers(set<int> which, ID2D1RenderTarget* pare
 ID2D1Bitmap* LayerManager::combineLayers(ID2D1RenderTarget* parent)
 {
     return combineLayers(keySet(layers_), parent);
+}
+
+string LayerManager::toString()
+{
+    string result = "Currently, I am managing "
+        + to_string(size()) + " ID2D1BitmapRenderTarget pointers. ";
+
 }
