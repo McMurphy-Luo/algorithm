@@ -54,7 +54,7 @@ namespace // unamed namespace for this file static staff
     const int BUTTON_HEIGHT = 20;
     const int INPUT_WIDTH = 150;
     const int INPUT_HEIGHT = 20;
-    const double RADIUS = 30.0;
+    const double RADIUS = 25.0;
 
     void createRenderObjectsForEveryNode(
         const TreeNode<string, string> *node,
@@ -235,14 +235,12 @@ Controller::~Controller()
 void Controller::render()
 {
     main_scene_->render(render_target_);
-    HRESULT result;
     if (need_resize_) {
         RECT client_rect = main_window_->getSize();
         D2D1_SIZE_U client_size;
         client_size.width = client_rect.right - client_rect.left;
         client_size.height = client_rect.bottom - client_rect.top;
-        result = render_target_->Resize(client_size);
-        assert(result == S_OK);
+        assert(SUCCEEDED(render_target_->Resize(client_size)));
         createRenderObjects(render_target_, the_tree_, main_scene_);
     }
     need_resize_ = false;

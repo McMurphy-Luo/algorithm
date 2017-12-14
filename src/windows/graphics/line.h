@@ -31,6 +31,12 @@ namespace algorithm
                 /* do nothing */
             }
 
+            Line(const Line &another) = default;
+
+            Line& operator=(const Line &another) = default;
+
+            ~Line() = default;
+
             double getRight() const { return right_; }
 
             void setRight(double value) { right_ = value; }

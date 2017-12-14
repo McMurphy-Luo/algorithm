@@ -112,7 +112,7 @@ void Scene::render(ID2D1RenderTarget *render_target)
         renderGraphics(child, render_target);
     }
     render_target->BeginDraw();
-    render_target->Clear(colorToD2D1Color(getBackgroundColor()));
+    render_target->Clear(D2D1::ColorF(255,255,255,0));
     ID2D1Bitmap* bitmap = layer_manager_.combineLayers(render_target);
     render_target->DrawBitmap(bitmap);
     bitmap->Release();
@@ -149,10 +149,8 @@ void Scene::createD2D1Resource()
         write_factory_ = nullptr;
     }
     layer_manager_.freeLayers();
-    HRESULT result;
-    result = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, _uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&write_factory_));
-    assert(SUCCEEDED(result));
-    result = write_factory_->CreateTextFormat(
+    assert(SUCCEEDED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, _uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&write_factory_))));
+    assert(SUCCEEDED(write_factory_->CreateTextFormat(
         L"Consolas",
         nullptr,
         DWRITE_FONT_WEIGHT_NORMAL,
@@ -161,9 +159,8 @@ void Scene::createD2D1Resource()
         24.0f,
         L"en-us",
         &text_format_
-    );
+    )));
     text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-    assert(SUCCEEDED(result));
 }
 
 void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target)
@@ -172,7 +169,7 @@ void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget 
     ID2D1BitmapRenderTarget *target_layer_render_target = layer_manager_.getLayer(z_index_of_this_graphics, render_target);
     if (used_layers_of_render_round_.find(z_index_of_this_graphics) == used_layers_of_render_round_.end()) {
         target_layer_render_target->BeginDraw();
-        target_layer_render_target->Clear();
+        target_layer_render_target->Clear(D2D1::ColorF(255, 255, 255, 0));
         target_layer_render_target->EndDraw();
     }
     used_layers_of_render_round_.insert(z_index_of_this_graphics);

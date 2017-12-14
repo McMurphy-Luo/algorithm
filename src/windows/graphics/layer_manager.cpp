@@ -87,5 +87,5 @@ string LayerManager::toString()
 {
     string result = "Currently, I am managing "
         + to_string(size()) + " ID2D1BitmapRenderTarget pointers. ";
-
+    return result;
 }

@@ -21,6 +21,12 @@ namespace algorithm
 
             }
 
+            Text(const Text& another) = default;
+
+            Text& operator=(const Text& another) = default;
+
+            ~Text() = default;
+
             void setContent(const std::string &content) { content_ = content; }
 
             std::string getContent() { return content_; }
