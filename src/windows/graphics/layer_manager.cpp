@@ -17,7 +17,7 @@ namespace
     void initializeSingleLayer(ID2D1BitmapRenderTarget* target)
     {
         target->BeginDraw();
-        target->Clear();
+        target->Clear(D2D1::ColorF(1.0, 1.0, 1.0, 0));
     }
 }
 
@@ -35,7 +35,7 @@ LayerManager::~LayerManager()
 
 ID2D1BitmapRenderTarget* LayerManager::getLayer(int index, ID2D1RenderTarget* parent)
 {
-    assert(am_i_in_render_round_, "getLayer should only be called during render round");
+    assert(am_i_in_render_round_);
     ID2D1BitmapRenderTarget* result;
     LayerIterator find_result = layers_.find(index);
     if (find_result == layers_.cend()) {
@@ -104,8 +104,9 @@ ID2D1Bitmap* LayerManager::combineLayers(set<int> which, ID2D1RenderTarget* pare
     ID2D1Bitmap *temporary_bitmap;
     assert(SUCCEEDED(parent->CreateCompatibleRenderTarget(&temporary_layer)));
     temporary_layer->BeginDraw();
+    temporary_layer->Clear();
     for (set<int>::const_iterator iterator = which.cbegin(); iterator != which.cend(); ++iterator) {
-        map<int, ID2D1BitmapRenderTarget*>::const_iterator layer_find_result = layers_.find(*iterator);
+        LayerIterator layer_find_result = layers_.find(*iterator);
         if (layer_find_result == layers_.cend()) {
             continue;
         }

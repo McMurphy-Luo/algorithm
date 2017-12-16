@@ -265,8 +265,8 @@ LRESULT Controller::onCommand(WPARAM w_param, LPARAM l_param)
         buf[input_text_length] = 0;
         the_tree_.put(wStringToU8String(wstring(buf)), wStringToU8String(wstring(buf)));
         createRenderObjects(render_target_, the_tree_, main_scene_);
-        render();
         delete[] buf;
+        render();
     }
     return 0;
 }
