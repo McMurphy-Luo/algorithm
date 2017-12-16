@@ -39,7 +39,6 @@ namespace
 
     void renderCircle(shared_ptr<Circle> circle, ID2D1RenderTarget *render_target)
     {
-        render_target->BeginDraw();
         Logger class_logger = LogManager::getLogger(LOGGER_NAME);
         D2D1_POINT_2F circle_center_point;
         Point circle_top_left_point = circle->getAbsolutePosition();
@@ -56,12 +55,10 @@ namespace
         render_target->DrawEllipse(d2d_ellipse, border_brush, circle->getBorderWidth());
         background_brush->Release();
         border_brush->Release();
-        assert(SUCCEEDED(render_target->EndDraw()));
     }
 
     void renderText(shared_ptr<Text> text, ID2D1RenderTarget *render_target, IDWriteTextFormat* text_format)
     {
-        render_target->BeginDraw();
         Color text_color = text->getColor();
         D2D1_COLOR_F d2d_color = colorToD2D1Color(text_color);
         ID2D1SolidColorBrush *text_brush = nullptr;
@@ -76,25 +73,21 @@ namespace
             text_brush
         );
         text_brush->Release();
-        assert(SUCCEEDED(render_target->EndDraw()));
     }
 
     void renderLine(shared_ptr<Line> line, ID2D1RenderTarget *render_target)
     {
-        render_target->BeginDraw();
         ID2D1SolidColorBrush* brush;
         render_target->CreateSolidColorBrush(colorToD2D1Color(line->getColor()), &brush);
         D2D1_POINT_2F left_top = D2D1::Point2F(line->getLeft(), line->getTop());
         D2D1_POINT_2F bottom_right = D2D1::Point2F(line->getRight(), line->getBottom());
         render_target->DrawLine(left_top, bottom_right, brush);
-        assert(SUCCEEDED(render_target->EndDraw()));
     }
 }
 
 Scene::~Scene()
 {
     class_logger_.debug("Scene::~Scene is called!");
-    layer_manager_.freeLayers();
     if (text_format_) {
         text_format_->Release();
         text_format_ = nullptr;
@@ -107,34 +100,22 @@ Scene::~Scene()
 
 void Scene::render(ID2D1RenderTarget *render_target)
 {
-    used_layers_of_render_round_.clear();
+    layer_manager_.beginDraw();
     for (shared_ptr<GraphicsBase> child : getChildren()) {
         renderGraphics(child, render_target);
     }
     render_target->BeginDraw();
-    render_target->Clear(D2D1::ColorF(255,255,255,0));
+    render_target->Clear(colorToD2D1Color(background_color_));
     ID2D1Bitmap* bitmap = layer_manager_.combineLayers(render_target);
     render_target->DrawBitmap(bitmap);
     bitmap->Release();
+    layer_manager_.endDraw();
     HRESULT result = render_target->EndDraw();
     if (result == D2DERR_RECREATE_TARGET) {
         result = S_OK;
         createD2D1Resource();
     }
     assert(SUCCEEDED(result));
-    /*
-    set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
-    for (set<int>::const_iterator iterator = useless_layers.cbegin(); iterator != useless_layers.cend(); ++iterator) {
-        layers_[*iterator]->Release();
-        layers_.erase(*iterator);
-    }
-    */
-}
-
-void Scene::discard()
-{
-    class_logger_.debug("Scene::discard is called!");
-    layer_manager_.freeLayers();
 }
 
 void Scene::createD2D1Resource()
@@ -148,7 +129,6 @@ void Scene::createD2D1Resource()
         write_factory_->Release();
         write_factory_ = nullptr;
     }
-    layer_manager_.freeLayers();
     assert(SUCCEEDED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, _uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&write_factory_))));
     assert(SUCCEEDED(write_factory_->CreateTextFormat(
         L"Consolas",
@@ -167,12 +147,6 @@ void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget 
 {
     int z_index_of_this_graphics = graphics->getZIndex();
     ID2D1BitmapRenderTarget *target_layer_render_target = layer_manager_.getLayer(z_index_of_this_graphics, render_target);
-    if (used_layers_of_render_round_.find(z_index_of_this_graphics) == used_layers_of_render_round_.end()) {
-        target_layer_render_target->BeginDraw();
-        target_layer_render_target->Clear(D2D1::ColorF(255, 255, 255, 0));
-        target_layer_render_target->EndDraw();
-    }
-    used_layers_of_render_round_.insert(z_index_of_this_graphics);
     switch (graphics->getType())
     {
     case Graphics::circle:

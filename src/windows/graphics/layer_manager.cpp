@@ -7,51 +7,91 @@ using std::set;
 using std::map;
 using std::string;
 using std::to_string;
+using std::pair;
 using algorithm::windows::LayerManager;
 using algorithm::common::keySet;
+using algorithm::common::differenceTwoSets;
+
+namespace
+{
+    void initializeSingleLayer(ID2D1BitmapRenderTarget* target)
+    {
+        target->BeginDraw();
+        target->Clear();
+    }
+}
+
+LayerManager::~LayerManager()
+{
+    for (
+        LayerIterator iterator = layers_.cbegin();
+        iterator != layers_.cend();
+        ++iterator
+        )
+    {
+        iterator->second->Release();
+    }
+}
 
 ID2D1BitmapRenderTarget* LayerManager::getLayer(int index, ID2D1RenderTarget* parent)
 {
-    if (layers_.find(index) == layers_.end()) {
+    assert(am_i_in_render_round_, "getLayer should only be called during render round");
+    ID2D1BitmapRenderTarget* result;
+    LayerIterator find_result = layers_.find(index);
+    if (find_result == layers_.cend()) {
         ID2D1BitmapRenderTarget* new_created_render_target;
         assert(SUCCEEDED(parent->CreateCompatibleRenderTarget(&new_created_render_target)));
-        layers_[index] = new_created_render_target;
+        result = layers_[index] = new_created_render_target;
+        initializeSingleLayer(new_created_render_target);
+    } else {
+        result = find_result->second;
     }
-    return layers_[index];
+    used_layers_of_render_round_.insert(index);
+    return result;
 }
 
-void LayerManager::freeLayer(int index)
+void LayerManager::beginDraw()
 {
-    map<int, ID2D1BitmapRenderTarget*>::const_iterator find_result = layers_.find(index);
-    if (find_result == layers_.cend()) {
-        return;
-    }
-    find_result->second->Release();
-    layers_.erase(find_result);
-}
-
-void LayerManager::freeLayers(set<int> layers)
-{
-    for (set<int>::const_iterator iterator = layers.cbegin(); iterator != layers.cend(); ++iterator) {
-        freeLayer(*iterator);
-    }
-}
-
-void LayerManager::freeLayers()
-{
+    used_layers_of_render_round_.clear();
     for (
-        map<int, ID2D1BitmapRenderTarget*>::const_iterator layer_iterator = layers_.cbegin();
-        layer_iterator != layers_.cend();
-        ++layer_iterator
+        LayerIterator iterator = layers_.cbegin();
+        iterator != layers_.cend();
+        ++iterator
         )
     {
-        layer_iterator->second->Release();
+        initializeSingleLayer(iterator->second);
     }
-    layers_.clear();
+    am_i_in_render_round_ = true;
+}
+
+void LayerManager::endDraw()
+{
+    set<int> useless_layers = differenceTwoSets(keySet(layers_), used_layers_of_render_round_);
+    for (
+        const int useless_layer : useless_layers
+        )
+    {
+        LayerIterator find_result = layers_.find(useless_layer);
+        if (find_result == layers_.cend()) {
+            return;
+        }
+        find_result->second->Release();
+        layers_.erase(find_result);
+    }
+    for (
+        LayerIterator iterator = layers_.cbegin();
+        iterator != layers_.cend();
+        ++iterator
+        )
+    {
+        assert(SUCCEEDED(iterator->second->EndDraw()));
+    }
+    am_i_in_render_round_ = false;
 }
 
 ID2D1Bitmap* LayerManager::combineLayer(int which, ID2D1RenderTarget* parent)
 {
+    assert(am_i_in_render_round_);
     set<int> layer_index_set;
     layer_index_set.insert(which);
     return combineLayers(layer_index_set, parent);
@@ -59,6 +99,7 @@ ID2D1Bitmap* LayerManager::combineLayer(int which, ID2D1RenderTarget* parent)
 
 ID2D1Bitmap* LayerManager::combineLayers(set<int> which, ID2D1RenderTarget* parent)
 {
+    assert(am_i_in_render_round_);
     ID2D1BitmapRenderTarget *temporary_layer;
     ID2D1Bitmap *temporary_bitmap;
     assert(SUCCEEDED(parent->CreateCompatibleRenderTarget(&temporary_layer)));
@@ -80,12 +121,13 @@ ID2D1Bitmap* LayerManager::combineLayers(set<int> which, ID2D1RenderTarget* pare
 
 ID2D1Bitmap* LayerManager::combineLayers(ID2D1RenderTarget* parent)
 {
+    assert(am_i_in_render_round_);
     return combineLayers(keySet(layers_), parent);
 }
 
-string LayerManager::toString()
+string LayerManager::toString() const
 {
     string result = "Currently, I am managing "
-        + to_string(size()) + " ID2D1BitmapRenderTarget pointers. ";
+        + to_string(layers_.size()) + " ID2D1BitmapRenderTarget pointers. ";
     return result;
 }

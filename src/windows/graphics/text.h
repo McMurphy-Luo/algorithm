@@ -27,7 +27,7 @@ namespace algorithm
 
             ~Text() = default;
 
-            void setContent(const std::string &content) { content_ = content; }
+            void setContent(const std::string& content) { content_ = content; }
 
             std::string getContent() { return content_; }
 

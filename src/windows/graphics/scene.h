@@ -31,9 +31,7 @@ namespace algorithm
 
             virtual ~Scene();
 
-            void render(ID2D1RenderTarget *render_target);
-
-            void discard();
+            void render(ID2D1RenderTarget* render_target);
 
             Color getBackgroundColor() const { return background_color_; }
 
@@ -44,15 +42,14 @@ namespace algorithm
         protected:
             void createD2D1Resource();
 
-            void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target);
+            void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget* render_target);
 
         private:
             algorithm::common::Logger class_logger_;
             LayerManager layer_manager_;
-            std::set<int> used_layers_of_render_round_;
             Color background_color_;
-            IDWriteFactory *write_factory_;
-            IDWriteTextFormat *text_format_;
+            IDWriteFactory* write_factory_;
+            IDWriteTextFormat* text_format_;
         };
     }
 }

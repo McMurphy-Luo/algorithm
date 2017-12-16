@@ -12,24 +12,29 @@ namespace algorithm
     {
         class LayerManager
         {
+        protected:
+            typedef std::map<int, ID2D1BitmapRenderTarget*>::const_iterator LayerIterator;
+
         public:
             LayerManager():
-                layers_()
+                used_layers_of_render_round_(),
+                layers_(),
+                am_i_in_render_round_(false)
             {
                 /* do nothing */
             }
 
-            std::size_t size() { return layers_.size(); }
+            LayerManager(const LayerManager& another) = delete;
+
+            LayerManager& operator=(const LayerManager& another) = delete;
+
+            ~LayerManager();
 
             ID2D1BitmapRenderTarget* getLayer(int index, ID2D1RenderTarget* parent);
 
-            bool hasLayer(int index) { return layers_.find(index) != layers_.end(); };
+            void beginDraw();
 
-            void freeLayer(int index);
-
-            void freeLayers(std::set<int> layers);
-
-            void freeLayers();
+            void endDraw();
 
             ID2D1Bitmap* combineLayer(int which, ID2D1RenderTarget* parent);
 
@@ -37,10 +42,12 @@ namespace algorithm
 
             ID2D1Bitmap* combineLayers(ID2D1RenderTarget* parent);
 
-            std::string toString();
+            std::string toString() const;
 
         private:
+            std::set<int> used_layers_of_render_round_;
             std::map<int, ID2D1BitmapRenderTarget*> layers_;
+            bool am_i_in_render_round_;
         };
     }
 }

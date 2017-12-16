@@ -21,9 +21,9 @@ namespace algorithm
         class Controller final
         {
         public:
-            explicit Controller(MainWindow *main_window);
+            explicit Controller(MainWindow* main_window);
 
-            Controller(const Controller&) = delete;
+            Controller(const Controller& another) = delete;
 
             Controller& operator=(const Controller& rhs) = delete;
 
@@ -47,7 +47,7 @@ namespace algorithm
         private:
             algorithm::common::Logger class_logger;
 
-            MainWindow *main_window_;
+            MainWindow* main_window_;
 
             MainWindow::Callback resize_callback_;
             
