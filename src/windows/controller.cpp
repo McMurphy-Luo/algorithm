@@ -283,17 +283,22 @@ LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
         }
         graphics_under_mouse_now = child;
     }
+    bool need_render = false;
     if (current_graphics_under_mouse_ != graphics_under_mouse_now) {
         if (current_graphics_under_mouse_->getType() == Graphics::circle) {
             dynamic_pointer_cast<Circle>(current_graphics_under_mouse_)->setBorderColor(previous_border_color_of_circle_);
+            need_render = true;
         }
         if (graphics_under_mouse_now->getType() == Graphics::circle) {
             previous_border_color_of_circle_ = dynamic_pointer_cast<Circle>(graphics_under_mouse_now)->getBorderColor();
             dynamic_pointer_cast<Circle>(graphics_under_mouse_now)->setBorderColor(green);
+            need_render = true;
         }
     }
     current_graphics_under_mouse_ = graphics_under_mouse_now;
-    render();
+    if (need_render) {
+        render();
+    }
     return 0;
 }
 

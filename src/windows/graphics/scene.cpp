@@ -99,6 +99,7 @@ Scene::~Scene()
 
 void Scene::render(ID2D1RenderTarget *render_target)
 {
+    class_logger_.debug("Scene::render is called!");
     layer_manager_.beginDraw();
     for (shared_ptr<GraphicsBase> child : getChildren()) {
         renderGraphics(child, render_target);
