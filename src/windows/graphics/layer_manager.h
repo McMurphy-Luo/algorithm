@@ -30,6 +30,8 @@ namespace algorithm
 
             ~LayerManager();
 
+            void discard();
+
             ID2D1BitmapRenderTarget* getLayer(int index, ID2D1RenderTarget* parent);
 
             void beginDraw();

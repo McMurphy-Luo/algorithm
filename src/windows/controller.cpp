@@ -235,14 +235,16 @@ Controller::~Controller()
 void Controller::render()
 {
     main_scene_->render(render_target_);
-    if (need_resize_) {
-        RECT client_rect = main_window_->getSize();
-        D2D1_SIZE_U client_size;
-        client_size.width = client_rect.right - client_rect.left;
-        client_size.height = client_rect.bottom - client_rect.top;
-        assert(SUCCEEDED(render_target_->Resize(client_size)));
-        createRenderObjects(render_target_, the_tree_, main_scene_);
+    if (!need_resize_) {
+        return;
     }
+    RECT client_rect = main_window_->getSize();
+    D2D1_SIZE_U client_size;
+    client_size.width = client_rect.right - client_rect.left;
+    client_size.height = client_rect.bottom - client_rect.top;
+    assert(SUCCEEDED(render_target_->Resize(client_size)));
+    createRenderObjects(render_target_, the_tree_, main_scene_);
+    main_scene_->discard();
     need_resize_ = false;
 }
 
@@ -283,22 +285,17 @@ LRESULT Controller::onMouseMove(WPARAM w_param, LPARAM l_param)
         }
         graphics_under_mouse_now = child;
     }
-    bool need_render = false;
     if (current_graphics_under_mouse_ != graphics_under_mouse_now) {
         if (current_graphics_under_mouse_->getType() == Graphics::circle) {
             dynamic_pointer_cast<Circle>(current_graphics_under_mouse_)->setBorderColor(previous_border_color_of_circle_);
-            need_render = true;
         }
         if (graphics_under_mouse_now->getType() == Graphics::circle) {
             previous_border_color_of_circle_ = dynamic_pointer_cast<Circle>(graphics_under_mouse_now)->getBorderColor();
             dynamic_pointer_cast<Circle>(graphics_under_mouse_now)->setBorderColor(green);
-            need_render = true;
         }
     }
     current_graphics_under_mouse_ = graphics_under_mouse_now;
-    if (need_render) {
-        render();
-    }
+    render();
     return 0;
 }
 

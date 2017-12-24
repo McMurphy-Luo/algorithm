@@ -26,10 +26,12 @@ namespace algorithm
                 write_factory_(nullptr),
                 text_format_(nullptr)
             {
-                createD2D1Resource();
+                // do nothing
             }
 
             virtual ~Scene();
+
+            void discard();
 
             void render(ID2D1RenderTarget* render_target);
 
@@ -40,8 +42,6 @@ namespace algorithm
             virtual bool containsPoint(double x, double y) override { return true; }
 
         protected:
-            void createD2D1Resource();
-
             void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget* render_target);
 
         private:

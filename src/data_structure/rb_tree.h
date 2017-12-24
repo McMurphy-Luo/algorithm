@@ -162,8 +162,8 @@ namespace algorithm
                     uncle = grand_parent->left;
                 }
                 if (uncle && uncle->color == NodeColor::red) {
-                    // case 2 hit: parent of the new node is black node
-                    // uncle of the new node is black node or null
+                    // case 2 hit: parent of the new node is red node
+                    // uncle of the new node is red node
                     uncle->color = NodeColor::black;
                     parent->color = NodeColor::black;
                     grand_parent->color = NodeColor::red;
@@ -196,6 +196,11 @@ namespace algorithm
                 if (root_ == grand_parent) {
                     root_ = grand_parent->parent;
                 }
+            }
+
+            void remove_fix(node* which)
+            {
+
             }
 
         private:

@@ -23,6 +23,12 @@ namespace
 
 LayerManager::~LayerManager()
 {
+    discard();
+}
+
+void LayerManager::discard()
+{
+    assert(!am_i_in_render_round_);
     for (
         LayerIterator iterator = layers_.cbegin();
         iterator != layers_.cend();
@@ -31,6 +37,7 @@ LayerManager::~LayerManager()
     {
         iterator->second->Release();
     }
+    layers_.clear();
 }
 
 ID2D1BitmapRenderTarget* LayerManager::getLayer(int index, ID2D1RenderTarget* parent)

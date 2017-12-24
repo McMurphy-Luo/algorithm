@@ -87,6 +87,12 @@ namespace
 Scene::~Scene()
 {
     class_logger_.debug("Scene::~Scene is called!");
+    discard();
+}
+
+void Scene::discard()
+{
+    layer_manager_.discard();
     if (text_format_) {
         text_format_->Release();
         text_format_ = nullptr;
@@ -100,6 +106,22 @@ Scene::~Scene()
 void Scene::render(ID2D1RenderTarget *render_target)
 {
     class_logger_.debug("Scene::render is called!");
+    if (!write_factory_) {
+        assert(SUCCEEDED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, _uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&write_factory_))));
+    }
+    if (!text_format_) {
+        assert(SUCCEEDED(write_factory_->CreateTextFormat(
+            L"Consolas",
+            nullptr,
+            DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL,
+            DWRITE_FONT_STRETCH_NORMAL,
+            24.0f,
+            L"en-us",
+            &text_format_
+        )));
+        text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    }
     layer_manager_.beginDraw();
     for (shared_ptr<GraphicsBase> child : getChildren()) {
         renderGraphics(child, render_target);
@@ -113,34 +135,9 @@ void Scene::render(ID2D1RenderTarget *render_target)
     HRESULT result = render_target->EndDraw();
     if (result == D2DERR_RECREATE_TARGET) {
         result = S_OK;
-        createD2D1Resource();
+        discard();
     }
     assert(SUCCEEDED(result));
-}
-
-void Scene::createD2D1Resource()
-{
-    class_logger_.debug("Scene::createD2D1Resource is called!");
-    if (text_format_) {
-        text_format_->Release();
-        text_format_ = nullptr;
-    }
-    if (write_factory_) {
-        write_factory_->Release();
-        write_factory_ = nullptr;
-    }
-    assert(SUCCEEDED(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, _uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&write_factory_))));
-    assert(SUCCEEDED(write_factory_->CreateTextFormat(
-        L"Consolas",
-        nullptr,
-        DWRITE_FONT_WEIGHT_NORMAL,
-        DWRITE_FONT_STYLE_NORMAL,
-        DWRITE_FONT_STRETCH_NORMAL,
-        24.0f,
-        L"en-us",
-        &text_format_
-    )));
-    text_format_->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 }
 
 void Scene::renderGraphics(shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget *render_target)
