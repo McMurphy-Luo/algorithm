@@ -86,7 +86,23 @@ namespace algorithm
 
             value_type* remove(const key_type& key)
             {
-                // TODO
+                if (!root_) {
+                    return nullptr;
+                }
+                node* maybe_result = fuzzy_find(key, root_);
+                int compare_result = Comparator(key, maybe_result->key);
+                if (compare_result != 0) {
+                    // the key does not map to any value, so procedure end. return null.
+                    return nullptr;
+                }
+                // from now on, maybe_result is the node of the key, and it is not null.
+                node* successor = detach(maybe_result);
+                if (maybe_result == root_) {
+                    root_ = successor;
+                }
+                value_type* result_value = new value_type(maybe_result->value);
+                delete maybe_result;
+                return result_value;
             }
 
             void clear()

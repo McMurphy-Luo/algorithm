@@ -3,6 +3,7 @@
 
 #include <string>
 #include <d2d1_1.h>
+#include <data_structure/binary_tree.h>
 #include <data_structure/rb_tree.h>
 #include <common/logger.h>
 #include "./main_window.h"

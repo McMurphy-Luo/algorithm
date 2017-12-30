@@ -22,6 +22,7 @@ using std::mem_fn;
 using std::dynamic_pointer_cast;
 using algorithm::common::LogManager;
 using algorithm::common::wStringToU8String;
+using algorithm::data_structure::BinaryTree;
 using algorithm::data_structure::RBTree;
 using algorithm::data_structure::TreeNode;
 using algorithm::data_structure::NodeColor;
