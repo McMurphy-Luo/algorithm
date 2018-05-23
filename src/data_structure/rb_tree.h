@@ -71,6 +71,9 @@ namespace algorithm
                 insert_fix(new_node);
             }
 
+            /*
+             * its user's resposibility to delete the returned
+            */
             value_type* find(const key_type* key)
             {
                 if (!root_) {
@@ -216,7 +219,7 @@ namespace algorithm
 
             void remove_fix(node* which)
             {
-
+                
             }
 
         private:

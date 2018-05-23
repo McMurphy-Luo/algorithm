@@ -27,7 +27,7 @@ namespace algorithm
                 // do nothing
             }
 
-            ArrayList(const ArrayList &another)
+            ArrayList(const ArrayList& another)
                 : ArrayList()
             {
                 for (size_type index = 0; index < another.size_; ++index) {
@@ -35,7 +35,7 @@ namespace algorithm
                 }
             }
 
-            ArrayList &operator=(const ArrayList &rhs)
+            ArrayList &operator=(const ArrayList& rhs)
             {
                 if (this == &rhs) return *this;
                 clear();
@@ -60,17 +60,17 @@ namespace algorithm
                 return (*this)[index];
             }
 
-            value_type &operator[](size_type index)
+            value_type& operator[](size_type index)
             {
                 return *(begin_ + index);
             }
 
-            const value_type &operator[](size_type index) const
+            const value_type& operator[](size_type index) const
             {
                 return *(begin_ + index);
             }
 
-            void add(const value_type &data)
+            void add(const value_type& data)
             {
                 if (size_ == located_) {
                     reallocate();
@@ -118,12 +118,12 @@ namespace algorithm
             void reallocate()
             {
                 if (size_ == 0) {
-                    begin_ = static_cast<value_type *>(malloc(sizeof(value_type)));
+                    begin_ = static_cast<value_type*>(malloc(sizeof(value_type)));
                     located_ = 1;
                     return;
                 }
                 size_type next_located = located_ * 2;
-                value_type *new_begin = static_cast<value_type *>(malloc(sizeof(value_type) * next_located));
+                value_type* new_begin = static_cast<value_type*>(malloc(sizeof(value_type) * next_located));
                 move(new_begin, new_begin + next_located - 1);
                 located_ = next_located;
             }
@@ -144,7 +144,7 @@ namespace algorithm
         private:
             size_type size_;
             size_type located_;
-            value_type *begin_;
+            value_type* begin_;
         };
     }
 }

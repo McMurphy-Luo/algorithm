@@ -1,5 +1,5 @@
 //
-// Created by luojiayi on 5/18/17.
+// Created by McMurphy.Luo on 5/18/17.
 //
 
 #ifndef ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H
