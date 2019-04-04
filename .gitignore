@@ -1,11 +1,4 @@
-﻿cmake-build-debug
-.idea
-bin
-lib
-temp
-CMakeFiles
+﻿.idea
+build/
 *.cbp
-CMakeCache.txt
-cmake_install.cmake
 .vs
-build

@@ -1,6 +1,0 @@
-prebuild :
-    mkdir bin
-
-simple_test.exe : prebuild
-    cl /Fe./bin/simple_test.exe ./test/test.cpp
-
