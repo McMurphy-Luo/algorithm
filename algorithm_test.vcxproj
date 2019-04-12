@@ -18,6 +18,34 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="test\common\map_util_test.cpp" />
+    <ClCompile Include="test\data_structure\binary_tree_test.cpp" />
+    <ClCompile Include="test\data_structure\list_test.cpp" />
+    <ClCompile Include="test\test_all.cpp" />
+    <ClCompile Include="test\windows\controller.cpp" />
+    <ClCompile Include="test\windows\graphics\circle.cpp" />
+    <ClCompile Include="test\windows\graphics\graphics_base.cpp" />
+    <ClCompile Include="test\windows\graphics\layer_manager.cpp" />
+    <ClCompile Include="test\windows\graphics\line.cpp" />
+    <ClCompile Include="test\windows\graphics\scene.cpp" />
+    <ClCompile Include="test\windows\main_window.cpp" />
+    <ClCompile Include="test\windows\win_main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="test\windows\controller.h" />
+    <ClInclude Include="test\windows\graphics\circle.h" />
+    <ClInclude Include="test\windows\graphics\color.h" />
+    <ClInclude Include="test\windows\graphics\graphics_base.h" />
+    <ClInclude Include="test\windows\graphics\layer_manager.h" />
+    <ClInclude Include="test\windows\graphics\line.h" />
+    <ClInclude Include="test\windows\graphics\scene.h" />
+    <ClInclude Include="test\windows\graphics\text.h" />
+    <ClInclude Include="test\windows\main_window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="test\windows\render.manifest" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{A2B68606-C0CF-4224-B704-7B89F6FE06F6}</ProjectGuid>
@@ -123,8 +151,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
