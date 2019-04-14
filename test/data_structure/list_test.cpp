@@ -1,10 +1,11 @@
 #include <string>
 #include <iostream>
 #include <cassert>
-#include "data_structure/linked_list.h"
-#include "data_structure/array_list.h"
+#include <gtest/gtest.h>
+#include <data_structure/linked_list.h>
+#include <data_structure/array_list.h>
+
 using namespace algorithm;
-using namespace std;
 
 template<typename T>
 void test_list_1(T& list){
@@ -32,6 +33,10 @@ void test_list_2(T& list){
     list_2.remove(1);
     assert(list_2.size() == 2);
     assert(list_2[0] + list_2.get(1) == std::string("helloworld"));
+}
+
+TEST(ListTest, TestTheLinkedList) {
+
 }
 
 int main(int argc, char* argv[]){
