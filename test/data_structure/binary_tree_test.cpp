@@ -29,12 +29,12 @@ TEST(BinaryTreeTest, BasicTest) {
   ASSERT_EQ(tree.size(), 1) << "After put one string the tree size should be 1";
   shared_ptr<string> holder;
   holder.reset(tree.find("1"));
-  assert(*holder == "I am 1 string!");
+  ASSERT_STREQ(holder->c_str(), "I am 1 string!");
   holder.reset(tree.find("2"));
-  assert(!holder);
+  ASSERT_TRUE(!holder);
   tree.put(string("a"), string("I am a string!"));
   holder.reset(tree.find("a"));
-  assert(*holder == "I am a string!");
+  ASSERT_STREQ(holder->c_str(), "I am a string!");
   tree.put(string("3"), string("I am 3 string!"));
   holder.reset(tree.remove("1"));
   assert(*holder == "I am 1 string!");
