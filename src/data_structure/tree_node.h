@@ -106,7 +106,7 @@ namespace algorithm
         {
             assert(which);
             assert(!(which->left) && !(which->right));
-            replace(which, nullptr);
+            replace<KeyType, ValueType>(which, nullptr);
         }
 
         template<typename KeyType, typename ValueType>

@@ -7,6 +7,9 @@
 
 using namespace algorithm;
 
+using algorithm::data_structure::ArrayList;
+using algorithm::data_structure::LinkedList;
+
 template<typename T>
 void test_list_1(T& list){
     list.add(std::string("hello!"));
@@ -35,16 +38,14 @@ void test_list_2(T& list){
     assert(list_2[0] + list_2.get(1) == std::string("helloworld"));
 }
 
-TEST(ListTest, TestTheLinkedList) {
-
+TEST(ListTest, TestTheArrayList) {
+  ArrayList<std::string> array_l1, array_l2;
+  test_list_1(array_l1);
+  test_list_2(array_l2);
 }
 
-int main(int argc, char* argv[]){
-    LinkedList<std::string> linked_l1, linked_l2;
-    ArrayList<std::string> array_l1, array_l2;
-    test_list_1(linked_l1);
-    test_list_2(linked_l2);
-    test_list_1(array_l1);
-    test_list_2(array_l2);
-    std::cout << "hello world, test passed!" << std::endl;
+TEST(ListTest, TestTheLinkedList) {
+  LinkedList<std::string> linked_l1, linked_l2;
+  test_list_1(linked_l1);
+  test_list_2(linked_l2);
 }

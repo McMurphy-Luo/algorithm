@@ -30,32 +30,31 @@ TEST(BinaryTreeTest, BasicTest) {
   shared_ptr<string> holder;
   holder.reset(tree.find("1"));
   assert(*holder == "I am 1 string!");
-  holder.reset(the_tree.find("2"));
+  holder.reset(tree.find("2"));
   assert(!holder);
-  the_tree.put(string("a"), string("I am a string!"));
-  holder.reset(the_tree.find("a"));
+  tree.put(string("a"), string("I am a string!"));
+  holder.reset(tree.find("a"));
   assert(*holder == "I am a string!");
-  the_tree.put(string("3"), string("I am 3 string!"));
-  holder.reset(the_tree.remove("1"));
+  tree.put(string("3"), string("I am 3 string!"));
+  holder.reset(tree.remove("1"));
   assert(*holder == "I am 1 string!");
-  holder.reset(the_tree.remove("not exists"));
+  holder.reset(tree.remove("not exists"));
   assert(!holder);
-  holder.reset(the_tree.find("1"));
+  holder.reset(tree.find("1"));
   assert(!holder);
-  holder.reset(the_tree.find("3"));
+  holder.reset(tree.find("3"));
   assert(*holder == "I am 3 string!");
 
 
   BinaryTree<string, string, Comparator> tree2 = tree;
-
-  size_type origin_size = the_tree.size();
-  the_tree.put("xx", "xx_s");
-  assert(origin_size + 1 == the_tree.size());
-  shared_ptr<string> holder(the_tree.find("xx"));
+  algorithm::data_structure::size_type origin_size = tree2.size();
+  tree2.put("xx", "xx_s");
+  assert(origin_size + 1 == tree2.size());
+  holder.reset(tree2.find("xx"));
   assert(*holder == "xx_s");
-  T tree2 = the_tree;
-  the_tree.clear();
-  assert(tree2.size() == origin_size + 1);
-  holder.reset(tree2.remove("xx"));
+  BinaryTree<string, string, Comparator> tree3 = tree2;
+  tree2.clear();
+  assert(tree3.size() == origin_size + 1);
+  holder.reset(tree3.remove("xx"));
   assert(*holder == "xx_s");
 }

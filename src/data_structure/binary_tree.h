@@ -75,7 +75,7 @@ namespace algorithm
 
             size_type size() const
             {
-                return algorithm::size(root_);
+                return algorithm::data_structure::size(root_);
             }
 
             value_type* find(const key_type& key)
