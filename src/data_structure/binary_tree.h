@@ -2,8 +2,8 @@
 // Created by McMurphy.Luo on 5/18/17.
 //
 
-#ifndef ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H
-#define ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H
+#ifndef ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H_
+#define ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H_
 
 #include <cassert>
 #include "./tree_node.h"
@@ -20,6 +20,16 @@ public:
   typedef typename TreeNode<KeyType, ValueType>::key_type key_type;
   typedef typename TreeNode<KeyType, ValueType>::value_type value_type;
   typedef TreeNode<KeyType, ValueType> node;
+
+private:
+
+  struct Node {
+    KeyType key;
+    ValueType value;
+    
+
+  };
+
 
 public:
   BinaryTree() :
@@ -159,4 +169,4 @@ private:
 }
 }
 
-#endif //ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H
+#endif //ALGORITHM_DATA_STRUCTURE_BINARY_TREE_H_
