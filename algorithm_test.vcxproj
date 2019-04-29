@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test\data_structure\binary_tree_test.cpp" />
+    <ClCompile Include="test\data_structure\avl_tree_test.cpp" />
     <ClCompile Include="test\data_structure\list_test.cpp" />
     <ClCompile Include="test\test_all.cpp" />
   </ItemGroup>

@@ -12,30 +12,30 @@ using algorithm::data_structure::LinkedList;
 
 template<typename T>
 void test_list_1(T& list){
-    list.add(std::string("hello!"));
-    assert(list.size() == 1);
-    list.clear();
-    assert(list.size() == 0);
-    list.add(std::string("hello"));
-    list.add(std::string(" "));
-    list.add(std::string("world!"));
-    assert(list.size() == 3);
-    std::string hello_world = list[0] + list[1] + list.get(2);
-    assert(hello_world == std::string("hello world!"));
+  list.add(std::string("hello!"));
+  ASSERT_EQ(list.size() == 1);
+  list.clear();
+  ASSERT_EQ(list.size() == 0);
+  list.add(std::string("hello"));
+  list.add(std::string(" "));
+  list.add(std::string("world!"));
+  ASSERT_EQ(list.size() == 3);
+  std::string hello_world = list[0] + list[1] + list.get(2);
+  ASSERT_EQ(hello_world == std::string("hello world!"));
 }
 
 template<typename T>
 void test_list_2(T& list){
-    list.insert(std::string("world"), 0);
-    assert(list.size() == 1);
-    list.insert(std::string("hello"), 0);
-    list.insert(std::string(" "), 1);
-    assert(list.size() == 3);
-    auto list_2 = list;
-    assert(list_2.size() == 3);
-    list_2.remove(1);
-    assert(list_2.size() == 2);
-    assert(list_2[0] + list_2.get(1) == std::string("helloworld"));
+  list.insert(std::string("world"), 0);
+  ASSERT_EQ(list.size(), 1);
+  list.insert(std::string("hello"), 0);
+  list.insert(std::string(" "), 1);
+  ASSERT_EQ(list.size() == 3);
+  T list_2 = list;
+  ASSERT_EQ(list_2.size() == 3);
+  list_2.remove(1);
+  ASSERT_EQ(list_2.size() == 2);
+  ASSERT_EQ(list_2[0] + list_2.get(1) == std::string("helloworld"));
 }
 
 TEST(ListTest, TestTheArrayList) {

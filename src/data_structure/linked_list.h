@@ -1,9 +1,9 @@
 //
-// Created by luojiayi on 5/16/17.
+// Created by McMurphy Luo on 5/16/17.
 //
 
-#ifndef ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
-#define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
+#ifndef ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H_
+#define ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H_
 
 #include <cstddef>
 #include <cassert>
@@ -21,12 +21,11 @@ public:
   typedef std::size_t size_type;
 
 private:
-  struct Node
-  {
+  struct Node {
     value_type payload;
     Node *previous;
     Node *next;
-  };
+  }
 
 public:
   LinkedList():
@@ -74,7 +73,7 @@ public:
   {
     Node *temporary_item = first_;
     for (; index; --index) {
-        temporary_item = temporary_item->next;
+      temporary_item = temporary_item->next;
     }
     return temporary_item->payload;
   }
@@ -92,8 +91,8 @@ public:
     new_one->previous = last_;
     ++length_;
     if (!first_) {
-        first_ = last_ = new_one;
-        return;
+      first_ = last_ = new_one;
+      return;
     }
     last_->next = new_one;
     last_ = new_one;
@@ -171,4 +170,4 @@ private:
 }
 };
 
-#endif //ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H
+#endif //ALGORITHM_DATA_STRUCTURE_LINKED_LIST_H_
