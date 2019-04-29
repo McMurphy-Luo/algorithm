@@ -5,25 +5,15 @@
 #include <iostream>
 #include <memory>
 #include <cassert>
-#include <data_structure/binary_tree.h>
+#include <data_structure/avl_tree.h>
 #include <gtest/gtest.h>
 
 using std::string;
 using std::shared_ptr;
-using algorithm::data_structure::BinaryTree;
-
-int Comparator(const string& lhs, const string& rhs){
-    if (lhs < rhs){
-        return -1;
-    }
-    if (lhs > rhs){
-        return 1;
-    }
-    return 0;
-};
+using algorithm::data_structure::AVLTree;
 
 TEST(BinaryTreeTest, BasicTest) {
-  BinaryTree<string, string, Comparator> tree;
+  AVLTree<string, string, std::less<string>> tree;
   ASSERT_EQ(tree.size(), 0) << "The default constructed tree should be empty";
 
   std::cout << "here1" << std::endl;
