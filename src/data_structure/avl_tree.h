@@ -130,7 +130,7 @@ public:
     }
     Node* parent = new_node->parent;
     while (parent) {
-      parent->height = std::max((parent->left ? parent->left->height : 0), (parent->right ? parent->right->height : 0));
+      parent->height = std::max((parent->left ? parent->left->height : 0), (parent->right ? parent->right->height : 0)) + 1;
       parent = parent->parent;
     }
     ++size_;
@@ -139,12 +139,42 @@ public:
 
   std::shared_ptr<value_type> Remove(const key_type& key)
   {
-    return nullptr;
+    Node* target_node_to_remove = FuzzyFind(root_, key);
+    if (!target_node_to_remove) {
+      assert(!root_);
+      return nullptr;
+    }
+    bool should_before = comparator_(key, target_node_to_remove->key);
+    bool should_after = comparator_(target_node_to_remove->key, key);
+    assert(!(should_before && should_after));
+    if (should_before || should_after) {
+      return nullptr;
+    }
+    assert(!should_before && !should_after);
+    std::shared_ptr<value_type> result = target_node_to_remove->value;
+    Node* parent = traget_node_to_remove->parent;
+    if (!parent) {
+      assert(target_node_to_remove == root_);
+    }
+
+    do {
+      if (!target_node_to_remove->right && !target_node_to_remove->left) {
+        if (!parent) {
+          root_ = nullptr;
+          delete target_node_to_remove;
+          break;
+        }
+      }
+
+    } while (0);
+    return result;
   }
 
   void Clear()
   {
-
+    RecursiveDisposeNode(root_);
+    size_ = 0;
+    root_ = nullptr;
   }
 
 private:
