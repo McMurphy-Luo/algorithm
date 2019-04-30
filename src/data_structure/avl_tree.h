@@ -10,6 +10,7 @@
 #define ALGORITHM_DATA_STRUCTURE_AVL_TREE_H_
 
 #include <cassert>
+#include <memory>
 
 namespace algorithm
 {
@@ -63,7 +64,7 @@ public:
     }
     RecursiveDisposeNode(root_);
     root_ = DeepClone(rhs.root_);
-    size_t = rhs.size_;
+    size_ = rhs.size_;
     return *this;
   }
 
@@ -77,9 +78,24 @@ public:
     return size_;
   }
 
+  std::shared_ptr<value_type> Find(const key_type& key) const
+  {
+    Node* find_result = FuzzyFind(root_, key);
+    if (!find_result) {
+      assert(!root_);
+    }
+    bool should_before = comparator_(key, find_result->key);
+    bool should_after = comparator_(find_result->key, key);
+    assert(!(should_before && should_after));
+    if (!should_before && !should_after) {
+      return std::make_shared<value_type>(find_result->value);
+    }
+    return nullptr;
+  }
+
   void Put(const key_type& key, const value_type& value)
   {
-    node* find_result = FuzzyFind(root_, key);
+    Node* find_result = FuzzyFind(root_, key);
     if (!find_result) {
       root_ = new Node;
       root_->left = nullptr;
@@ -88,22 +104,45 @@ public:
       root_->key = key;
       root_->value = value;
       root_->height = 1;
+      ++size_;
+      return;
     }
-    int compare_result = Comparator(key, find_result->key);
-    if (compare_result == 0) {
+    bool should_before = comparator_(key, find_result->key);
+    bool should_after = comparator_(find_result->key, key);
+    if (!should_before && !should_after) {
       find_result->value = value;
       return;
     }
-    if (compare_result > 0) {
-      find_result->right = new node(key, value, nullptr, nullptr, NodeColor::black);
+    assert(!(should_after && should_before));
+    Node* new_node = new Node;
+    new_node->key = key;
+    new_node->value = value;
+    new_node->parent = find_result;
+    new_node->height = 1;
+    new_node->left = nullptr;
+    new_node->right = nullptr;
+    new_node->parent = find_result;
+    if (should_before) {
+      find_result->left = new_node;
+    } else {
+      assert(should_after);
+      find_result->right = new_node;
     }
-    if (compare_result < 0) {
-      find_result->left = new node(key, value, nullptr, nullptr, NodeColor::black);
+    Node* parent = new_node->parent;
+    while (parent) {
+      parent->height = std::max((parent->left ? parent->left->height : 0), (parent->right ? parent->right->height : 0));
+      parent = parent->parent;
     }
-    Blance(find_result);
+    ++size_;
+    Blance(new_node);
   }
 
-  value_type* Remove(const key_type& key)
+  std::shared_ptr<value_type> Remove(const key_type& key)
+  {
+    return nullptr;
+  }
+
+  void Clear()
   {
 
   }
@@ -123,7 +162,7 @@ private:
     delete which;
   }
 
-  Node* DeepClone(Node* which)
+  Node* DeepClone(Node* which) const
   {
     if (!which) {
       return nullptr;
@@ -146,30 +185,31 @@ private:
 
   void Blance(Node* which)
   {
-    size_type left_child_height = height(which->left);
-    size_type right_child_height = height(which->right);
-    int child_height_diff = left_child_height - right_child_height;
+    
   }
 
-  Node* FuzzyFind(Node* current, const key_type& key)
+  Node* FuzzyFind(Node* current, const key_type& key) const
   {
     if (!current) {
       return nullptr;
     }
-    int compare_result = comparator_(key, current->key);
-    if (compare_result > 0) {
-      if (!(current->right)) {
-          return current;
-      }
-      return FuzzyFind(current->right, key);
+    bool should_before = comparator_(key, current->key);
+    bool should_after = comparator_(current->key, key);
+    assert(!(should_before && should_after));
+    if (!should_before && !should_after) {
+      return current;
     }
-    if (compare_result < 0) {
-      if (!(current->left)) {
-          return current;
+    if (should_before) {
+      if (!current->left) {
+        return current;
       }
       return FuzzyFind(current->left, key);
     }
-    return current;
+    assert(should_after);
+    if (!current->right) {
+      return current;
+    }
+    return FuzzyFind(current->right, key);
   }
 
 private:

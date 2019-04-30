@@ -25,7 +25,7 @@ private:
     value_type payload;
     Node *previous;
     Node *next;
-  }
+  };
 
 public:
   LinkedList():
