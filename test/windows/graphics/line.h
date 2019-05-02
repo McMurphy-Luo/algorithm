@@ -6,62 +6,64 @@
 
 namespace algorithm
 {
-    namespace windows
-    {
-        class Line : public GraphicsBase
-        {
-        public:
-            Line(double right, double bottom, Color color, double width, double left, double top):
-                GraphicsBase(Graphics::line, left, top),
-                right_(right),
-                bottom_(bottom),
-                color_(color),
-                width_(width)
-            {
-                /* do nothing */
-            }
+namespace windows
+{
 
-            Line(double right, double bottom, double left, double top) :
-                GraphicsBase(Graphics::line, left, top),
-                right_(right),
-                bottom_(bottom),
-                color_(0, 0, 0), // black
-                width_(1)
-            {
-                /* do nothing */
-            }
+class Line : public GraphicsBase
+{
+public:
+  Line(double right, double bottom, Color color, double width, double left, double top):
+    GraphicsBase(Graphics::line, left, top),
+    right_(right),
+    bottom_(bottom),
+    color_(color),
+    width_(width)
+  {
+    /* do nothing */
+  }
 
-            Line(const Line &another) = default;
+  Line(double right, double bottom, double left, double top) :
+    GraphicsBase(Graphics::line, left, top),
+    right_(right),
+    bottom_(bottom),
+    color_(0, 0, 0), // black
+    width_(1)
+  {
+    /* do nothing */
+  }
 
-            Line& operator=(const Line &another) = default;
+  Line(const Line &another) = default;
 
-            ~Line() = default;
+  Line& operator=(const Line &another) = default;
 
-            double getRight() const { return right_; }
+  ~Line() = default;
 
-            void setRight(double value) { right_ = value; }
+  double getRight() const { return right_; }
 
-            double getBottom() const { return bottom_; }
+  void setRight(double value) { right_ = value; }
 
-            void setBottom(double value) { bottom_ = value; }
+  double getBottom() const { return bottom_; }
 
-            Color getColor() const { return color_; }
+  void setBottom(double value) { bottom_ = value; }
 
-            void setColor(Color value) { color_ = value; }
+  Color getColor() const { return color_; }
 
-            double getWidth() const { return width_; }
+  void setColor(Color value) { color_ = value; }
 
-            void setWidth(double value) { width_ = value; }
+  double getWidth() const { return width_; }
 
-            bool containsPoint(double x, double y) override;
+  void setWidth(double value) { width_ = value; }
 
-        private:
-            double right_;
-            double bottom_;
-            Color color_;
-            double width_;
-        };
-    }
+  bool containsPoint(double x, double y) override;
+
+private:
+  double right_;
+  double bottom_;
+  Color color_;
+  double width_;
+};
+
+}
 }
 
 #endif //ALGORITHM_WINDOWS_LINE_H

@@ -13,45 +13,47 @@
 
 namespace algorithm
 {
-    namespace windows
-    {
-        class Scene : public GraphicsBase
-        {
-        public:
-            Scene():
-                GraphicsBase(Graphics::scene, 0, 0),
-                class_logger_(algorithm::common::LogManager::getLogger("algorithm.windows.Scene")),
-                layer_manager_(),
-                background_color_(135, 206, 235),
-                write_factory_(nullptr),
-                text_format_(nullptr)
-            {
-                // do nothing
-            }
+namespace windows
+{
 
-            virtual ~Scene();
+class Scene : public GraphicsBase
+{
+public:
+  Scene():
+    GraphicsBase(Graphics::scene, 0, 0),
+    class_logger_(algorithm::common::LogManager::getLogger("algorithm.windows.Scene")),
+    layer_manager_(),
+    background_color_(135, 206, 235),
+    write_factory_(nullptr),
+    text_format_(nullptr)
+  {
+    // do nothing
+  }
 
-            void discard();
+  virtual ~Scene();
 
-            void render(ID2D1RenderTarget* render_target);
+  void discard();
 
-            Color getBackgroundColor() const { return background_color_; }
+  void render(ID2D1RenderTarget* render_target);
 
-            void setBackgroundColor(const Color& value) { background_color_ = value; }
+  Color getBackgroundColor() const { return background_color_; }
 
-            virtual bool containsPoint(double x, double y) override { return true; }
+  void setBackgroundColor(const Color& value) { background_color_ = value; }
 
-        protected:
-            void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget* render_target);
+  virtual bool containsPoint(double x, double y) override { return true; }
 
-        private:
-            algorithm::common::Logger class_logger_;
-            LayerManager layer_manager_;
-            Color background_color_;
-            IDWriteFactory* write_factory_;
-            IDWriteTextFormat* text_format_;
-        };
-    }
+protected:
+  void renderGraphics(std::shared_ptr<GraphicsBase> graphics, ID2D1RenderTarget* render_target);
+
+private:
+  algorithm::common::Logger class_logger_;
+  LayerManager layer_manager_;
+  Color background_color_;
+  IDWriteFactory* write_factory_;
+  IDWriteTextFormat* text_format_;
+};
+
+}
 }
 
 #endif //ALGORITHM_WINDOWS_SCENE_H
