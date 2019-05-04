@@ -4,8 +4,8 @@
 #include <Windows.h>
 #include <common/log_manager.h>
 #include <common/logger.h>
-#include "./main_window.h"
-#include "./controller.h"
+#include "./windows/main_window.h"
+#include "./windows/controller.h"
 
 using algorithm::common::Filter;
 using algorithm::common::LogManager;
