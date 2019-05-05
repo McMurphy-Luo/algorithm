@@ -15,6 +15,12 @@
     <ClCompile Include="test\data_structure\list_test.cpp" />
     <ClCompile Include="test\test_all.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\data_structure\array_list.h" />
+    <ClInclude Include="src\data_structure\avl_tree.h" />
+    <ClInclude Include="src\data_structure\linked_list.h" />
+    <ClInclude Include="src\data_structure\rb_tree.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{A2B68606-C0CF-4224-B704-7B89F6FE06F6}</ProjectGuid>
