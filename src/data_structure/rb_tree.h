@@ -35,7 +35,6 @@ private:
     NodeColor color;
   };
 
-
 public:
   RBTree(Comparator comparator)
     : root_(nullptr)
@@ -55,6 +54,7 @@ public:
     : RBTree(another.comparator_)
   {
     root_ = DeepClone(another.root_);
+    size_ = another.size_;
   }
 
   RBTree& operator=(const RBTree& rhs)
@@ -191,14 +191,18 @@ private:
     delete which;
   }
 
-  void DeepClone(node* which)
+  Node* DeepClone(Node* which)
   {
     if (!which) {
-      return;
+      return nullptr;
     }
-    put(which->key, which->value);
-    DeepClone(which->left);
-    DeepClone(which->right);
+    Node* result = new Node;
+    result->key = which->key;
+    result->value = which->value;
+    result->color = which->color;
+    result->left = DeepClone(which->left);
+    result->right = DeepClone(which->right);
+    return result;
   }
 
   void InsertFix(node* which)
