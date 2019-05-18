@@ -9,6 +9,7 @@
 #define ALGORITHM_DATA_STRUCTURE_RB_TREE_H_
 
 #include <cassert>
+#include <memory>
 
 namespace algorithm
 {
@@ -62,14 +63,20 @@ public:
     if (this == &rhs) {
       return *this;
     }
-    clear();
-    inner_copy(rhs.root_);
+    Clear();
+    DeepClone(rhs.root_);
+    size_ = rhs.size_;
     return *this;
   }
 
   ~RBTree()
   {
-    clear();
+    Clear();
+  }
+
+  bool Empty() const
+  {
+    return size_ == 0;
   }
 
   void Put(const KeyType& key, const ValueType& value)
@@ -87,45 +94,45 @@ public:
       ++size_;
       return;
     }
-    node* maybe_target = fuzzy_find(key, root_);
-    int compare_result = Comparator(key, maybe_target->key);
+    Node* maybe_target = FuzzyFind(key, root_);
+    int compare_result = comparator_(key, maybe_target->key);
     if (compare_result == 0) {
       // key is already exists in the tree, replacing value is enough
       maybe_target->value = value;
       return;
     }
-    node* new_node;
+    Node* new_node;
     if (compare_result > 0) {
-      new_node = maybe_target->right = new node(key, value, maybe_target, nullptr, nullptr, NodeColor::red);
+      new_node = maybe_target->right = new Node(key, value, maybe_target, nullptr, nullptr, NodeColor::red);
     }
     if (compare_result < 0) {
-      new_node = maybe_target->left = new node(key, value, maybe_target, nullptr, nullptr, NodeColor::red);
+      new_node = maybe_target->left = new Node(key, value, maybe_target, nullptr, nullptr, NodeColor::red);
     }
-    insert_fix(new_node);
+    InsertFix(new_node);
   }
 
-  /*
-    * its user's resposibility to delete the returned
-  */
-  value_type* Find(const key_type* key)
+  /**
+   * its user's resposibility to delete the returned
+   */
+  std::shared_ptr<ValueType> Find(const KeyType& key)
   {
     if (!root_) {
       return nullptr;
     }
-    node* maybe_result = fuzzy_find(key, root_);
+    Node* maybe_result = FuzzyFind(key, root_);
     int compare_result = Comparator(key, maybe_result->key);
     if (compare_result == 0) {
-      return new value_type(maybe_result->value);
+      return new ValueType(maybe_result->value);
     }
     return nullptr;
   }
 
-  value_type* Remove(const key_type& key)
+  std::shared_ptr<ValueType> Remove(const KeyType& key)
   {
     if (!root_) {
       return nullptr;
     }
-    node* maybe_result = fuzzy_find(key, root_);
+    node* maybe_result = FuzzyFind(key, root_);
     int compare_result = Comparator(key, maybe_result->key);
     if (compare_result != 0) {
       // the key does not map to any value, so procedure end. return null.
@@ -143,13 +150,9 @@ public:
 
   void Clear()
   {
-    inner_clear(root_);
+    RecursiveDispose(root_);
     root_ = nullptr;
-  }
-
-  const node* getRootNode() const
-  {
-    return root_;
+    size_ = 0;
   }
 
 private:
@@ -181,13 +184,13 @@ private:
     assert(false);
   }
 
-  void RecursiveDispose(node* which)
+  void RecursiveDispose(Node* which)
   {
     if (!which) {
       return;
     }
-    inner_clear(which->left);
-    inner_clear(which->right);
+    RecursiveDispose(which->left);
+    RecursiveDispose(which->right);
     delete which;
   }
 
@@ -205,7 +208,7 @@ private:
     return result;
   }
 
-  void InsertFix(node* which)
+  void InsertFix(Node* which)
     // "which" may be the new inserted node or node on the path from the new node to root
     // In double red case
   {
@@ -270,7 +273,7 @@ private:
     }
   }
 
-  void RemoveFix(node* which)
+  void RemoveFix(Node* which)
   {
 
   }
