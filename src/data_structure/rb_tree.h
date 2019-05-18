@@ -64,7 +64,7 @@ public:
       return *this;
     }
     Clear();
-    DeepClone(rhs.root_);
+    root_ = DeepClone(rhs.root_);
     size_ = rhs.size_;
     return *this;
   }
@@ -72,11 +72,17 @@ public:
   ~RBTree()
   {
     Clear();
+    root_ = nullptr;
   }
 
   bool Empty() const
   {
     return size_ == 0;
+  }
+
+  size_t Size() const
+  {
+    return size_;
   }
 
   void Put(const KeyType& key, const ValueType& value)
@@ -95,19 +101,37 @@ public:
       return;
     }
     Node* maybe_target = FuzzyFind(key, root_);
-    int compare_result = comparator_(key, maybe_target->key);
-    if (compare_result == 0) {
+    assert(maybe_target);
+    bool should_before = comparator_(key, maybe_target->key);
+    bool should_after = comparator_(maybe_target->key, key);
+    assert(!(should_after && should_before));
+    if (!should_before && !should_after) {
       // key is already exists in the tree, replacing value is enough
       maybe_target->value = value;
       return;
     }
     Node* new_node;
-    if (compare_result > 0) {
-      new_node = maybe_target->right = new Node(key, value, maybe_target, nullptr, nullptr, NodeColor::red);
+    if (should_after) {
+      assert(!maybe_target->right);
+      new_node = maybe_target->right = new Node;
+      new_node->left = nullptr;
+      new_node->right = nullptr;
+      new_node->parent = maybe_target;
+      new_node->key = key;
+      new_node->value = value;
+      new_node->color = NodeColor::Red;
+    } else {
+      assert(should_before);
+      assert(!maybe_target->left);
+      new_node = maybe_target->left = new Node;
+      new_node->left = nullptr;
+      new_node->right = nullptr;
+      new_node->parent = maybe_target;
+      new_node->key = key;
+      new_node->value = value;
+      new_node->color = NodeColor::Red;
     }
-    if (compare_result < 0) {
-      new_node = maybe_target->left = new Node(key, value, maybe_target, nullptr, nullptr, NodeColor::red);
-    }
+    ++size_;
     InsertFix(new_node);
   }
 
@@ -120,10 +144,12 @@ public:
       return nullptr;
     }
     Node* maybe_result = FuzzyFind(key, root_);
-    int compare_result = Comparator(key, maybe_result->key);
-    if (compare_result == 0) {
-      return new ValueType(maybe_result->value);
+    bool should_before = comparator_(key, maybe_result->key);
+    bool should_after = comparator_(maybe_result->key, key);
+    if (!should_before && !should_after) {
+      return std::make_shared<ValueType>(maybe_result->value);
     }
+    assert(!(should_before && should_after));
     return nullptr;
   }
 
@@ -132,14 +158,52 @@ public:
     if (!root_) {
       return nullptr;
     }
-    node* maybe_result = FuzzyFind(key, root_);
-    int compare_result = Comparator(key, maybe_result->key);
-    if (compare_result != 0) {
-      // the key does not map to any value, so procedure end. return null.
+    Node* maybe_result = FuzzyFind(key, root_);
+    bool should_before = comparator_(key, maybe_result->key);
+    bool should_after = comparator_(maybe_result->key, key);
+    assert(!(should_before && should_after));
+    if (should_before && !should_after) {
       return nullptr;
     }
-    // from now on, maybe_result is the node of the key, and it is not null.
-    node* successor = detach(maybe_result);
+    if (!should_before && should_after) {
+      return nullptr;
+    }
+    assert(!should_before && !should_after);
+    // The target node that is required to be removed is found.
+    std::shared_ptr<ValueType> result;
+    if (!maybe_result->left && !maybe_result->right) {
+      Node* parent = nullptr;
+      if (!maybe_result->parent) {
+        assert(maybe_result == root_);
+        root_ = nullptr;
+      }
+      else if(maybe_result->parent->left == maybe_result) {
+        maybe_result->parent->left = nullptr;
+        parent = maybe_result->parent;
+      }
+      else if (maybe_result->parent->right == maybe_result) {
+        maybe_result->parent->right = nullptr;
+        parent = maybe_result->parent;
+      }
+      result = std::make_shared<ValueType>(maybe_result->value);
+      if (parent) {
+        RemoveFix(parent);
+      }
+      --size_;
+      return result;
+    }
+    else if (maybe_result->left && !maybe_result->right) {
+
+    }
+    else if (!maybe_result->left && maybe_result->right) {
+      
+    }
+    else {
+      assert(maybe_result->left && maybe_result->right);
+
+    }
+
+    Node* successor = detach(maybe_result);
     if (maybe_result == root_) {
       root_ = successor;
     }
@@ -164,15 +228,14 @@ private:
       // The target node is found
       return from;
     }
-    if (should_before && ) {
-      // The target node is found
+    if (should_before) {
       if (!from->left) {
         // No further searching can be performed
         return from;
       }
       return FuzzyFind(key, from->left);
     }
-    if (should_after && !from->right) {
+    if (should_after) {
       // The target node has not been found and no further searching can be performed
       if (!from->right) {
         return from;
