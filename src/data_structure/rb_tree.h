@@ -296,6 +296,7 @@ private:
     // If we reach here it means should_before == true and should_after == true
     // Which is not supposed to happen
     assert(false);
+    return nullptr;
   }
 
   void RecursiveDispose(Node* which)
