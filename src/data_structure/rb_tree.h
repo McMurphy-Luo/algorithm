@@ -393,8 +393,8 @@ private:
     if (grand_parent->left == parent) {
       uncle = grand_parent->right;
     }
-    // I don't want to use the 'else' keyword, even if it's faster
-    if (grand_parent->right == parent) {
+    else {
+      assert(grand_parent->right == parent);
       uncle = grand_parent->left;
     }
     if (uncle && uncle->color == NodeColor::Red) {
@@ -418,9 +418,8 @@ private:
       grand_parent->color = NodeColor::Red;
       grand_parent->parent->color = NodeColor::Black;
       grand_parent->parent->left->color = NodeColor::Red;
-    }
-
-    if (parent == grand_parent->right) {
+    } else {
+      assert(parent == grand_parent->right);
       if (which == parent->left) {
         RightRotate(parent);
       }
